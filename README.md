@@ -41,7 +41,7 @@ build.yaml
     - ansible.plugin_builder.run
 ```
 MANIFEST.yaml
-```
+```yaml
 ---
 collection:
   path: /path/to/collection

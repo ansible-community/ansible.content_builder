@@ -1,0 +1,21 @@
+# tasks file for run
+- name: Validate task input against defined schema
+  ansible.utils.validate:
+    data: "{{ lookup('file',  '{{ manifest_file }}') | from_yaml | to_json }}"
+    criteria: "{{ lookup('file',  'files/schema.json') | from_json }}"
+    engine: ansible.utils.jsonschema
+  register: result
+
+- name: Load settings from MANIFEST file
+  include_vars:
+    file: "{{ manifest_file }}"
+
+- name: Start Scaffolding
+  include_role:
+    name: "{{ builder_role }}"
+  loop:
+    - init
+    - scaffold_plugins
+  loop_control:
+    loop_var: builder_role
+  when: not result.failed

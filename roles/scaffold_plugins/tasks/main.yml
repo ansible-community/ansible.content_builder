@@ -1,0 +1,6 @@
+
+- name: Scaffold the specified plugins
+  include: template.yml
+  with_items: "{{ plugins }}"
+  loop_control:
+    loop_var: plugin

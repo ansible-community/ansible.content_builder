@@ -1,0 +1,39 @@
+# -*- coding: utf-8 -*-
+# {{ copyright }}
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
+# Make coding more python3-ish
+from __future__ import (absolute_import, division, print_function)
+
+__metaclass__ = type
+
+DOCUMENTATION = '''
+{{ docstring|d('') }}
+'''
+
+from ansible.plugins.cache import BaseCacheModule
+
+
+class CacheModule(BaseCacheModule):
+    """
+    A {{ plugin['name'] }} caching plugin.
+    """
+
+    def get(self, key):
+        pass
+
+    def set(self, key, value):
+        pass
+
+    def keys(self):
+        pass
+
+    def contains(self, key):
+        pass
+
+    def delete(self, key):
+        pass
+
+    def flush(self):
+        pass

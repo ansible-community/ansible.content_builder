@@ -1,0 +1,45 @@
+# -*- coding: utf-8 -*-
+# {{ copyright }}
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
+
+"""
+The {{ plugin.name }} lookup plugin
+"""
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+
+DOCUMENTATION = """
+{{ docstring|d('') }}
+"""
+
+RETURN = """
+"""
+
+from ansible.errors import AnsibleLookupError
+from ansible.plugins.lookup import LookupBase
+from ansible_collections.{{ collection.namespace }}.{{ collection.name }}.module_utils.common.{{ plugin.name }} import (
+    {{ plugin.name }},
+)
+from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_validate import (
+    AnsibleArgSpecValidator,
+)
+
+
+class LookupModule(LookupBase):
+    def run(self, terms, variables=None, **kwargs):
+        if isinstance(terms, list):
+            keys = {{ (docstring|from_yaml)["options"].keys() }}
+            terms = dict(zip(keys, terms))
+        terms.update(kwargs)
+        aav = AnsibleArgSpecValidator(
+            data=terms, schema=DOCUMENTATION, name="{{ plugin.name }}"
+        )
+        valid, errors, updated_data = aav.validate()
+        if not valid:
+            raise AnsibleLookupError(errors)
+        res = {{ plugin.name }}(**updated_data)
+        return res

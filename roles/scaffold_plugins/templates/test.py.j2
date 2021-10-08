@@ -1,0 +1,43 @@
+# -*- coding: utf-8 -*-
+# {{ copyright }}
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
+"""
+Test plugin file for {{ plugin.name }}
+"""
+
+from __future__ import absolute_import, division, print_function
+from ansible_collections.ansible.utils.plugins.plugin_utils.base.utils import (
+    _validate_args,
+)
+
+__metaclass__ = type
+
+DOCUMENTATION = """
+{{ docstring|d('') }}
+"""
+
+EXAMPLES = r"""
+"""
+
+RETURN = """
+"""
+
+
+def _{{ plugin.name }}({{ (docstring|from_yaml)["options"].keys()|join(', ') }}):
+    """Implementation for {{ plugin.name }}"""
+    # TO-DO: Remove quotes from the dict values for `params`
+    params = {{ dict((docstring|from_yaml)["options"].keys() | zip((docstring|from_yaml)["options"].keys())) }}
+    _validate_args("{{ plugin.name }}", DOCUMENTATION, params)
+
+    # implement test logic here
+
+
+class TestModule(object):
+    """ {{ plugin.name }} test"""
+
+    test_map = {"{{ plugin.name }}": _{{ plugin.name }}}
+
+    def tests(self):
+        return self.test_map

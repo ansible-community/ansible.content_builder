@@ -1,0 +1,47 @@
+- debug:
+    msg: "Scaffolding {{ plugin['name'] }} of type {{ plugin['type'] }}"
+
+- name: Check to see if the file exists
+  ansible.builtin.stat:
+    path: "{{ parent_directory }}/{{ plugin['type'] }}/{{ plugin['name'] }}.py"
+  register: file_stat
+
+- name: Load docstring (if specified)
+  set_fact:
+    docstring: "{{ lookup('file', '{{ plugin.docstring }}') }}"
+  when: "'docstring' in plugin"
+
+- block:
+  - name: Create the plugin file, if it doesnt exist already or override is set
+    ansible.builtin.template:
+      src: "{{ plugin['type'] }}.py.j2"
+      dest: "{{ parent_directory }}/{{ plugin['type'] }}/{{ plugin['name'] }}.py"
+
+  - name: Copy docstring to module file for action plugins
+    ansible.builtin.template:
+      src: action_module.py.j2
+      dest: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
+    when: plugin.type == "action"
+  when: not file_stat.stat.exists or plugin['overwrite']|default(False)
+
+- block:
+    - name: "Set correct utils dir for {{ plugin.name }}"
+      set_fact:
+        utils_dir: "{{ 'module_utils' if plugin.type == 'module' else 'plugin_utils' }}"
+
+    - name: Check to see if the utils file exists
+      ansible.builtin.stat:
+        path: "{{ parent_directory }}/{{ utils_dir }}/{{ plugin['name'] }}.py"
+      register: file_stat
+
+    - name: Create utils file
+      ansible.builtin.template:
+        src: "{{ utils_dir }}/plugin.py.j2"
+        dest: "{{ parent_directory }}/{{ utils_dir }}/{{ plugin['name'] }}.py"
+      when: not file_stat.stat.exists
+  when: plugin.type not in ["action", "module"]
+
+- name: Empty docstring
+  set_fact:
+    docstring: ''
+  when: "'docstring' in plugin"

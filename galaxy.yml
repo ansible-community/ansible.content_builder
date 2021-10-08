@@ -1,0 +1,13 @@
+namespace: ansible
+name: plugin_builder
+version: 0.0.1
+readme: README.md
+authors:
+- Brad Thornton (@cidrblock)
+- Nilashish Chakraborty (@NilashishC)
+description: your collection description
+license_file: LICENSE
+tags: []
+dependencies: {}
+repository: https://github.com/ansible-collections/ansible.plugin_builder
+issues: https://github.com/ansible-collections/ansible.plugin_builder/issues

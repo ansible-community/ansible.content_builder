@@ -1,0 +1,29 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# {{ copyright }}
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
+"""
+The {{ plugin.name }} filter plugin
+"""
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+def _raise_error(msg):
+    """Raise an error message, prepend with filter name
+    :param msg: The message
+    :type msg: str
+    :raises: AnsibleError
+    """
+    error = "Error when using plugin '{{ plugin.name }}': {msg}".format(msg=msg)
+    raise AnsibleFilterError(error)
+
+
+def {{ plugin.name }}():
+    """{{ plugin.name }} implementation
+    """
+    # Enter plugin logic here
+    # This method will be invoked from the main plugin class
+    pass

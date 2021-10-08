@@ -6,14 +6,6 @@ This repository contains the `ansible.plugin_builder` Ansible Collection.
 
 Tested with ansible-core 2.11 releases and the current development version of ansible-core.
 
-## External requirements
-
-Some modules and plugins require external libraries. Please check the requirements for each plugin or module you use in the documentation to find out which requirements are needed.
-
-## Included content
-
-Please check the included content on the [Ansible Galaxy page for this collection](https://galaxy.ansible.com/ansible/plugin_builder).
-
 ## Installation
 
 ```

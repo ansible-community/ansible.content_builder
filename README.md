@@ -65,6 +65,21 @@ plugins:
 ansible-playbook build.yaml -e manifest_file=MANIFEST.yaml 
 ```
 
+## Supported plugins
+
+| **Plugin Type**        | **Description**                                             |
+|------------------------|-------------------------------------------------------------|
+| action                 | Scaffold a action plugin                                    |
+| cache                  | Scaffold a cache plugin                                     |
+| filter                 | Scaffold a filter plugin                                    |
+| test                   | Scaffold a test plugin                                      |
+| lookup                 | Scaffold a lookup plugin                                    |
+| module_network_cli     | Scaffold a Network Resource Module that support network_cli |
+| module_network_netconf | Scaffold a Network Resource Module that supports netconf    |
+
+## Options
+
+
 ## Licensing
 
 GNU General Public License v3.0 or later.

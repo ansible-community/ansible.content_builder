@@ -3,3 +3,10 @@ copyright: "Copyright {{ ansible_date_time.year }} Red Hat"
 version_added: "1.0.0"
 
 parent_directory: "{{ collection['path'] }}/plugins"
+
+generic_plugins:
+  - action
+  - filter
+  - test
+  - cache
+  - module

@@ -4,6 +4,8 @@
     data: "{{ lookup('file',  '{{ manifest_file }}') | from_yaml | to_json }}"
     criteria: "{{ lookup('file',  'files/schema.json') | from_json }}"
     engine: ansible.utils.jsonschema
+  vars:
+    ansible_jsonschema_draft: draft7
   register: result
 
 - name: Load settings from MANIFEST file

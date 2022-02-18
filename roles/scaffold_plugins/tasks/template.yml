@@ -1,47 +1,103 @@
 - debug:
     msg: "Scaffolding {{ plugin['name'] }} of type {{ plugin['type'] }}"
 
-- name: Check to see if the file exists
-  ansible.builtin.stat:
-    path: "{{ parent_directory }}/{{ plugin['type'] }}/{{ plugin['name'] }}.py"
-  register: file_stat
+- name: Set path to main plugin file for generic plugins
+  set_fact:
+    path_to_plugin: "{{ parent_directory }}/{{ plugin['type'] }}/{{ plugin['name'] }}.py"
+  when: plugin['type'] in generic_plugins
+
+- name: Set path to main plugin file for specialized plugins
+  set_fact: 
+    path_to_plugin: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
+  when: plugin['type'] not in generic_plugins
 
 - name: Load docstring (if specified)
   set_fact:
     docstring: "{{ lookup('file', '{{ plugin.docstring }}') }}"
   when: "'docstring' in plugin"
 
-- block:
-  - name: Create the plugin file, if it doesnt exist already or override is set
-    ansible.builtin.template:
-      src: "{{ plugin['type'] }}.py.j2"
-      dest: "{{ parent_directory }}/{{ plugin['type'] }}/{{ plugin['name'] }}.py"
+- name: Load EXAMPLES from example file (if specified)
+  set_fact:
+    examples: "{{ lookup('file', '{{ plugin.examples }}') }}"
+  when: "'examples' in plugin"
 
-  - name: Copy docstring to module file for action plugins
-    ansible.builtin.template:
-      src: action_module.py.j2
-      dest: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
-    when: plugin.type == "action"
-  when: not file_stat.stat.exists or plugin['overwrite']|default(False)
+- name: Check to see if the plugin file exists
+  ansible.builtin.stat:
+    path: "{{ path_to_plugin }}"
+  register: file_stat
 
+# Load docstring from correct places (if previously unspecified)
+# Error out if not present anywhere
 - block:
-    - name: "Set correct utils dir for {{ plugin.name }}"
+    - assert:
+        that: file_stat.stat.exists
+        success_msg: "{{ plugin['name'] }} plugin file exists...attempting to fetch DOCUMENTATION"
+        fail_msg: "{{ plugin['name'] }} plugin file does not exist and path to docstring not set"
+      when: not docstring|default(None)
+
+    - name: Extract DOCUMENTATION from plugin (for existing plugin)
       set_fact:
-        utils_dir: "{{ 'module_utils' if plugin.type == 'module' else 'plugin_utils' }}"
+        docstring: "{{ lookup('file', '{{ path_to_plugin }}')|ansible.plugin_builder.get_doc }}"
+      when: not docstring|default(None)
 
-    - name: Check to see if the utils file exists
-      ansible.builtin.stat:
-        path: "{{ parent_directory }}/{{ utils_dir }}/{{ plugin['name'] }}.py"
-      register: file_stat
+    - assert:
+        that: docstring != ''
+        fail_msg: "{{ plugin['name'] }} plugin file has no DOCUMENTATION and path to docstring is not set"
 
-    - name: Create utils file
-      ansible.builtin.template:
-        src: "{{ utils_dir }}/plugin.py.j2"
-        dest: "{{ parent_directory }}/{{ utils_dir }}/{{ plugin['name'] }}.py"
-      when: not file_stat.stat.exists
-  when: plugin.type not in ["action", "module"]
+    - name: Extract EXAMPLES from plugin (for existing plugin)
+      set_fact:
+        examples: "{{ lookup('file', '{{ path_to_plugin }}')|ansible.plugin_builder.get_example }}"
+      when: not examples|default(None) and file_stat.stat.exists
+
+  when: not docstring|default(None) or not examples|default(None)
+
+# Start scaffolding specialized plugins
+- block:
+
+  - name: "Start scaffolding specialized plugin"
+    include_role:
+      name: "{{ plugin['type'] }}"
+
+  when: plugin['type'] not in generic_plugins
+
+# Start scaffolding generic plugins
+- block:
+
+  - block:
+      - name: Create the plugin file, if it doesnt exist already or override is set
+        ansible.builtin.template:
+          src: "{{ plugin['type'] }}.py.j2"
+          dest: "{{ path_to_plugin }}"
+
+      - name: Copy docstring to module file for action plugins
+        ansible.builtin.template:
+          src: action_module.py.j2
+          dest: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
+        when: plugin.type == "action"
+
+    when: not file_stat.stat.exists or plugin['overwrite']|default(False)
+
+  - block:
+      - name: Check to see if the utils file exists
+        ansible.builtin.stat:
+          path: "{{ parent_directory }}/plugin_utils/{{ plugin['name'] }}.py"
+        register: file_stat
+
+      - name: Create utils file
+        ansible.builtin.template:
+          src: "{{ utils_dir }}/plugin.py.j2"
+          dest: "{{ parent_directory }}/{{ utils_dir }}/{{ plugin['name'] }}.py"
+        when: not file_stat.stat.exists
+
+    when: plugin['type'] in ["filter", "test", "lookup"]
+
+  when: plugin['type'] in generic_plugins
 
 - name: Empty docstring
   set_fact:
     docstring: ''
-  when: "'docstring' in plugin"
+    examples: ''
+  when: "'docstring' in plugin or 'examples' in plugin"
+
+- debug:
+    msg: "Completed scaffolding {{ plugin['name'] }} of type {{ plugin['type'] }}"

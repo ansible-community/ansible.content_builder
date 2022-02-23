@@ -25,3 +25,6 @@
   file:
     path: /tmp/mycollection
     state: absent
+
+- debug: 
+    msg: "Completed plugin_builder tests!"

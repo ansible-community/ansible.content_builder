@@ -1,0 +1,15 @@
+---
+collection:
+  path: /tmp/mycollection
+  namespace: myorg
+  name: myos
+plugins:
+  - type: module_network_cli
+    name: myos_interfaces
+    docstring: files/docstrings/interfaces.yaml
+    resource: interfaces
+
+  - type: module_network_netconf
+    name: myos_l2_interfaces
+    docstring: files/docstrings/l2_interfaces.yaml
+    resource: l2_interfaces

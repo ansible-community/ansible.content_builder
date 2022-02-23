@@ -5,7 +5,7 @@ readme: README.md
 authors:
 - Brad Thornton (@cidrblock)
 - Nilashish Chakraborty (@NilashishC)
-description: your collection description
+description: A collection to scaffold Ansible plugins.
 license_file: LICENSE
 tags: []
 dependencies: {}

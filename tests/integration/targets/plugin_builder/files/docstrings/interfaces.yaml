@@ -1,0 +1,62 @@
+module: myos_interfaces
+version_added: 1.0.0
+short_description: 'Manages interface attributes of MyOS Interfaces'
+description: This module manages the interface attributes of MyOS interfaces.
+authors: Ansible Network Team
+notes:
+  - Tested against MyOS 1.0.0
+options:
+  config:
+    description: A dictionary of interface options
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        description:
+          - Full name of interface, e.g. Ethernet1/1, port-channel10.
+        type: str
+        required: true
+      description:
+        description:
+          - Interface description.
+        type: str
+      enabled:
+        description:
+          - Administrative state of the interface.
+            Set the value to C(true) to administratively enable the interface
+            or C(false) to disable it
+        type: bool
+        default: true
+      speed:
+        description:
+          - Interface link speed. Applicable for Ethernet interfaces only.
+        type: str
+      mode:
+        description:
+          - Manage Layer2 or Layer3 state of the interface.
+            Applicable for Ethernet and port channel interfaces only.
+        choices: ['layer2','layer3']
+        type: str
+      mtu:
+        description:
+          - MTU for a specific interface. Must be an even number between 576 and 9216.
+            Applicable for Ethernet interfaces only.
+        type: str
+      duplex:
+        description:
+          - Interface link status. Applicable for Ethernet interfaces only.
+        type: str
+        choices: ['full', 'half', 'auto']
+  state:
+    description:
+      - The state the configuration should be left in.
+    type: str
+    choices:
+      - merged
+      - replaced
+      - overridden
+      - deleted
+      - gathered
+      - parsed
+      - rendered
+    default: merged

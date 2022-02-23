@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  gather_facts: yes
+  tasks:
+    - include_role:
+        role: ansible.plugin_builder.run
+    - debug:
+        msg: "Completed plugin_builder tests!"

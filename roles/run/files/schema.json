@@ -55,6 +55,9 @@
                     },
                     "resource": {
                         "type": "string"
+                    },
+                    "examples": {
+                        "type": "string"
                     }
                 },
                 "allOf": [

@@ -1,0 +1,5 @@
+# Using myos_action
+
+- myorg.myos.myos_action:
+    keyA: test
+    keyB: test_2

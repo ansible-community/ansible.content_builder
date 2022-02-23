@@ -1,0 +1,13 @@
+name: myos_filter
+author: Ansible Team
+version_added: "1.0.0"
+short_description: A demo filter plugin.
+description: A demo filter plugin.
+options:
+  keyA:
+    type: int
+    description: Description for keyA.
+    required: True
+  keyB:
+    type: str
+    description: Description for keyB.

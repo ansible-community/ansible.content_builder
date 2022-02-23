@@ -4,10 +4,32 @@ collection:
   namespace: myorg
   name: myos
 plugins:
+  - type: action
+    name: myos_action
+    docstring: files/docstrings/action.yaml
+    examples: files/examples/action.yaml
+  
+  - type: filter
+    name: myos_filter
+    docstring: files/docstrings/filter.yaml
+  
+  - type: cache
+    name: myos_cache
+    docstring: files/docstrings/cache.yaml
+  
+  - type: lookup
+    name: myos_lookup
+    docstring: files/docstrings/lookup.yaml
+  
+  - type: test
+    name: myos_test
+    docstring: files/docstrings/test.yaml
+
   - type: module_network_cli
     name: myos_interfaces
     docstring: files/docstrings/interfaces.yaml
     resource: interfaces
+    examples: files/examples/interfaces.yaml
 
   - type: module_network_netconf
     name: myos_l2_interfaces

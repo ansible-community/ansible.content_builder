@@ -1,0 +1,13 @@
+module: myos_action
+author: Ansible Team
+short_description: A demo action plugin
+description: A demo action plugin
+version_added: 1.0.0
+options:
+  keyA:
+    type: str
+    description: Description for keyA.
+    required: True
+  keyB:
+    type: str
+    description: Description for keyB.

@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# {{ copyright }}
+# Copyright 2022 Red Hat
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 """
-The {{ plugin.name }} filter plugin
+The myos_filter filter plugin
 """
 from __future__ import absolute_import, division, print_function
 
@@ -19,12 +19,12 @@ def _raise_error(msg):
     :type msg: str
     :raises: AnsibleError
     """
-    error = "Error when using plugin '{{ plugin.name }}': {msg}".format(msg=msg)
+    error = "Error when using plugin 'myos_filter': {msg}".format(msg=msg)
     raise AnsibleFilterError(error)
 
 
-def {{ plugin.name }}():
-    """{{ plugin.name }} implementation
+def myos_filter():
+    """myos_filter implementation
     """
     # Enter plugin logic here
     # This method will be invoked from the main plugin class

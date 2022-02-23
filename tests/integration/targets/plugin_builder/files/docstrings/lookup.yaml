@@ -1,0 +1,10 @@
+name: myos_lookup
+author: Ansible Team
+version_added: "1.0.0"
+short_description: A demo lookup plugin.
+description: A demo lookup plugin.
+options:
+  keyA:
+    type: int
+    description: Description for keyA.
+    required: True

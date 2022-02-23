@@ -1,0 +1,46 @@
+# -*- coding: utf-8 -*-
+# Copyright 2022 Red Hat
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+
+from ansible.plugins.action import ActionBase
+from ansible_collections.ansible.utils.plugins.modules.myos_action import (
+    DOCUMENTATION,
+)
+from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_validate import (
+    AnsibleArgSpecValidator,
+)
+from ansible.errors import AnsibleActionFail
+
+
+class ActionModule(ActionBase):
+    """action module"""
+
+    def __init__(self, *args, **kwargs):
+        """Start here"""
+        super(ActionModule, self).__init__(*args, **kwargs)
+        self._supports_async = True # TO-DO: change this is needed
+        self._updates = None
+        self._result = None
+
+    def _check_argspec(self):
+        aav = AnsibleArgSpecValidator(
+            data=self._task.args, schema=DOCUMENTATION, name=self._task.action
+        )
+        valid, errors, self._task.args = aav.validate()
+        if not valid:
+            raise AnsibleActionFail(errors)
+
+    def run(self, tmp=None, task_vars=None):
+        """action entry point"""
+        self._task.diff = False
+        self._result = super(ActionModule, self).run(tmp, task_vars)
+        self._result["changed"] = False
+        self._check_argspec()
+
+        # add implementation for myos_action here

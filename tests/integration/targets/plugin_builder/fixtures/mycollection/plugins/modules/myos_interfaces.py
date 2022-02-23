@@ -78,7 +78,14 @@ options:
 """
 
 EXAMPLES = """
+# Using myos_interfaces
 
+- myorg.myos.myos_interfaces:
+    config:
+      - name: Ethernet1/1
+        description: Test
+      - name: Ethernet1/2
+        description: Test-2
 """
 
 RETURN = """

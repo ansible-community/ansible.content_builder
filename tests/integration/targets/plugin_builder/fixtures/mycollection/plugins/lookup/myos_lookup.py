@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-# {{ copyright }}
+# Copyright 2022 Red Hat
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
 """
-The {{ plugin.name }} lookup plugin
+The myos_lookup lookup plugin
 """
 from __future__ import absolute_import, division, print_function
 
@@ -13,7 +13,16 @@ __metaclass__ = type
 
 
 DOCUMENTATION = """
-{{ docstring|d('') }}
+name: myos_lookup
+author: Ansible Team
+version_added: "1.0.0"
+short_description: A demo lookup plugin.
+description: A demo lookup plugin.
+options:
+  keyA:
+    type: int
+    description: Description for keyA.
+    required: True
 """
 
 RETURN = """
@@ -22,8 +31,8 @@ RETURN = """
 
 from ansible.errors import AnsibleLookupError
 from ansible.plugins.lookup import LookupBase
-from ansible_collections.{{ collection.namespace }}.{{ collection.name }}.plugin_utils.{{ plugin.name }} import (
-    {{ plugin.name }},
+from ansible_collections.myorg.myos.plugin_utils.myos_lookup import (
+    myos_lookup,
 )
 from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_validate import (
     AnsibleArgSpecValidator,
@@ -33,14 +42,14 @@ from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_valid
 class LookupModule(LookupBase):
     def run(self, terms, variables=None, **kwargs):
         if isinstance(terms, list):
-            keys = {{ (docstring|from_yaml)["options"].keys() }}
+            keys = ['keyA']
             terms = dict(zip(keys, terms))
         terms.update(kwargs)
         aav = AnsibleArgSpecValidator(
-            data=terms, schema=DOCUMENTATION, name="{{ plugin.name }}"
+            data=terms, schema=DOCUMENTATION, name="myos_lookup"
         )
         valid, errors, updated_data = aav.validate()
         if not valid:
             raise AnsibleLookupError(errors)
-        res = {{ plugin.name }}(**updated_data)
+        res = myos_lookup(**updated_data)
         return res

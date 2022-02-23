@@ -11,6 +11,9 @@ from __future__ import absolute_import, division, print_function
 from ansible_collections.ansible.utils.plugins.plugin_utils.base.utils import (
     _validate_args,
 )
+from ansible_collections.{{ collection.namespace }}.{{ collection.name }}.plugin_utils.{{ plugin.name }} import (
+    {{ plugin.name }},
+)
 
 __metaclass__ = type
 
@@ -19,9 +22,11 @@ DOCUMENTATION = """
 """
 
 EXAMPLES = r"""
+{{ examples|d('') }}
 """
 
 RETURN = """
+# TO-DO: Enter return values here
 """
 
 

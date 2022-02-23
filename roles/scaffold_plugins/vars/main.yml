@@ -10,3 +10,4 @@ generic_plugins:
   - test
   - cache
   - module
+  - lookup

@@ -1,0 +1,31 @@
+---
+- debug: 
+    msg: "Start plugin_builder tests"
+
+- name: Create temp directory
+  file:
+    path: /tmp/mycollection
+    state: directory
+
+- set_fact:
+    manifest_file: '{{ role_path }}/files/MANIFEST.yaml'
+
+- include_role:
+    role: run
+
+- name: Check diff between output and fixture
+  command: "diff -q -r /tmp/mycollection {{ role_path }}/fixtures/mycollection"
+  register: result
+  changed_when: False
+
+- name: Assert that collection generated is correct
+  assert: 
+    that: result.rc == 0
+
+- name: Delete temp directory
+  file:
+    path: /tmp/mycollection
+    state: absent
+
+- debug:
+    msg: "Completed plugin_builder tests!"

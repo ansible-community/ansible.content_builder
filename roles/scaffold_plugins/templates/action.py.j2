@@ -9,7 +9,7 @@ __metaclass__ = type
 
 
 from ansible.plugins.action import ActionBase
-from ansible_collections.ansible.utils.plugins.modules.{{ plugin.name }} import (
+from ansible_collections.{{ collection.namespace }}.{{ collection.name }}.plugins.modules.{{ plugin.name }} import (
     DOCUMENTATION,
 )
 from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_validate import (

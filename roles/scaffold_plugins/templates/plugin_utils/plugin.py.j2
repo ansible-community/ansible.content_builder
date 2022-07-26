@@ -11,6 +11,9 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from ansible.errors import AnsibleFilterError
+
+
 def _raise_error(msg):
     """Raise an error message, prepend with filter name
     :param msg: The message

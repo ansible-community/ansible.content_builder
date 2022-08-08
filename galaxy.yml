@@ -1,6 +1,6 @@
 namespace: ansible
 name: plugin_builder
-version: null
+version: 0.0.0
 readme: README.md
 authors:
   - Brad Thornton (@cidrblock)

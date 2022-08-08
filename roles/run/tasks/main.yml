@@ -1,3 +1,4 @@
+---
 # tasks file for run
 - name: Validate task input against defined schema
   ansible.utils.validate:
@@ -8,12 +9,12 @@
     ansible_jsonschema_draft: draft7
   register: result
 
-- name: Load settings from MANIFEST file
-  include_vars:
+- name: Load settings from manifest file
+  ansible.builtin.include_vars:
     file: "{{ manifest_file }}"
 
-- name: Start Scaffolding
-  include_role:
+- name: Start scaffolding
+  ansible.builtin.include_role:
     name: "{{ builder_role }}"
   loop:
     - init

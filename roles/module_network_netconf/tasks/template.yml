@@ -1,10 +1,12 @@
+---
 - name: Check to see if the file exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ template['destination'] }}"
   register: file_stat
 
 - name: Create the file, if it doesnt exist already or override is set
-  template:
+  ansible.builtin.template:
     src: "{{ template['source'] }}"
     dest: "{{ template['destination'] }}"
+    mode: 0644
   when: not file_stat.stat.exists or template['overwrite']

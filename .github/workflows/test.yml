@@ -14,19 +14,15 @@ jobs:
     uses: ansible-network/github_actions/.github/workflows/ansible-lint.yml@main
   changelog:
     uses: ansible-network/github_actions/.github/workflows/changelog.yml@main
-  sanity:
-    uses: ansible-network/github_actions/.github/workflows/sanity.yml@main
   all_green:
     if: ${{ always() }}
     needs:
     - ansible-lint
     - changelog
-    - sanity
     runs-on: ubuntu-latest
     steps:
     - run: >-
         python -c "assert set([
         '${{ needs.ansible-lint.result }}',
         '${{ needs.changelog.result }}',
-        '${{ needs.sanity.result }}',
         ]) == {'success'}"

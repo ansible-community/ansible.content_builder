@@ -10,7 +10,7 @@ Tested with ansible-core 2.11 releases and the current development version of an
 
 ```
     pip install ansible-core
-    ansible-galaxy collection install ansible.plugin_builder
+    ansible-galaxy collection install git+https://github.com/ansible-community/ansible.plugin_builder.git
 ```
 
 You can also include it in a `requirements.yml` file and install it via `ansible-galaxy collection install -r requirements.yml` using the format:

@@ -85,8 +85,8 @@
 
       - name: Create utils file
         ansible.builtin.template:
-          src: "{{ utils_dir }}/plugin.py.j2"
-          dest: "{{ parent_directory }}/{{ utils_dir }}/{{ plugin['name'] }}.py"
+          src: "plugin_utils/plugin.py.j2"
+          dest: "{{ parent_directory }}/plugin_utils/{{ plugin['name'] }}.py"
         when: not file_stat.stat.exists
 
     when: plugin['type'] in ["filter", "test", "lookup"]

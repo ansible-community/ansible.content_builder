@@ -1,41 +1,41 @@
-
-- set_fact:
+---
+- ansible.builtin.set_fact:
     resource: "{{ plugin['resource'] }}"
     rm_documentation: "{{ docstring }}"
 
-- set_fact:
+- ansible.builtin.set_fact:
     resource_module_templates:
       - source: module_directory/network_os/network_os_resource.py.j2
         destination: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
-        overwrite: True
+        overwrite: true
       - source: module_directory/network_os/network_os_facts.py.j2
         destination: "{{ parent_directory }}/modules/{{ network_os }}_facts.py"
-        overwrite: False
+        overwrite: false
       - source: module_utils/network_os/argspec/facts/facts.py.j2
         destination: "{{ parent_directory}}/module_utils/network/{{ network_os }}/argspec/facts/facts.py"
-        overwrite: False
+        overwrite: false
       - source: module_utils/network_os/argspec/resource/resource.py.j2
         destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/argspec/{{ resource }}/{{ resource }}.py"
-        overwrite: True
+        overwrite: true
       - source: module_utils/network_os/config/resource/resource.py.j2
         destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/config/{{ resource }}/{{ resource }}.py"
-        overwrite: False
+        overwrite: false
       - source: module_utils/network_os/facts/facts.py.j2
         destination: "{{ parent_directory}}/module_utils/network/{{ network_os }}/facts/facts.py"
-        overwrite: False
+        overwrite: false
       - source: module_utils/network_os/facts/resource/resource.py.j2
         destination: "{{ parent_directory}}/module_utils/network/{{ network_os }}/facts/{{ resource }}/{{ resource }}.py"
-        overwrite: False
+        overwrite: false
       - source: module_utils/network_os/utils/utils.py.j2
         destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/utils/utils.py"
-        overwrite: False
+        overwrite: false
 
-- name: Invoking Network Base to build argspec and touch common files
-  include_role:
+- name: Invoking network base to build argspec and touch common files
+  ansible.builtin.include_role:
     name: module_network_base
 
 - name: Template each of the files
-  include: template.yml
+  ansible.builtin.include: template.yml
   with_items: "{{ resource_module_templates }}"
   loop_control:
     loop_var: template

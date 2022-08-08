@@ -1,8 +1,9 @@
-- debug:
+---
+- ansible.builtin.debug:
     msg: "Performing all common pre-tasks for scaffolding Network modules"
 
-- name: Set/Reset directory paths
-  set_fact:
+- name: Set/reset directory paths
+  ansible.builtin.set_fact:
     resource_module_directories:
       - modules
       - module_utils
@@ -16,55 +17,55 @@
       - module_utils/network/{{ network_os }}/facts
       - module_utils/network/{{ network_os }}/facts/{{ resource }}
       - module_utils/network/{{ network_os }}/utils
-    rm_templates_dir: ['module_utils/network/{{ network_os }}/rm_templates']
-
+    rm_templates_dir:
+      - "module_utils/network/{{ network_os }}/rm_templates"
 - name: Add rm_templates dir when scaffolding module_network_cli
-  set_fact:
+  ansible.builtin.set_fact:
     resource_module_directories: "{{ resource_module_directories + rm_templates_dir }}"
   when: plugin['type'] == 'module_network_cli'
 
 - name: Copy argspec to a temporary file to format
-  copy:
+  ansible.builtin.copy:
     # the prepended whitespace is needed to ensure that booleans are not lowercased
     content: " {{ (rm_documentation|ansible_network.cli_rm_builder.to_argspec)['argument_spec'] }}"
     dest: "{{ temp }}"
-  changed_when: False
+  changed_when: false
 
 - name: Remove the whitespace from the argspec in temp file
   # the preceeding whitespace added in the previous task breaks `black`
-  replace:
+  ansible.builtin.replace:
     path: "{{ temp }}"
-    regexp: '^\s+'
-    replace: ''
-  changed_when: False
+    regexp: "^\\s+"
+    replace: ""
+  changed_when: false
 
 - name: Format dumped argspec using black with fixed line-length
-  command: "black -l 79 {{ temp }}"
-  changed_when: False
+  ansible.builtin.command: "black -l 79 {{ temp }}"
+  changed_when: false
 
 - name: Load formatted argspec and get other module kwargs
-  set_fact:
+  ansible.builtin.set_fact:
     # this _has_ to be loaded as a string to preserve black formatting
     formatted_argspec: "{{ lookup('file', '{{ temp }}')|string() }}"
 
 - name: Delete temp file
-  file:
+  ansible.builtin.file:
     path: "{{ temp }}"
     state: absent
-  changed_when: False
+  changed_when: false
 
 - name: "Create the resource module directory structure"
-  file:
+  ansible.builtin.file:
     path: "{{ parent_directory }}/{{ item }}"
     state: directory
   with_items: "{{ resource_module_directories }}"
 
 - name: Touch the __init__.py in each directory
-  copy:
+  ansible.builtin.copy:
     content: ""
     dest: "{{ parent_directory }}/{{ item }}/__init__.py"
-    force: no
+    force: false
   with_items: "{{ resource_module_directories }}"
 
-- debug:
+- ansible.builtin.debug:
     msg: "Completed all common pre-tasks for scaffolding Network modules"

@@ -1,3 +1,4 @@
+---
 - name: "Create the collection directory structure"
   ansible.builtin.file:
     path: "{{ collection['path'] }}/{{ item }}"
@@ -8,19 +9,19 @@
   ansible.builtin.copy:
     content: ""
     dest: "{{ collection['path'] }}/{{ item }}/__init__.py"
-    force: no
+    force: false
   with_items: "{{ directories }}"
 
-- name: Add license file to collection (Default is GPL-3.0)
+- name: Add license file to collection (default is gpl-3.0)
   ansible.builtin.copy:
     src: "{{ license_file | default('gpl-3.0.txt') }}"
     dest: "{{ collection['path'] }}/LICENSE"
 
-- name: Add README to collection
+- name: Add readme to collection
   ansible.builtin.template:
     src: "{{ item['source'] }}"
     dest: "{{ item['destination'] }}"
-    force: no
+    force: false
   loop:
     - source: "README.md.j2"
       destination: "{{ collection['path'] }}/README.md"

@@ -1,5 +1,6 @@
 ---
-- ansible.builtin.debug:
+- name: Debug message
+  ansible.builtin.debug:
     msg: "Scaffolding {{ plugin['name'] }} of type {{ plugin['type'] }}"
 
 - name: Set path to main plugin file for generic plugins
@@ -29,31 +30,35 @@
 
 # Load docstring from correct places (if previously unspecified)
 # Error out if not present anywhere
-- block:
-    - ansible.builtin.assert:
+- name: Attempt to extract documentation
+  block:
+    - name: Check if documentation string can be found
+      ansible.builtin.assert:
         that: file_stat.stat.exists
         success_msg: "{{ plugin['name'] }} plugin file exists...attempting to fetch DOCUMENTATION"
         fail_msg: "{{ plugin['name'] }} plugin file does not exist and path to docstring not set"
-      when: not docstring|default(None)
+      when: not docstring | default(None)
 
     - name: Extract documentation from plugin (for existing plugin)
       ansible.builtin.set_fact:
-        docstring: "{{ lookup('file', '{{ path_to_plugin }}')|ansible.plugin_builder.get_doc }}"
-      when: not docstring|default(None)
+        docstring: "{{ lookup('file', '{{ path_to_plugin }}') | ansible.plugin_builder.get_doc }}"
+      when: not docstring | default(None)
 
-    - ansible.builtin.assert:
+    - name: Fail if no docstring could be found
+      ansible.builtin.assert:
         that: docstring != ''
         fail_msg: "{{ plugin['name'] }} plugin file has no DOCUMENTATION and path to docstring is not set"
 
     - name: Extract examples from plugin (for existing plugin)
       ansible.builtin.set_fact:
-        examples: "{{ lookup('file', '{{ path_to_plugin }}')|ansible.plugin_builder.get_example }}"
-      when: not examples|default(None) and file_stat.stat.exists
+        examples: "{{ lookup('file', '{{ path_to_plugin }}') | ansible.plugin_builder.get_example }}"
+      when: not examples | default(None) and file_stat.stat.exists
 
-  when: not docstring|default(None) or not examples|default(None)
+  when: not docstring | default(None) or not examples | default(None)
 
 # Start scaffolding specialized plugins
-- block:
+- name: Start scaffolding specialized plugins
+  block:
     - name: "Start scaffolding specialized plugin"
       ansible.builtin.include_role:
         name: "{{ plugin['type'] }}"
@@ -61,22 +66,27 @@
   when: plugin['type'] not in generic_plugins
 
 # Start scaffolding generic plugins
-- block:
-    - block:
+- name: Start scaffolding generic plugins
+  block:
+    - name: Generate plugin file
+      block:
         - name: Create the plugin file, if it doesnt exist already or override is set
           ansible.builtin.template:
             src: "{{ plugin['type'] }}.py.j2"
             dest: "{{ path_to_plugin }}"
+            mode: 0644
 
         - name: Copy docstring to module file for action plugins
           ansible.builtin.template:
             src: action_module.py.j2
             dest: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
+            mode: 0644
           when: plugin.type == "action"
 
       when: not file_stat.stat.exists or plugin['overwrite']|default(False)
 
-    - block:
+    - name: Generate utils file
+      block:
         - name: Check to see if the utils file exists
           ansible.builtin.stat:
             path: "{{ parent_directory }}/plugin_utils/{{ plugin['name'] }}.py"
@@ -86,6 +96,7 @@
           ansible.builtin.template:
             src: "plugin_utils/plugin.py.j2"
             dest: "{{ parent_directory }}/plugin_utils/{{ plugin['name'] }}.py"
+            mode: 0644
           when: not file_stat.stat.exists
 
       when: plugin['type'] in ["filter", "test", "lookup"]
@@ -98,5 +109,6 @@
     examples: ""
   when: "'docstring' in plugin or 'examples' in plugin"
 
-- ansible.builtin.debug:
+- name: Debug message
+  ansible.builtin.debug:
     msg: "Completed scaffolding {{ plugin['name'] }} of type {{ plugin['type'] }}"

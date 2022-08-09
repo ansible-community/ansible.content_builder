@@ -1,0 +1,3 @@
+---
+trivial:
+  - Pin jinja2 version to 3.0.3.

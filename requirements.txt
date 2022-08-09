@@ -1,2 +1,3 @@
 ansible-core
 jsonschema
+Jinja2==3.0.3

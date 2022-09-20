@@ -3,7 +3,6 @@
   ansible.builtin.file:
     path: "{{ collection['path'] }}/{{ item }}"
     state: directory
-    mode: 0644
   with_items: "{{ directories }}"
 
 - name: Touch the __init__.py in each directory
@@ -11,21 +10,18 @@
     content: ""
     dest: "{{ collection['path'] }}/{{ item }}/__init__.py"
     force: false
-    mode: 0644
   with_items: "{{ directories }}"
 
 - name: Add license file to collection (default is gpl-3.0)
   ansible.builtin.copy:
     src: "{{ license_file | default('gpl-3.0.txt') }}"
     dest: "{{ collection['path'] }}/LICENSE"
-    mode: 0644
 
 - name: Add readme to collection
   ansible.builtin.template:
     src: "{{ item['source'] }}"
     dest: "{{ item['destination'] }}"
     force: false
-    mode: 0644
   loop:
     - source: "README.md.j2"
       destination: "{{ collection['path'] }}/README.md"

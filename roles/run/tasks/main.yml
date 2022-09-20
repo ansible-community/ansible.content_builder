@@ -2,8 +2,8 @@
 # tasks file for run
 - name: Validate task input against defined schema
   ansible.utils.validate:
-    data: "{{ lookup('file',  '{{ manifest_file }}') | from_yaml | to_json }}"
-    criteria: "{{ lookup('file',  'files/schema.json') | from_json }}"
+    data: "{{ lookup('file', '{{ manifest_file }}') | from_yaml | to_json }}"
+    criteria: "{{ lookup('file', 'files/schema.json') | from_json }}"
     engine: ansible.utils.jsonschema
   vars:
     ansible_jsonschema_draft: draft7

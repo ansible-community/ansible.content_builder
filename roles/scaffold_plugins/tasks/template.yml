@@ -74,16 +74,14 @@
           ansible.builtin.template:
             src: "{{ plugin['type'] }}.py.j2"
             dest: "{{ path_to_plugin }}"
-            mode: 0644
 
         - name: Copy docstring to module file for action plugins
           ansible.builtin.template:
             src: action_module.py.j2
             dest: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
-            mode: 0644
           when: plugin.type == "action"
 
-      when: not file_stat.stat.exists or plugin['overwrite']|default(False)
+      when: not file_stat.stat.exists or plugin['overwrite'] | default(False)
 
     - name: Generate utils file
       block:
@@ -96,7 +94,6 @@
           ansible.builtin.template:
             src: "plugin_utils/plugin.py.j2"
             dest: "{{ parent_directory }}/plugin_utils/{{ plugin['name'] }}.py"
-            mode: 0644
           when: not file_stat.stat.exists
 
       when: plugin['type'] in ["filter", "test", "lookup"]

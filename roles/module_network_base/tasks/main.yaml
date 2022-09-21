@@ -30,7 +30,6 @@
     # the prepended whitespace is needed to ensure that booleans are not lowercased
     content: " {{ (rm_documentation | ansible_network.cli_rm_builder.to_argspec)['argument_spec'] }}"
     dest: "{{ temp }}"
-    mode: 0644
   changed_when: false
 
 - name: Remove the whitespace from the argspec in temp file
@@ -60,7 +59,6 @@
   ansible.builtin.file:
     path: "{{ parent_directory }}/{{ item }}"
     state: directory
-    mode: 0644
   with_items: "{{ resource_module_directories }}"
 
 - name: Touch the __init__.py in each directory
@@ -68,7 +66,6 @@
     content: ""
     dest: "{{ parent_directory }}/{{ item }}/__init__.py"
     force: false
-    mode: 0644
   with_items: "{{ resource_module_directories }}"
 
 - name: Debug message

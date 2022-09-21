@@ -8,5 +8,4 @@
   ansible.builtin.template:
     src: "{{ template['source'] }}"
     dest: "{{ template['destination'] }}"
-    mode: 0644
   when: not file_stat.stat.exists or template['overwrite']

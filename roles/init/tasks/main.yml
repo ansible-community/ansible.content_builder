@@ -35,9 +35,10 @@
   block:
 
     - name: "Create the collection directory structure"
-      file:
+      ansible.builtin.file:
         path: "{{ module_generator['rm_dest'] }}/{{ item }}"
         state: directory
+        mode: 0644
       with_items: "{{ directories_openapi }}"
 
   when: module_generator is defined

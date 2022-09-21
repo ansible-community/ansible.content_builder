@@ -8,10 +8,6 @@ transport: httpapi
 
 parent_directory: "{{ module_generator['rm_dest'] }}/plugins"
 
-module_parent_directory: "{{ module_generator['rm_dest'] }}/plugins/modules"
-
-action_parent_directory: "{{ module_generator['rm_dest'] }}/plugins/action"
-
 import_path: "ansible_collections.{{ module_generator['collection_org']|default('') }}.{{ module_generator['collection_name']|default('') }}.plugins.modules.{{ module_generator['collection_name'] }}_{{ resource }}"
 
 # each of the files to be templated

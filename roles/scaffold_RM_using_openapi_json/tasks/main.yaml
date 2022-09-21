@@ -1,13 +1,4 @@
-- name: Print the args
-  ansible.builtin.debug:
-    msg:
-      - "{{ module_generator['rm_swagger_json'] }}"
-      - "{{ module_generator['api_object_path'] }}"
-      - "{{ module_generator['module_name'] }}"
-      - "{{ module_generator['module_version'] }}"
-      - "{{ module_generator['collection_name'] }}"
-      - "{{ module_generator['author'] }}"
-
+---
 - name: Get the CURRENT WORKING DIR
   ansible.builtin.command: "pwd"
   register: dir

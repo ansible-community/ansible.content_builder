@@ -11,6 +11,7 @@
 - name: Get the CURRENT WORKING DIR
   ansible.builtin.command: "pwd"
   register: dir
+  changed_when: false
 
 - name: Create temporary build directory
   ansible.builtin.tempfile:
@@ -19,15 +20,25 @@
   register: tmp_directory
 
 - name: EXECUTE the python script
-  ansible.builtin.command: python3 doc_generator.py "{{ module_generator['rm_swagger_json'] }}" "{{ module_generator['api_object_path'] }}" "{{ module_generator['module_name'] }}" "{{ module_generator['module_version'] }}" "{{ module_generator['resource'] }}" "{{ module_generator['collection_org'] }}" "{{ module_generator['collection_name'] }}" "{{ module_generator['unique_key'] }}" "{{ module_generator['author'] }}" "{{ tmp_directory["path"] }}"
+  ansible.builtin.command: python3 doc_generator.py "{{ module_generator['rm_swagger_json'] }}"
+    "{{ module_generator['api_object_path'] }}"
+    "{{ module_generator['module_name'] }}"
+    "{{ module_generator['module_version'] }}"
+    "{{ module_generator['resource'] }}"
+    "{{ module_generator['collection_org'] }}"
+    "{{ module_generator['collection_name'] }}"
+    "{{ module_generator['unique_key'] }}"
+    "{{ module_generator['author'] }}"
+    "{{ tmp_directory["path"] }}"
   delegate_to: 127.0.0.1
   run_once: true
+  changed_when: false
 
 - name: Create a vars temp directory 
   ansible.builtin.file:
     path: "{{ tmp_directory['path'] }}/vars"
     state: directory
-    mode: '0644'
+    mode: 0755
 
 - name: Display multiple file contents
   ansible.builtin.debug: var=item
@@ -38,9 +49,11 @@
 
 - name: Copy the MODULE DOC
   ansible.builtin.copy: content="{{ test['results'][0]['item'] }}" dest="{{ tmp_directory['path'] }}/vars/data.yaml"
+  mode: 0644
 
 - name: Copy the MODULE PARAM DICT
   ansible.builtin.copy: content="{{ test['results'][1]['item'] }}" dest="{{ tmp_directory['path'] }}/vars/module_params_dict.json"
+  mode: 0644
 
 - name: Extract DOCUMENTATION from source (for new module)
   ansible.builtin.set_fact:
@@ -52,7 +65,7 @@
     module_params_dict: "{{ test['results'][1]['item'] }}"
   when: test is defined
 
-- name: get the API object
+- name: Get the API object
   ansible.builtin.set_fact:
     api_object: "api/{{ module_generator['api_object_path'].split('/')[1] | default('default') }}"
 

@@ -49,11 +49,9 @@
 
 - name: Copy the MODULE DOC
   ansible.builtin.copy: content="{{ test['results'][0]['item'] }}" dest="{{ tmp_directory['path'] }}/vars/data.yaml"
-  mode: 0644
 
 - name: Copy the MODULE PARAM DICT
   ansible.builtin.copy: content="{{ test['results'][1]['item'] }}" dest="{{ tmp_directory['path'] }}/vars/module_params_dict.json"
-  mode: 0644
 
 - name: Extract DOCUMENTATION from source (for new module)
   ansible.builtin.set_fact:

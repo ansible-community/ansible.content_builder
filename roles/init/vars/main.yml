@@ -12,3 +12,10 @@ directories:
   - docs
   - meta
   - tests
+
+path_to_module: "{{ module_generator['rm_dest'] }}/plugins/modules/{{ network_os }}_{{ resource }}.py"
+
+directories_openapi:
+  - plugins/modules
+  - plugins/action
+  - tests

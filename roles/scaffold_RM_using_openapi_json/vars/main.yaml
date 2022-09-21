@@ -1,0 +1,26 @@
+# basic vars to make the templates cleaner
+copyright: "Copyright {{ ansible_date_time.year }} Red Hat"
+version_added: "1.0.0"
+temp: "/tmp/{{ ansible_date_time.iso8601_basic|hash('md5') }}"
+
+# set transport to httpapi unless overridden in cli
+transport: httpapi
+
+parent_directory: "{{ module_generator['rm_dest'] }}/plugins"
+
+module_parent_directory: "{{ module_generator['rm_dest'] }}/plugins/modules"
+
+action_parent_directory: "{{ module_generator['rm_dest'] }}/plugins/action"
+
+import_path: "ansible_collections.{{ module_generator['collection_org']|default('') }}.{{ module_generator['collection_name']|default('') }}.plugins.modules.{{ module_generator['collection_name'] }}_{{ resource }}"
+
+# each of the files to be templated
+resource_module_templates:
+
+- source: module_directory/resource_module.py.j2
+  destination: "{{ module_parent_directory }}/{{ module_generator['module_name'] }}.py"
+  overwrite: True
+
+- source: action_directory/{{ module_generator['collection_org'] }}/resource_action_plugin.py.j2
+  destination: "{{ action_parent_directory }}/{{ module_generator['module_name'] }}.py"
+  overwrite: False

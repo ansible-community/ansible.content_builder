@@ -1,0 +1,28 @@
+- name: Check to see if the file exists
+  stat:
+    path: "{{ template['destination'] }}"
+  register: file_stat
+
+- debug:
+    msg:
+      - "{{ template }}"
+      - "{{ template['destination'].split('plugins')[0] }}plugins/{{ template['destination'].split('plugins')[1].split('/')[1] }}"
+      - "{{ file_stat }}"
+
+# - name: Create a new directory www at given path 
+#   ansible.builtin.file:
+#     path: "{{ template['destination'].split('plugins')[0] }}plugins/{{ template['destination'].split('plugins')[1].split('/')[1] }}"
+#     state: directory
+#     mode: '0755'
+
+# - name: Create a new directory www at given path 
+#   ansible.builtin.file:
+#     path: /tmp/checkpoint/mgmt/plugins/action
+#     state: directory
+#     mode: '0755'
+
+- name: Create the file, if it doesnt exist already or override is set
+  template:
+    src: "{{ template['source'] }}"
+    dest: "{{ template['destination'] }}"
+  when: not file_stat.stat.exists or template['overwrite']

@@ -1,14 +1,14 @@
 namespace: ansible
-name: plugin_builder
+name: content_builder
 version: 0.0.0
 readme: README.md
 authors:
   - Brad Thornton (@cidrblock)
   - Nilashish Chakraborty (@NilashishC)
-description: A collection to scaffold Ansible plugins.
+description: A collection to scaffold Ansible content.
 license_file: LICENSE
 tags: []
 dependencies:
   "ansible.utils": ">=2.6.1"
-repository: https://github.com/ansible-collections/ansible.plugin_builder
-issues: https://github.com/ansible-collections/ansible.plugin_builder/issues
+repository: https://github.com/ansible-collections/ansible.content_builder
+issues: https://github.com/ansible-collections/ansible.content_builder/issues

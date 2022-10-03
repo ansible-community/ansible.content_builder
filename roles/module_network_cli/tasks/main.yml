@@ -40,7 +40,7 @@
     name: module_network_base
 
 - name: Template each of the files
-  ansible.builtin.include: template.yml
+  ansible.builtin.include_tasks: template.yml
   with_items: "{{ resource_module_templates }}"
   loop_control:
     loop_var: template

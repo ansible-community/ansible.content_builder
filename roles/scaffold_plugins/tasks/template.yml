@@ -31,6 +31,7 @@
 # Load docstring from correct places (if previously unspecified)
 # Error out if not present anywhere
 - name: Attempt to extract documentation
+  when: not docstring | default(None) or not examples | default(None)
   block:
     - name: Check if documentation string can be found
       ansible.builtin.assert:
@@ -54,21 +55,20 @@
         examples: "{{ lookup('file', '{{ path_to_plugin }}') | ansible.plugin_builder.get_example }}"
       when: not examples | default(None) and file_stat.stat.exists
 
-  when: not docstring | default(None) or not examples | default(None)
-
 # Start scaffolding specialized plugins
 - name: Start scaffolding specialized plugins
+  when: plugin['type'] not in generic_plugins
   block:
     - name: "Start scaffolding specialized plugin"
       ansible.builtin.include_role:
         name: "{{ plugin['type'] }}"
 
-  when: plugin['type'] not in generic_plugins
-
 # Start scaffolding generic plugins
 - name: Start scaffolding generic plugins
+  when: plugin['type'] in generic_plugins
   block:
     - name: Generate plugin file
+      when: not file_stat.stat.exists or plugin['overwrite'] | default(False)
       block:
         - name: Create the plugin file, if it doesnt exist already or override is set
           ansible.builtin.template:
@@ -81,9 +81,8 @@
             dest: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
           when: plugin.type == "action"
 
-      when: not file_stat.stat.exists or plugin['overwrite'] | default(False)
-
     - name: Generate utils file
+      when: plugin['type'] in ["filter", "test", "lookup"]
       block:
         - name: Check to see if the utils file exists
           ansible.builtin.stat:
@@ -95,10 +94,6 @@
             src: "plugin_utils/plugin.py.j2"
             dest: "{{ parent_directory }}/plugin_utils/{{ plugin['name'] }}.py"
           when: not file_stat.stat.exists
-
-      when: plugin['type'] in ["filter", "test", "lookup"]
-
-  when: plugin['type'] in generic_plugins
 
 - name: Empty docstring
   ansible.builtin.set_fact:

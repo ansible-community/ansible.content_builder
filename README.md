@@ -1,23 +1,23 @@
-# Ansible Plugin Builder Collection
+# Ansible Content Builder Collection
 
-This repository contains the `ansible.plugin_builder` Ansible Collection.
+This repository contains the `ansible.content_builder` Ansible Collection.
 
 ## Tested with Ansible
 
-Tested with ansible-core 2.11 releases and the current development version of ansible-core.
+Tested with ansible-core 2.13 releases and the current development version of ansible-core.
 
 ## Installation
 
 ```
 pip install ansible-core
-ansible-galaxy collection install git+https://github.com/ansible-community/ansible.plugin_builder.git
+ansible-galaxy collection install git+https://github.com/ansible-community/ansible.content_builder.git
 ```
 
 You can also include it in a `requirements.yml` file and install it via `ansible-galaxy collection install -r requirements.yml` using the format:
 
 ```yaml
 collections:
-- name: ansible.plugin_builder
+- name: ansible.content_builder
 ```
 
 See [Ansible Using collections](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html) for more details.
@@ -30,7 +30,7 @@ build.yaml
 - hosts: localhost
   gather_facts: yes
   roles:
-    - ansible.plugin_builder.run
+    - ansible.content_builder.run
 ```
 MANIFEST.yaml
 ```yaml

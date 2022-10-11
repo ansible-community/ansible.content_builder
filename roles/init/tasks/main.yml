@@ -1,44 +1,36 @@
 ---
-- name: Configure Network collection and plugins
-  block:
-    - name: "Create the collection directory structure"
-      ansible.builtin.file:
-        path: "{{ collection['path'] }}/{{ item }}"
-        state: directory
-      with_items: "{{ directories }}"
+  - name: "Create the collection directory structure"
+    ansible.builtin.file:
+      path: "{{ collection['path'] }}/{{ item }}"
+      state: directory
+    with_items: "{{ directories }}"
 
-    - name: Touch the __init__.py in each directory
-      ansible.builtin.copy:
-        content: ""
-        dest: "{{ collection['path'] }}/{{ item }}/__init__.py"
-        force: false
-      with_items: "{{ directories }}"
+  - name: Touch the __init__.py in each directory
+    ansible.builtin.copy:
+      content: ""
+      dest: "{{ collection['path'] }}/{{ item }}/__init__.py"
+      force: false
+    with_items: "{{ directories }}"
 
-    - name: Add license file to collection (default is gpl-3.0)
-      ansible.builtin.copy:
-        src: "{{ license_file | default('gpl-3.0.txt') }}"
-        dest: "{{ collection['path'] }}/LICENSE"
+  - name: Add license file to collection (default is gpl-3.0)
+    ansible.builtin.copy:
+      src: "{{ license_file | default('gpl-3.0.txt') }}"
+      dest: "{{ collection['path'] }}/LICENSE"
 
-    - name: Add readme to collection
-      ansible.builtin.template:
-        src: "{{ item['source'] }}"
-        dest: "{{ item['destination'] }}"
-        force: false
-      loop:
-        - source: "README.md.j2"
-          destination: "{{ collection['path'] }}/README.md"
-        - source: "galaxy.yaml.j2"
-          destination: "{{ collection['path'] }}/galaxy.yaml"
-  when: collection is defined
+  - name: Add readme to collection
+    ansible.builtin.template:
+      src: "{{ item['source'] }}"
+      dest: "{{ item['destination'] }}"
+      force: false
+    loop:
+      - source: "README.md.j2"
+        destination: "{{ collection['path'] }}/README.md"
+      - source: "galaxy.yaml.j2"
+        destination: "{{ collection['path'] }}/galaxy.yaml"
 
-- name: Resource module scaffolding tool generated using OpenApi based JSON
-  block:
-
-    - name: "Create the collection directory structure"
-      ansible.builtin.file:
-        path: "{{ module_generator['rm_dest'] }}/{{ item }}"
-        state: directory
-        mode: 0755
-      with_items: "{{ directories_openapi }}"
-
-  when: module_generator is defined
+  - name: "Create the collection directory structure"
+    ansible.builtin.file:
+      path: "{{ collection['path'] }}/{{ item }}"
+      state: directory
+      mode: 0755
+    with_items: "{{ directories_openapi }}"

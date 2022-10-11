@@ -19,7 +19,6 @@
   loop:
     - init
     - scaffold_plugins
-    - scaffold_rm_using_openapi_json
   loop_control:
     loop_var: builder_role
   when: not result.failed

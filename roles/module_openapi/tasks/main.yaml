@@ -11,15 +11,15 @@
   register: tmp_directory
 
 - name: EXECUTE the python script
-  ansible.builtin.command: python3 doc_generator.py "{{ module_generator['rm_swagger_json'] }}"
-    "{{ module_generator['api_object_path'] }}"
-    "{{ module_generator['module_name'] }}"
-    "{{ module_generator['module_version'] }}"
-    "{{ module_generator['resource'] }}"
-    "{{ module_generator['collection_org'] }}"
-    "{{ module_generator['collection_name'] }}"
-    "{{ module_generator['unique_key'] }}"
-    "{{ module_generator['author'] }}"
+  ansible.builtin.command: python3 doc_generator.py "{{ plugin['rm_swagger_json'] }}"
+    "{{ plugin['api_object_path'] }}"
+    "{{ plugin['name'] }}"
+    "{{ plugin['module_version'] }}"
+    "{{ plugin['resource'] }}"
+    "{{ collection['namespace'] }}"
+    "{{ collection['name'] }}"
+    "{{ plugin['unique_key'] }}"
+    "{{ plugin['author'] }}"
     "{{ tmp_directory["path"] }}"
   delegate_to: 127.0.0.1
   run_once: true
@@ -56,7 +56,7 @@
 
 - name: Get the API object
   ansible.builtin.set_fact:
-    api_object: "api/{{ module_generator['api_object_path'].split('/')[1] | default('default') }}"
+    api_object: "api/{{ plugin['api_object_path'].split('/')[1] | default('default') }}"
 
 - name: Template each of the files
   ansible.builtin.include: template.yaml

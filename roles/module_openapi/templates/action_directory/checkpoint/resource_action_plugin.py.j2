@@ -3,7 +3,7 @@
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """
-The module file for {{ module_generator['module_name'] }}
+The module file for {{ plugin['name'] }}
 """
 
 from __future__ import absolute_import, division, print_function
@@ -17,7 +17,7 @@ from ansible.module_utils.connection import Connection
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
-from ansible_collections.{{ module_generator['collection_org'] }}.{{ module_generator['collection_name'] }}.plugins.module_utils.{{ module_generator['collection_org'] }} import (
+from ansible_collections.{{ collection['namespace'] }}.{{ collection['name'] }}.plugins.module_utils.{{ collection['namespace'] }} import (
     CheckPointRequest,
     map_params_to_obj,
     sync_show_params_with_add_params,
@@ -27,7 +27,7 @@ from ansible_collections.{{ module_generator['collection_org'] }}.{{ module_gene
 from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_validate import (
     AnsibleArgSpecValidator,
 )
-from ansible_collections.{{ module_generator['collection_org'] }}.{{ module_generator['collection_name'] }}.plugins.modules.{{ module_generator['module_name'] }} import (
+from ansible_collections.{{ collection['namespace'] }}.{{ collection['name'] }}.plugins.modules.{{ plugin['name'] }} import (
     DOCUMENTATION,
 )
 
@@ -41,7 +41,7 @@ class ActionModule(ActionBase):
         self._result = None
         self.api_call_object = "{{ api_object }}"
         self.api_call_object_plural_version = "{{ api_object }}base"
-        self.module_return = "{{ module_generator['resource'] }}"
+        self.module_return = "{{ plugin['resource'] }}"
         self.key_transform = {{ module_params_dict }}
 
     def _check_argspec(self):

@@ -32,17 +32,22 @@
     mode: 0755
 
 - name: Display multiple file contents
-  ansible.builtin.debug: var=item
+  ansible.builtin.debug:
+    var: item
   with_file:
     - "{{ tmp_directory['path'] }}/data.yml"
     - "{{ tmp_directory['path'] }}/params.json"
   register: test
 
 - name: Copy the MODULE DOC
-  ansible.builtin.copy: content="{{ test['results'][0]['item'] }}" dest="{{ tmp_directory['path'] }}/vars/data.yaml"
+  ansible.builtin.copy:
+    content: "{{ test['results'][0]['item'] }}"
+    dest: "{{ tmp_directory['path'] }}/vars/data.yaml"
 
 - name: Copy the MODULE PARAM DICT
-  ansible.builtin.copy: content="{{ test['results'][1]['item'] }}" dest="{{ tmp_directory['path'] }}/vars/module_params_dict.json"
+  ansible.builtin.copy:
+    content: "{{ test['results'][1]['item'] }}"
+    dest: "{{ tmp_directory['path'] }}/vars/module_params_dict.json"
 
 - name: Extract DOCUMENTATION from source (for new module)
   ansible.builtin.set_fact:
@@ -59,7 +64,7 @@
     api_object: "api/{{ plugin['api_object_path'].split('/')[1] | default('default') }}"
 
 - name: Template each of the files
-  ansible.builtin.include: template.yaml
+  ansible.builtin.include_tasks: template.yaml
   with_items: "{{ resource_module_templates }}"
   loop_control:
     loop_var: template

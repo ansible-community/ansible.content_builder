@@ -60,6 +60,15 @@ plugins:
   - type: lookup
     name: custom_lookup
     docstring: /path/to/docstring.yaml
+  
+  - type: module_openapi
+    name: deepsec_intrusion_prevention_rules
+    module_version: 1.0.0
+    rm_swagger_json: /swagger_tm.json
+    api_object_path: /intrusionpreventionrules
+    resource: intrusion_prevention_rules
+    unique_key: ""
+    author: "Ansible Team"
 ```
 
 ### Ressource module scaffolding generated using OpenApi based JSON 
@@ -105,7 +114,7 @@ plugins:
     api_object_path: /intrusionpreventionrules
     resource: intrusion_prevention_rules
     unique_key: ""
-    author: "Ansible Security Automation Team (@justjais) <https://github.com/ansible-security>"
+    author: "Ansible Team"
 ```
 
 #### 2. Fortinet
@@ -125,7 +134,7 @@ plugins:
     rm_swagger_json: /FortiOS_7.0.3_Configuration_API_firewall.json
     api_object_path: /firewall/policy
     unique_key: policyid
-    author: "Ansible Security Automation Team (@justjais) <https://github.com/ansible-security>"
+    author: "Ansible Team"
 ```
 
 #### 3. CheckPoint
@@ -145,7 +154,7 @@ plugins:
     api_object_path: add-access-rule
     resource: access_rules
     unique_key: ""
-    author: "Ansible Security Automation Team (@justjais) <https://github.com/ansible-security>"
+    author: "Ansible Team"
 ```
 
 ```

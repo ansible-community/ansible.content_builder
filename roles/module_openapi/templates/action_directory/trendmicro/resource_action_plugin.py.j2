@@ -40,8 +40,8 @@ class ActionModule(ActionBase):
         self._result = None
         self.api_object = "/{{ api_object }}"
         self.api_object_search = "/{{ api_object }}/search"
-        self.api_return = "{{ resource }}"
-        self.module_return = "{{ resource }}"
+        self.api_return = "{{ plugin['resource'] }}"
+        self.module_return = "{{ plugin['resource'] }}"
         self.key_transform = {{ module_params_dict }}
 
     def _check_argspec(self):
@@ -197,7 +197,7 @@ class ActionModule(ActionBase):
                         before.append(every)
                         if self._task.args["state"] == "merged":
                             # Check for actual modification and if present fire
-                            # the request over that {{ resource }} ID
+                            # the request over that {{ plugin['resource'] }} ID
                             each = utils.remove_empties(
                                 utils.dict_merge(every, each)
                             )

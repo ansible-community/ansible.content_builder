@@ -41,7 +41,8 @@
                             "lookup",
                             "module_network_cli",
                             "module_network_netconf",
-                            "module_security_httpapi"
+                            "module_security_httpapi",
+                            "module_openapi"
                         ]
                     },
                     "name": {
@@ -57,6 +58,21 @@
                         "type": "string"
                     },
                     "examples": {
+                        "type": "string"
+                    },
+                    "rm_swagger_json": {
+                        "type": "string"
+                    },
+                    "api_object_path": {
+                        "type": "string"
+                    },
+                    "module_version": {
+                        "type": "string"
+                    },
+                    "unique_key": {
+                        "type": "string"
+                    },
+                    "author": {
                         "type": "string"
                     }
                 },
@@ -75,6 +91,26 @@
                         "then": {
                             "required": [
                                 "resource"
+                            ]
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "module_openapi"
+                                    ]
+                                }
+                            }
+                        },
+                        "then": {
+                            "required": [
+                                "rm_swagger_json",
+                                "api_object_path",
+                                "module_version",
+                                "unique_key",
+                                "author"
                             ]
                         }
                     }

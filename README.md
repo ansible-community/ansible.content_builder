@@ -70,6 +70,10 @@ plugins:
     author: "Ansible Team"
 ```
 
+```
+ansible-playbook build.yaml -e manifest_file=MANIFEST.yaml 
+```
+
 ## Supported plugins
 
 | **Plugin Type**        | **Description**                                                      |

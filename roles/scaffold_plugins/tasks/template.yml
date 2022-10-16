@@ -95,6 +95,20 @@
             dest: "{{ parent_directory }}/plugin_utils/{{ plugin['name'] }}.py"
           when: not file_stat.stat.exists
 
+    - name: Generate common implementation file
+      when: plugin['type'] in ["filter", "lookup"]
+      block:
+        - name: Check to see if the common implementation file exists
+          ansible.builtin.stat:
+            path: "{{ parent_directory }}/module_utils/common/{{ plugin['name'] }}.py"
+          register: file_stat
+
+        - name: Create utils file
+          ansible.builtin.template:
+            src: "common/plugin.py.j2"
+            dest: "{{ parent_directory }}/module_utils/common/{{ plugin['name'] }}.py"
+          when: not file_stat.stat.exists
+
 - name: Empty docstring
   ansible.builtin.set_fact:
     docstring: ""

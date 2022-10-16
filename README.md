@@ -33,7 +33,6 @@ build.yaml
     - ansible.content_builder.run
 ```
 MANIFEST.yaml
-### For Network collection scaffolding
 ```yaml
 ---
 collection:
@@ -71,7 +70,7 @@ plugins:
     author: "Ansible Team"
 ```
 
-### Ressource module scaffolding generated using OpenApi based JSON 
+### Resource module scaffolding generated using OpenApi based JSON (type: module_openapi)
 
 Giving `module_openapi` as an input to Ansible.content builder scaffolding tool helps Ansible content developers scaffold and output Ansible Resource Modules (RM) based out of OPENAPI based swagger JSON file, using HTTPAPI connection plugin for the platform configuration.
 
@@ -173,8 +172,6 @@ ansible-playbook build.yaml -e manifest_file=MANIFEST.yaml
 | module_network_cli     | Scaffold a Network Resource Module that support network_cli          |
 | module_network_netconf | Scaffold a Network Resource Module that supports netconf             |
 | module_openapi         | Scaffold a Resource Module generated using OpenApi swagger JSON file |
-
-## Options
 
 
 ## Licensing

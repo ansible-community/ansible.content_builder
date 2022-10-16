@@ -42,7 +42,7 @@
 
     - name: Extract documentation from plugin (for existing plugin)
       ansible.builtin.set_fact:
-        docstring: "{{ lookup('file', '{{ path_to_plugin }}') | ansible.plugin_builder.get_doc }}"
+        docstring: "{{ lookup('file', '{{ path_to_plugin }}') | ansible.content_builder.get_doc }}"
       when: not docstring | default(None)
 
     - name: Fail if no docstring could be found
@@ -52,7 +52,7 @@
 
     - name: Extract examples from plugin (for existing plugin)
       ansible.builtin.set_fact:
-        examples: "{{ lookup('file', '{{ path_to_plugin }}') | ansible.plugin_builder.get_example }}"
+        examples: "{{ lookup('file', '{{ path_to_plugin }}') | ansible.content_builder.get_example }}"
       when: not examples | default(None) and file_stat.stat.exists
 
 # Start scaffolding specialized plugins

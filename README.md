@@ -70,6 +70,19 @@ plugins:
     author: "Ansible Team"
 ```
 
+## Supported plugins
+
+| **Plugin Type**        | **Description**                                                      |
+|------------------------|----------------------------------------------------------------------|
+| action                 | Scaffold a action plugin                                             |
+| cache                  | Scaffold a cache plugin                                              |
+| filter                 | Scaffold a filter plugin                                             |
+| test                   | Scaffold a test plugin                                               |
+| lookup                 | Scaffold a lookup plugin                                             |
+| module_network_cli     | Scaffold a Network Resource Module that support network_cli          |
+| module_network_netconf | Scaffold a Network Resource Module that supports netconf             |
+| module_openapi         | Scaffold a Resource Module generated using OpenApi swagger JSON file |
+
 ### Resource module scaffolding generated using OpenApi based JSON (type: module_openapi)
 
 Giving `module_openapi` as an input to Ansible.content builder scaffolding tool helps Ansible content developers scaffold and output Ansible Resource Modules (RM) based out of OPENAPI based swagger JSON file, using HTTPAPI connection plugin for the platform configuration.
@@ -155,24 +168,6 @@ plugins:
     unique_key: ""
     author: "Ansible Team"
 ```
-
-```
-ansible-playbook build.yaml -e manifest_file=MANIFEST.yaml 
-```
-
-## Supported plugins
-
-| **Plugin Type**        | **Description**                                                      |
-|------------------------|----------------------------------------------------------------------|
-| action                 | Scaffold a action plugin                                             |
-| cache                  | Scaffold a cache plugin                                              |
-| filter                 | Scaffold a filter plugin                                             |
-| test                   | Scaffold a test plugin                                               |
-| lookup                 | Scaffold a lookup plugin                                             |
-| module_network_cli     | Scaffold a Network Resource Module that support network_cli          |
-| module_network_netconf | Scaffold a Network Resource Module that supports netconf             |
-| module_openapi         | Scaffold a Resource Module generated using OpenApi swagger JSON file |
-
 
 ## Licensing
 

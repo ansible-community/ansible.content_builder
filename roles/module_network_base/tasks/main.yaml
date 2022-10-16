@@ -25,10 +25,11 @@
     resource_module_directories: "{{ resource_module_directories + rm_templates_dir }}"
   when: plugin['type'] == 'module_network_cli'
 
+
 - name: Copy argspec to a temporary file to format
   ansible.builtin.copy:
     # the prepended whitespace is needed to ensure that booleans are not lowercased
-    content: " {{ (rm_documentation | ansible_network.cli_rm_builder.to_argspec)['argument_spec'] }}"
+    content: " {{ (rm_documentation | ansible.content_builder.to_argspec)['argument_spec'] }}"
     dest: "{{ temp }}"
   changed_when: false
 

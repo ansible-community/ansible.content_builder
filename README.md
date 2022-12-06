@@ -9,7 +9,7 @@ Tested with ansible-core 2.13 releases and the current development version of an
 ## Installation
 
 ```
-pip install ansible-core
+pip install jsonschema jinja2==3.0.3 ansible-core
 ansible-galaxy collection install git+https://github.com/ansible-community/ansible.content_builder.git
 ```
 

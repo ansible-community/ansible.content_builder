@@ -43,11 +43,11 @@ plugins:
   - type: action
     name: custom_action
     docstring: /path/to/docstring.yaml
-  
+
   - type: cache
     name: custom_cache
     docstring: /path/to/docstring.yaml
-  
+
   - type: filter
     name: custom_filter
     docstring: /path/to/docstring.yaml
@@ -55,11 +55,11 @@ plugins:
   - type: test
     name: custom_test
     docstring: /path/to/docstring.yaml
-  
+
   - type: lookup
     name: custom_lookup
     docstring: /path/to/docstring.yaml
-  
+
   - type: module_openapi
     name: deepsec_intrusion_prevention_rules
     module_version: 1.0.0
@@ -71,7 +71,7 @@ plugins:
 ```
 
 ```
-ansible-playbook build.yaml -e manifest_file=MANIFEST.yaml 
+ansible-playbook build.yaml -e manifest_file=MANIFEST.yaml
 ```
 
 ## Supported plugins
@@ -83,7 +83,7 @@ ansible-playbook build.yaml -e manifest_file=MANIFEST.yaml
 | filter                 | Scaffold a filter plugin                                             |
 | test                   | Scaffold a test plugin                                               |
 | lookup                 | Scaffold a lookup plugin                                             |
-| module_network_cli     | Scaffold a Network Resource Module that support network_cli          |
+| module_network_cli     | Scaffold a Network Resource Module that support network_cli [doc](https://github.com/ansible-community/ansible.content_builder/tree/main/docs/rm_dev_guide.md)    |
 | module_network_netconf | Scaffold a Network Resource Module that supports netconf             |
 | module_openapi         | Scaffold a Resource Module generated using OpenApi swagger JSON file |
 

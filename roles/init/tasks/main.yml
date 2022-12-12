@@ -26,7 +26,7 @@
     - source: "README.md.j2"
       destination: "{{ collection['path'] }}/README.md"
     - source: "galaxy.yaml.j2"
-      destination: "{{ collection['path'] }}/galaxy.yaml"
+      destination: "{{ collection['path'] }}/galaxy.yml"
 
 - name: "Create the collection directory structure"
   ansible.builtin.file:

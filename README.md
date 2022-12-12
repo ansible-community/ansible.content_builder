@@ -83,7 +83,7 @@ ansible-playbook build.yaml -e manifest_file=MANIFEST.yaml
 | filter                 | Scaffold a filter plugin                                             |
 | test                   | Scaffold a test plugin                                               |
 | lookup                 | Scaffold a lookup plugin                                             |
-| module_network_cli     | Scaffold a Network Resource Module that support network_cli [doc](https://github.com/ansible-community/ansible.content_builder/tree/main/docs/rm_dev_guide.md)    |
+| module_network_cli     | Scaffold a Network Resource Module that support network_cli ([doc](https://github.com/ansible-community/ansible.content_builder/tree/main/docs/rm_dev_guide.md))    |
 | module_network_netconf | Scaffold a Network Resource Module that supports netconf             |
 | module_openapi         | Scaffold a Resource Module generated using OpenApi swagger JSON file |
 

@@ -33,8 +33,7 @@ options:
         with an initial C(M(!)) to specify that a specific subset should
         not be collected.
     required: false
-    default: 'all'
-    version_added: "2.2"
+    default: 'min'
   gather_network_resources:
     description:
       - When supplied, this argument will restrict the facts collected
@@ -44,7 +43,6 @@ options:
         can also be used with an initial C(M(!)) to specify that a
         specific subset should not be collected.
     required: false
-    version_added: "2.9"
 """
 
 EXAMPLES = """
@@ -89,8 +87,6 @@ def main():
     """
     module = AnsibleModule(argument_spec=FactsArgs.argument_spec,
                            supports_check_mode=True)
-    warnings = ['default value for `gather_subset` '
-                'will be changed to `min` from `!config` v2.11 onwards']
 
     result = Facts(module).get_facts()
 

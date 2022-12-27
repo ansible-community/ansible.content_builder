@@ -1,3 +1,0 @@
----
-bugfixes:
-  - To fix the doc_generator path issue for secbuity RM builder using OpenAPI JSON file, (ref: https://github.com/ansible-community/ansible.content_builder/issues/28).

@@ -11,7 +11,7 @@
   register: tmp_directory
 
 - name: EXECUTE the python script
-  ansible.builtin.command: python3 doc_generator.py "{{ plugin['rm_swagger_json'] }}"
+  ansible.builtin.command: python3 "{{ role_path }}"/templates/doc_generator.py "{{ plugin['rm_swagger_json'] }}"
     "{{ plugin['api_object_path'] }}"
     "{{ plugin['name'] }}"
     "{{ plugin['module_version'] }}"

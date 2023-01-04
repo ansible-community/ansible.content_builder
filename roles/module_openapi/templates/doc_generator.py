@@ -881,14 +881,15 @@ def main():
                 }
             )
         else:
-            # post_properties = get_api_param_properties_recursively(
-            #     "$ref", api_object, data, global_var_mgmt_dict
-            # )
-            post_properties = get_api_param_properties_recursively(
-                "schema", api_object, data, global_var_mgmt_dict
-            )
+            if str(sys.argv[6]) == "trendmicro":
+                post_properties = get_api_param_properties_recursively(
+                    "$ref", api_object, data, global_var_mgmt_dict
+                )
+            elif str(sys.argv[6]) == "fortinet":
+                post_properties = get_api_param_properties_recursively(
+                    "schema", api_object, data, global_var_mgmt_dict
+                )
 
-        attribute_map_by_param = {}
         module_name = str(sys.argv[3])
         module_resource = str(sys.argv[5])
         module_version = str(sys.argv[4])

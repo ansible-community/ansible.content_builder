@@ -30,3 +30,5 @@ examples:
       - bucket_name
       - log_group_name
     task_selector: tag
+
+parent_directory: "{{ collection['path'] }}/plugins"

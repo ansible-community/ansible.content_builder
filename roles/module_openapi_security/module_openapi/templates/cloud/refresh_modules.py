@@ -6,12 +6,14 @@ import json
 
 import pathlib
 import re
+import shutil
+import pkg_resources
 from pbr.version import VersionInfo
-from content_library_data import content_library_static_ds
+from .content_library_data import content_library_static_ds
 import yaml
 import copy
 
-from utils import (
+from gouttelette.utils import (
     format_documentation,
     indent,
     UtilsBase,
@@ -25,7 +27,8 @@ from utils import (
 
 from typing import Dict, Iterable, List, DefaultDict, Union, Optional, TypeVar, Type
 
-from generator import generate_documentation
+from .resources import RESOURCES
+from .generator import generate_documentation
 
 
 # vmware specific
@@ -533,6 +536,26 @@ def gen_required_if(schema: Union[List, Dict]) -> List:
                 entries.append(["state", state, sorted(set(fields)), True])
 
     return entries
+
+
+def set_defaults(args: Iterable):
+    if args.collection == "amazon_cloud":
+        if args.target_dir is None:
+            args.target_dir = pathlib.Path("cloud")
+        if args.modules is None:
+            args.modules = pathlib.Path("gouttelette/config/amazon_cloud")
+        if args.schema_dir is None:
+            args.schema_dir = pathlib.Path(
+                "gouttelette/api_specifications/amazon_cloud"
+            )
+    else:
+        if args.target_dir is None:
+            args.target_dir = pathlib.Path("vmware_rest")
+        if args.modules is None:
+            args.modules = pathlib.Path("gouttelette/config/vmware_rest")
+        if args.schema_dir is None:
+            args.schema_dir = pathlib.Path("gouttelette/api_specifications/vmware_rest")
+    return args
 
 
 # Classes
@@ -1090,14 +1113,7 @@ class SwaggerFile:
 
 
 def generate_amazon_cloud(args: Iterable):
-    module_list = []    
-    RESOURCES = []
-    resource_file = args.modules / "modules.yaml"
-    res = resource_file.read_text()
-    for i in yaml.safe_load(res):
-        RESOURCES = i.get("RESOURCES", "")
-        if RESOURCES:
-            break
+    module_list = []
 
     for type_name in RESOURCES:
         file_name = re.sub("::", "_", type_name)
@@ -1237,24 +1253,15 @@ def generate_amazon_cloud(args: Iterable):
     with open(runtime_file, "w") as file:
         yaml.safe_dump(yaml_dict, file, sort_keys=False)
 
-<<<<<<< HEAD
-=======
     collection_dir = pkg_resources.resource_filename("gouttelette", "data")
     print(f"Copying files from {collection_dir}")
     shutil.copytree(collection_dir, args.target_dir, dirs_exist_ok=True)
 
->>>>>>> 4bd2fae (Create 2 new roles for cloud and security)
     return
 
 
 def generate_vmware_rest(args: Iterable):
     module_list = []
-<<<<<<< HEAD
-
-    for json_file in ["vcenter.json", "content.json", "appliance.json"]:
-        print("Generating modules from {}".format(json_file))
-        api_spec_file = str(args.schema_dir) + "/" + json_file
-=======
     schema_file = args.schema_dir
     schema_dir = pathlib.Path(args.schema_dir).parents[1]
 
@@ -1268,7 +1275,6 @@ def generate_vmware_rest(args: Iterable):
     for json_file in ["vcenter.json", "content.json", "appliance.json"]:
         print("Generating modules from {}".format(json_file))
         api_spec_file = str(schema_file) + "/" + json_file
->>>>>>> 4bd2fae (Create 2 new roles for cloud and security)
         raw_content = pathlib.Path(api_spec_file).read_text()
         swagger_file = SwaggerFile(raw_content)
         resources = swagger_file.init_resources(swagger_file.paths.values())
@@ -1318,16 +1324,12 @@ def generate_vmware_rest(args: Iterable):
                     next_version=args.next_version,
                 )
                 module_list.append(module.name)
-<<<<<<< HEAD
-    
-=======
     module_utils_dir = args.target_dir / "plugins" / "module_utils"
     module_utils_dir.mkdir(exist_ok=True)
     vmware_rest_dest = module_utils_dir / "vmware_rest.py"
     vmware_rest_dest.write_bytes(
         pkg_resources.resource_string("gouttelette", "module_utils/vmware_rest.py")
     )
->>>>>>> 4bd2fae (Create 2 new roles for cloud and security)
     return
 
 
@@ -1354,11 +1356,7 @@ def main():
         "--modules",
         dest="modules",
         type=pathlib.Path,
-<<<<<<< HEAD
-        help="location of the modules.yaml file (default: .)",
-=======
         help="location of the modules.yaml file (default: gouttelette/config/<collection>)",
->>>>>>> 4bd2fae (Create 2 new roles for cloud and security)
     )
 
     parser.add_argument(
@@ -1371,16 +1369,6 @@ def main():
         "--schema-dir",
         dest="schema_dir",
         type=pathlib.Path,
-<<<<<<< HEAD
-        help="location where to store the collected schemas (default: .)",
-    )
-    
-    args = parser.parse_args()
-    func = "generate_" + args.collection + "(args)"
-    eval(func)
-
-    #info = VersionInfo("content_builder")
-=======
         help="location where to store the collected schemas (default: ./gouttelette/api_specifications/<collection>)",
     )
     args = set_defaults(parser.parse_args())
@@ -1389,20 +1377,13 @@ def main():
     eval(func)
 
     info = VersionInfo("gouttelette")
->>>>>>> 4bd2fae (Create 2 new roles for cloud and security)
     dev_md = args.target_dir / "dev.md"
     dev_md.write_text(
         (
             "The modules are autogenerated by:\n"
-<<<<<<< HEAD
-            "https://github.com/ansible-community/ansible.content_builder\n"
-            ""
-            
-=======
             "https://github.com/ansible-collections/gouttelette\n"
             ""
             f"version: {info.version_string()}\n"
->>>>>>> 4bd2fae (Create 2 new roles for cloud and security)
         )
     )
     dev_md = args.target_dir / "commit_message"
@@ -1411,14 +1392,9 @@ def main():
             "bump auto-generated modules\n"
             "\n"
             "The modules are autogenerated by:\n"
-<<<<<<< HEAD
-            "https://github.com/ansible-community/ansible.content_builder\n"
-            ""
-=======
             "https://github.com/ansible-collections/gouttelette\n"
             ""
             f"version: {info.version_string()}\n"
->>>>>>> 4bd2fae (Create 2 new roles for cloud and security)
         )
     )
 

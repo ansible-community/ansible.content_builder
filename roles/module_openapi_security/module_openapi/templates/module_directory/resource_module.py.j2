@@ -1,0 +1,45 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# {{ copyright }}
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
+"""
+The module file for {{ plugin['name'] }}
+"""
+
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+DOCUMENTATION = """
+{{ rm_documentation }}
+"""
+
+EXAMPLES = """
+{{ example_documentation|default("") }}
+"""
+
+RETURN = """
+before:
+  description: The configuration prior to the module execution.
+  returned: when state is I(merged), I(replaced), I(deleted)
+  type: dict
+  sample: >
+    This output will always be in the same format as the
+    module argspec.
+after:
+  description: The resulting configuration after module execution.
+  returned: when changed
+  type: dict
+  sample: >
+    This output will always be in the same format as the
+    module argspec.
+gathered:
+  description: Facts about the security resource gathered from the remote device as structured data.
+  returned: when state is I(gathered)
+  type: list
+  sample: >
+    This output will always be in the same format as the
+    module argspec.
+"""

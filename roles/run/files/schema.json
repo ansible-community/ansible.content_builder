@@ -45,6 +45,12 @@
                             "module_openapi"
                         ]
                     },
+                    "action": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "string"
+                    },
                     "name": {
                         "type": "string"
                     },
@@ -101,6 +107,43 @@
                                     "enum": [
                                         "module_openapi"
                                     ]
+                                },
+                                "content": {
+				                    "enum": [
+                                        "amazon_cloud",
+                                        "vmware_rest"
+                                    ]
+                                },
+                                "action": {
+				                    "enum": [
+                                        "generate_all",
+                                        "generate_modules",
+                                        "generate_schema"
+                                    ]
+				                }
+                            }
+                        },
+                        "then": {
+                            "required": [
+                                "api_object_path"
+                            ]
+                        }   
+		            },
+                    {
+                        "if": {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "module_openapi"
+                                    ]
+                                },
+                                "not": {
+                                    "content": {
+                                        "enum": [
+                                            "amazon_cloud",
+                                            "vmware_rest"
+                                        ]
+                                    }    
                                 }
                             }
                         },

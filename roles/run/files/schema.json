@@ -80,6 +80,9 @@
                     },
                     "author": {
                         "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
                     }
                 },
                 "allOf": [

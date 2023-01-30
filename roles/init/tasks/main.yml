@@ -4,6 +4,7 @@
     path: "{{ collection['path'] }}/{{ item }}"
     state: directory
   with_items: "{{ directories }}"
+  when: ( collection['name'] != 'amazon' ) and ( collection['name'] != 'vmware' )
 
 - name: Touch the __init__.py in each directory
   ansible.builtin.copy:
@@ -11,6 +12,7 @@
     dest: "{{ collection['path'] }}/{{ item }}/__init__.py"
     force: false
   with_items: "{{ directories }}"
+  when: ( collection['name'] != 'amazon' ) and ( collection['name'] != 'vmware' )
 
 - name: Add license file to collection (default is gpl-3.0)
   ansible.builtin.copy:
@@ -34,3 +36,4 @@
     state: directory
     mode: 0755
   with_items: "{{ directories_openapi }}"
+  when: ( collection['name'] != 'amazon' ) and ( collection['name'] != 'vmware' )

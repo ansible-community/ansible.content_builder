@@ -3,9 +3,9 @@ import pathlib
 import re
 from typing import Dict, List, Optional, TypedDict
 import boto3
-from resources import RESOURCES
 from generator import CloudFormationWrapper
 import json
+import yaml
 from gouttelette.utils import camel_to_snake
 
 
@@ -50,10 +50,26 @@ def main() -> None:
     parser.add_argument(
         "--schema-dir",
         type=pathlib.Path,
-        default=pathlib.Path("gouttelette/amazon_cloud/api_specifications"),
-        help="location where to store the collected schemas (default: ./gouttelette/amazon_cloud/api_specifications)",
+        default=pathlib.Path("."),
+        help="location where to store the collected schemas (default: .)",
     )
+    
+    parser.add_argument(
+        "--modules",
+        type=pathlib.Path,
+        default=pathlib.Path("."),
+        help="location where to store the collected schemas (default: .)",
+    )
+    
     args = parser.parse_args()
+    
+    RESOURCES = []
+    resource_file = args.modules / "modules.yaml"
+    res = resource_file.read_text()
+    for i in yaml.safe_load(res):
+        RESOURCES = i.get("RESOURCES", "")
+        if RESOURCES:
+            break
 
     for type_name in RESOURCES:
         print("Collecting Schema")

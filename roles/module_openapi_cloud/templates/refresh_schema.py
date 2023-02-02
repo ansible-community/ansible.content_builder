@@ -77,6 +77,8 @@ def main() -> None:
         cloudformation = CloudFormationWrapper(boto3.client("cloudformation"))
         raw_content = cloudformation.generate_docs(type_name)
         schema = generate_schema(raw_content)
+        import q
+        q(schema)
         file_name = re.sub("::", "_", type_name)
         if not args.schema_dir.exists():
             pathlib.Path(args.schema_dir).mkdir(parents=True, exist_ok=True)

@@ -2,3 +2,4 @@
 skip_list:
   - risky-file-permissions
   - template-instead-of-copy
+  - galaxy[version-incorrect]

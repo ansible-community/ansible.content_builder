@@ -2,10 +2,13 @@ import pathlib
 import re
 from typing import Dict, List, Optional, TypedDict
 import boto3
-from generator import CloudFormationWrapper
+from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils import (
+    generator,
+    utils
+)
+
 import json
 import yaml
-from gouttelette.utils import camel_to_snake
 
 
 class Schema(TypedDict):
@@ -34,19 +37,19 @@ def generate_schema(raw_content) -> Dict:
                 for v in value:
                     if isinstance(v, list):
                         elems.extend(
-                            [camel_to_snake(p.split("/")[-1].strip()) for p in v]
+                            [utils.camel_to_snake(p.split("/")[-1].strip()) for p in v]
                         )
                     else:
-                        elems.append(camel_to_snake(v.split("/")[-1].strip()))
+                        elems.append(utils.camel_to_snake(v.split("/")[-1].strip()))
 
                 schema[key] = elems
 
     return schema
 
 
-def refresh_schema(schema_dir, modules):
+def refresh_schema(schema_dir: pathlib.Path, modules: pathlib.Path):
     RESOURCES = []
-    resource_file = modules / "modules.yaml"
+    resource_file = pathlib.Path(modules + "/modules.yaml")
     res = resource_file.read_text()
     for i in yaml.safe_load(res):
         RESOURCES = i.get("RESOURCES", "")
@@ -56,11 +59,20 @@ def refresh_schema(schema_dir, modules):
     for type_name in RESOURCES:
         print("Collecting Schema")
         print(type_name)
-        cloudformation = CloudFormationWrapper(boto3.client("cloudformation"))
+        cloudformation = generator.CloudFormationWrapper(boto3.client("cloudformation"))
         raw_content = cloudformation.generate_docs(type_name)
         schema = generate_schema(raw_content)
         file_name = re.sub("::", "_", type_name)
-        if not schema_dir.exists():
+        if not pathlib.Path(schema_dir).exists():
             pathlib.Path(schema_dir).mkdir(parents=True, exist_ok=True)
-        schema_file = schema_dir / f"{file_name}.json"
+        schema_file = pathlib.Path(schema_dir + "/" + file_name + ".json")
         schema_file.write_text(json.dumps(schema, indent=2))
+
+
+class FilterModule(object):
+    ''' refresh_schema for ansible.cloud '''
+
+    def filters(self):
+        return {
+            'refresh_schema': refresh_schema,
+        }

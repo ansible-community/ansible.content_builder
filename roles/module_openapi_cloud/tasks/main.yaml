@@ -1,12 +1,13 @@
 ---
 - name: Generate schema for "{{ collection['name'] }}"
-  ansible.builtin.command: python3 {{ role_path }}/templates/refresh_schema.py --schema-dir {{ plugin['api_object_path'] }} --modules {{ plugin['resource'] }}
-  delegate_to: 127.0.0.1
-  run_once: true
-  changed_when: false
+  set_fact:
+    schema_generation: " {{ plugin['api_object_path'] | refresh_schema(plugin['resource']) }}"
   when:
     - ( plugin['action'] == 'generate_schema' ) or ( plugin['action'] == 'generate_all' )
     - plugin['name'] == 'amazon_cloud'
+
+- debug:
+    var: schema_generation
 
 - name: Generate modules for "{{ collection['name'] }}"
   ansible.builtin.command: python3 "{{ role_path }}"/templates/refresh_modules.py

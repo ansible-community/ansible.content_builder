@@ -6,9 +6,6 @@
     - ( plugin['action'] == 'generate_schema' ) or ( plugin['action'] == 'generate_all' )
     - plugin['name'] == 'amazon_cloud'
 
-- debug:
-    var: schema_generation
-
 - name: Generate modules for "{{ collection['name'] }}"
   ansible.builtin.command: python3 "{{ role_path }}"/templates/refresh_modules.py
     --collection "{{ plugin['name'] }}"

@@ -1,0 +1,45 @@
+---
+- name: Generate schema for "{{ collection['name'] }}"
+  ansible.builtin.command: python3 {{ role_path }}/templates/refresh_schema.py --schema-dir {{ plugin['api_object_path'] }} --modules {{ plugin['resource'] }}
+  delegate_to: 127.0.0.1
+  run_once: true
+  changed_when: false
+  when:
+    - ( plugin['action'] == 'generate_schema' ) or ( plugin['action'] == 'generate_all' )
+    - plugin['name'] == 'amazon_cloud'
+
+- name: Generate modules for "{{ collection['name'] }}"
+  ansible.builtin.command: python3 "{{ role_path }}"/templates/refresh_modules.py
+    --collection "{{ plugin['name'] }}"
+    --target-dir "{{ collection['path'] }}"
+    --schema-dir "{{ plugin['api_object_path'] }}"
+    --modules "{{ plugin['resource'] }}"
+    --next-version "{{ plugin['version'] }}"
+  delegate_to: 127.0.0.1
+  run_once: true
+  changed_when: false
+  when: ( plugin['action'] == 'generate_modules' ) or ( plugin['action'] == 'generate_all' )
+
+- name: Generate examples for "{{ collection['name'] }}"
+  ansible.builtin.command: python3 "{{ role_path }}"/templates/refresh_examples.py
+    --target-dir "{{ collection['path'] }}"
+  delegate_to: 127.0.0.1
+  run_once: true
+  changed_when: false
+  when: ( plugin['action'] == 'generate_examples' ) or ( plugin['action'] == 'generate_all' )
+
+- name: Generate ignore files for "{{ collection['name'] }}"
+  ansible.builtin.command: python3 "{{ role_path }}"/templates/refresh_ignore_files.py
+    --target-dir "{{ collection['path'] }}"
+  delegate_to: 127.0.0.1
+  run_once: true
+  changed_when: false
+  when:
+    - ( plugin['action'] == 'generate_ignore_files' ) or ( plugin['action'] == 'generate_all' )
+    - plugin['name'] == 'vmware_rest'
+
+- name: Format the files in the collection using black
+  ansible.builtin.command: "black {{ collection['path'] }}"
+  delegate_to: 127.0.0.1
+  run_once: true
+  changed_when: false

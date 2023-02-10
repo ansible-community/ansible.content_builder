@@ -7,7 +7,7 @@
 import copy
 import re
 from typing import Iterable, List, Dict
-from gouttelette.utils import (
+from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.utils import (
     python_type,
     get_module_from_config,
     scrub_keys,

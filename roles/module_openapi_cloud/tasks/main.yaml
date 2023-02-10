@@ -7,14 +7,12 @@
     - plugin['name'] == 'amazon_cloud'
 
 - name: Generate modules for "{{ collection['name'] }}"
-  ansible.builtin.command: python3 "{{ role_path }}"/templates/refresh_modules.py
-    --collection "{{ plugin['name'] }}"
-    --target-dir "{{ collection['path'] }}"
-    --schema-dir "{{ plugin['api_object_path'] }}"
-    --modules "{{ plugin['resource'] }}"
-    --next-version "{{ plugin['version'] }}"
-  delegate_to: 127.0.0.1
-  run_once: true
+  ansible.content_builder.generate_cloud_modules:
+     collection: "{{ plugin['name'] }}"
+     target_dir: "{{ collection['path'] }}"
+     schema_dir: "{{ plugin['api_object_path'] }}"
+     modules: "{{ plugin['resource'] }}"
+     next_version: "{{ plugin['version'] }}"
   changed_when: false
   when: ( plugin['action'] == 'generate_modules' ) or ( plugin['action'] == 'generate_all' )
 

@@ -15,10 +15,11 @@ from functools import lru_cache
 
 
 def jinja2_renderer(
-    template_file: str, collection: str, **kwargs: Dict[str, Any]
+    template_file: str, role_path: Path, collection: str, **kwargs: Dict[str, Any]
 ) -> str:
 
-    templateLoader = jinja2.FileSystemLoader(Path(__file__).parent / f"module_directory/{collection}")
+    import q
+    templateLoader = jinja2.FileSystemLoader(role_path + "/templates/module_directory/" + collection)
     templateEnv = jinja2.Environment(loader=templateLoader)
     template = templateEnv.get_template(template_file)
     return template.render(kwargs)
@@ -75,7 +76,7 @@ def indent(text_block: str, indent: int = 0) -> str:
 
 def get_module_from_config(module: str, target_dir: Path) -> Dict[str, Any]:
 
-    module_file = target_dir / "modules.yaml"
+    module_file = Path(target_dir) / "modules.yaml"
     raw_content = module_file.read_text()
 
     for i in yaml.safe_load(raw_content):
@@ -264,7 +265,7 @@ class UtilsBase:
             return False
 
     def write_module(self, target_dir: Path, content: str) -> None:
-        module_dir = target_dir / "plugins" / "modules"
+        module_dir = Path(target_dir + "/plugins/modules")
         module_dir.mkdir(parents=True, exist_ok=True)
         module_py_file = module_dir / "{name}.py".format(name=self.name)
         module_py_file.write_text(content)

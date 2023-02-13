@@ -8,7 +8,7 @@ from typing import Dict, List, Any, Union
 import re
 import ruamel.yaml
 import yaml
-import pkg_resources
+from ansible.plugins.action import ActionBase
 
 
 class MissingDependency(Exception):
@@ -195,7 +195,7 @@ def flatten_module_examples(tasks: List[TaskType]) -> str:
 def inject(
     target_dir: Path, extracted_examples: Dict[str, Dict[str, List[Dict[str, Any]]]]
 ) -> None:
-    module_dir = target_dir / "plugins" / "modules"
+    module_dir = Path(target_dir + "/plugins/modules")
     for module_fqcn in extracted_examples:
         module_name = module_fqcn.split(".")[-1]
         module_path = module_dir / (module_name + ".py")
@@ -231,42 +231,62 @@ def inject(
         module_path.write_text(new_content)
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Build the amazon.cloud modules.")
-    parser.add_argument(
-        "--target-dir",
-        dest="target_dir",
-        type=Path,
-        default=Path("."),
-        help="location of the target repository (default: ./cloud)",
-    )
+class ActionModule(ActionBase):
+    
+    def __init__(self, *args, **kwargs):
+        super(ActionModule, self).__init__(*args, **kwargs)
+        self._validator_name = None
+        self._result = {}
 
-    args = parser.parse_args()
-    galaxy_file = args.target_dir / "galaxy.yml"
-    galaxy = yaml.safe_load(galaxy_file.open())
-    vars_file = Path(__file__).resolve().parents[1] / "vars" / "main.yaml"
-    vars = yaml.safe_load(Path(vars_file).open())
-    collection_name = f"{galaxy['namespace']}.{galaxy['name']}"
-    tasks = []
-    test_scenarios_dirs = [
-        args.target_dir / Path(i)
-        for i in vars["examples"][collection_name]["load_from"]
-    ]
-    for scenario_dir in test_scenarios_dirs:
-        if not scenario_dir.is_dir():
-            continue
-        if scenario_dir.name.startswith("setup_"):
-            continue
-        task_dir = scenario_dir / "tasks"
-        tasks += get_tasks(task_dir)
+    def _debug(self, name, msg):
+        """Output text using ansible's display
+        :param msg: The message
+        :type msg: str
+        """
+        msg = "<{phost}> {name} {msg}".format(phost=self._playhost, name=name, msg=msg)
+        self._display.vvvv(msg)
 
-    extracted_examples = extract(
-        tasks,
-        collection_name,
-        dont_look_up_vars=vars["examples"][collection_name]["dont_look_up_vars"],
-        task_selector=vars["examples"][collection_name]["task_selector"],
-    )
-    inject(args.target_dir, extracted_examples)
+    def run(self, tmp=None, task_vars=None):
+        """The std execution entry pt for an action plugin
+        :param tmp: no longer used
+        :type tmp: none
+        :param task_vars: The vars provided when the task is run
+        :type task_vars: dict
+        :return: The results from the parser
+        :rtype: dict
+        """
+        
+        self._result = super(ActionModule, self).run(tmp, task_vars)
+        self._task_vars = task_vars
+        args = self._task.args
+    
+        galaxy_file = args.get("target_dir") + "/galaxy.yml"
+        galaxy = yaml.safe_load(Path(galaxy_file).open())
+        vars_file = task_vars['vars']['role_path'] + "/vars/main.yaml"
+        vars = yaml.safe_load(Path(vars_file).open())
+        collection_name = f"{galaxy['namespace']}.{galaxy['name']}"
+        tasks = []
+        test_scenarios_dirs = [
+            Path(args.get("target_dir")) / Path(i)
+            for i in vars["examples"][collection_name]["load_from"]
+        ]
+        for scenario_dir in test_scenarios_dirs:
+            if not scenario_dir.is_dir():
+                continue
+            if scenario_dir.name.startswith("setup_"):
+                continue
+            task_dir = scenario_dir / "tasks"
+            tasks += get_tasks(task_dir)
+    
+        extracted_examples = extract(
+            tasks,
+            collection_name,
+            dont_look_up_vars=vars["examples"][collection_name]["dont_look_up_vars"],
+            task_selector=vars["examples"][collection_name]["task_selector"],
+        )
+        inject(args.get("target_dir"), extracted_examples)
+        return self._result
+
 
 
 if __name__ == "__main__":

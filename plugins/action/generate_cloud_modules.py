@@ -18,10 +18,11 @@ import json
 
 import pathlib
 import re
-from ansible.plugins.action import ActionBase
-from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.content_library_data import content_library_static_ds
 import yaml
 import copy
+from typing import Dict, Iterable, List, DefaultDict, Union, Optional, TypeVar, Type
+from ansible.plugins.action import ActionBase
+from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.content_library_data import content_library_static_ds
 from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.utils import (
     format_documentation,
     indent,
@@ -33,9 +34,6 @@ from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_util
     camel_to_snake,
     ignore_description,
 )
-
-from typing import Dict, Iterable, List, DefaultDict, Union, Optional, TypeVar, Type
-
 from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.generator import generate_documentation
 
 
@@ -1308,7 +1306,7 @@ def generate_vmware_rest(args: Iterable, role_path: str):
 
 
 class ActionModule(ActionBase):
-    
+
     def __init__(self, *args, **kwargs):
         super(ActionModule, self).__init__(*args, **kwargs)
         self._validator_name = None
@@ -1339,7 +1337,7 @@ class ActionModule(ActionBase):
         func = "generate_" + args['collection'] + "(args, task_vars['vars']['role_path'])"
         eval(func)
 
-        #info = VersionInfo("content_builder")
+        # info = VersionInfo("content_builder")
         dev_md = pathlib.Path(args.get("target_dir") + "/dev.md")
         dev_md.write_text(
             (

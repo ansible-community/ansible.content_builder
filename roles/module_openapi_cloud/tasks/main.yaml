@@ -24,14 +24,11 @@
   when: ( plugin['action'] == 'generate_examples' ) or ( plugin['action'] == 'generate_all' )
 
 - name: Generate ignore files for "{{ collection['name'] }}"
-  ansible.builtin.command: python3 "{{ role_path }}"/templates/refresh_ignore_files.py
-    --target-dir "{{ collection['path'] }}"
-  delegate_to: 127.0.0.1
-  run_once: true
+  ansible.content_builder.generate_cloud_ignore_files:
+      target_dir: "{{ collection['path'] }}"
   changed_when: false
   when:
       - ( plugin['action'] == 'generate_ignore_files' ) or ( plugin['action'] == 'generate_all' )
-      - plugin['name'] == 'vmware_rest'
 
 - name: Format the files in the collection using black
   ansible.builtin.command: "black {{ collection['path'] }}"

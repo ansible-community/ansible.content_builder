@@ -273,6 +273,7 @@ def generate_documentation(
 ) -> Iterable:
     """Format and generate the AnsibleModule documentation"""
 
+
     module_name = module.name
     documentation: Iterable = {
         "module": module_name,

@@ -195,7 +195,7 @@ def flatten_module_examples(tasks: List[TaskType]) -> str:
 def inject(
     target_dir: Path, extracted_examples: Dict[str, Dict[str, List[Dict[str, Any]]]]
 ) -> None:
-    module_dir = Path(target_dir + "/plugins/modules")
+    module_dir = target_dir / "plugins" / "modules"
     for module_fqcn in extracted_examples:
         module_name = module_fqcn.split(".")[-1]
         module_path = module_dir / (module_name + ".py")
@@ -284,10 +284,5 @@ class ActionModule(ActionBase):
             dont_look_up_vars=vars["examples"][collection_name]["dont_look_up_vars"],
             task_selector=vars["examples"][collection_name]["task_selector"],
         )
-        inject(args.get("target_dir"), extracted_examples)
+        inject(Path(args.get("target_dir")), extracted_examples)
         return self._result
-
-
-
-if __name__ == "__main__":
-    main()

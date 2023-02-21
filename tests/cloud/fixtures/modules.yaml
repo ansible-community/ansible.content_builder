@@ -1,0 +1,31 @@
+---
+- s3_bucket:
+    documentation:
+      short_description: Create and manage S3 buckets
+      description:
+        - Create and manage S3 buckets.
+- logs_log_group:
+    documentation:
+      short_description: Create and manage log groups
+      description:
+        - Create and manage log groups.
+- iam_role:
+    documentation:
+      short_description: Create and manage roles
+      description:
+        - Creates and manages new roles for your AWS account.
+- backup_backup_vault:
+    documentation:
+      short_description: Create and manage logical containers where backups are stored
+      description:
+        - Creates and manages logical containers where backups are stored.
+- backup_framework:
+    documentation:
+      short_description: Create and manage frameworks with one or more controls
+      description:
+        - Creates and manages frameworks with one or more controls.
+- backup_report_plan:
+    documentation:
+      short_description: Create and manage report plans
+      description:
+        - Creates and manages report plans.

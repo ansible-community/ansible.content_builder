@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Copyright 2020 Red Hat
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
+"""
+The action plugin file for generate_cloud_modules
+"""
+from __future__ import absolute_import, division, print_function
+
+
+__metaclass__ = type
 
 
 import argparse
@@ -6,12 +18,12 @@ import json
 
 import pathlib
 import re
-from pbr.version import VersionInfo
-from content_library_data import content_library_static_ds
 import yaml
 import copy
-
-from utils import (
+from typing import Dict, Iterable, List, DefaultDict, Union, Optional, TypeVar, Type
+from ansible.plugins.action import ActionBase
+from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.content_library_data import content_library_static_ds
+from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.utils import (
     format_documentation,
     indent,
     UtilsBase,
@@ -22,10 +34,7 @@ from utils import (
     camel_to_snake,
     ignore_description,
 )
-
-from typing import Dict, Iterable, List, DefaultDict, Union, Optional, TypeVar, Type
-
-from generator import generate_documentation
+from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.generator import generate_documentation
 
 
 # vmware specific
@@ -549,8 +558,8 @@ class AnsibleModuleBaseAmazon(UtilsBase):
         list_to_str = "".join(map(str, splitted[2:]))
         return prefix + "_" + camel_to_snake(list_to_str)
 
-    def renderer(self, target_dir: str, module_dir: str, next_version: str):
-        added_ins = get_module_added_ins(self.name, git_dir=target_dir / ".git")
+    def renderer(self, target_dir: str, module_dir: str, next_version: str, role_path: str):
+        added_ins = get_module_added_ins(self.name, git_dir=pathlib.Path(target_dir + "/.git"))
         documentation = generate_documentation(
             self,
             added_ins,
@@ -563,6 +572,7 @@ class AnsibleModuleBaseAmazon(UtilsBase):
 
         content = jinja2_renderer(
             self.template_file,
+            role_path,
             "amazon_cloud",
             arguments=indent(arguments, 4),
             documentation=documentation_to_string,
@@ -924,7 +934,7 @@ class AnsibleModuleBaseVmware(UtilsBase):
 
         return list_path
 
-    def renderer(self, target_dir: str, module_dir: str, next_version: str):
+    def renderer(self, target_dir: str, module_dir: str, next_version: str, role_path: str):
 
         added_ins = {}  # get_module_added_ins(self.name, git_dir=target_dir / ".git")
         arguments = gen_arguments_py(self.parameters(), self.list_index())
@@ -942,6 +952,7 @@ class AnsibleModuleBaseVmware(UtilsBase):
 
         content = jinja2_renderer(
             self.template_file,
+            role_path,
             "vmware_rest",
             arguments=indent(arguments, 4),
             documentation=documentation,
@@ -1089,10 +1100,10 @@ class SwaggerFile:
 # module_generation procs
 
 
-def generate_amazon_cloud(args: Iterable):
+def generate_amazon_cloud(args: Iterable, role_path: str):
     module_list = []    
     RESOURCES = []
-    resource_file = args.modules / "modules.yaml"
+    resource_file = pathlib.Path(args.get("modules") + "/modules.yaml")
     res = resource_file.read_text()
     for i in yaml.safe_load(res):
         RESOURCES = i.get("RESOURCES", "")
@@ -1102,23 +1113,24 @@ def generate_amazon_cloud(args: Iterable):
     for type_name in RESOURCES:
         file_name = re.sub("::", "_", type_name)
         print(f"Generating modules {file_name}")
-        schema_file = args.schema_dir / f"{file_name}.json"
+        schema_file = pathlib.Path(args.get("schema_dir") + "/" + file_name + ".json")
         schema = json.loads(schema_file.read_text())
 
         module = AnsibleModuleBaseAmazon(schema=schema)
 
-        if module.is_trusted(args.modules):
+        if module.is_trusted(args.get("modules")):
             module.renderer(
-                target_dir=args.target_dir,
-                module_dir=args.modules,
-                next_version=args.next_version,
+                target_dir=args.get("target_dir"),
+                module_dir=args.get("modules"),
+                next_version=args.get("next_version"),
+                role_path=role_path,
             )
             module_list.append(module.name)
 
     modules = [f"plugins/modules/{module}.py" for module in module_list]
     module_utils = ["plugins/module_utils/core.py", "plugins/module_utils/utils.py"]
 
-    ignore_dir = args.target_dir / "tests" / "sanity"
+    ignore_dir = pathlib.Path(args.get("target_dir") + "/tests/sanity")
     ignore_dir.mkdir(parents=True, exist_ok=True)
 
     for version in ["2.9", "2.10", "2.11", "2.12", "2.13", "2.14"]:
@@ -1196,7 +1208,7 @@ def generate_amazon_cloud(args: Iterable):
         ignore_file = ignore_dir / f"ignore-{version}.txt"
         ignore_file.write_text(per_version_ignore_content)
 
-    meta_dir = args.target_dir / "meta"
+    meta_dir = pathlib.Path(args.get("target_dir") + "/meta")
     meta_dir.mkdir(parents=True, exist_ok=True)
     yaml_dict = {
         "requires_ansible": """>=2.11.0""",
@@ -1232,13 +1244,13 @@ def generate_amazon_cloud(args: Iterable):
     return
 
 
-def generate_vmware_rest(args: Iterable):
+def generate_vmware_rest(args: Iterable, role_path: str):
     module_list = []
 
     for json_file in ["vcenter.json", "content.json", "appliance.json"]:
         print("Generating modules from {}".format(json_file))
-        api_spec_file = str(args.schema_dir) + "/" + json_file
-        raw_content = pathlib.Path(api_spec_file).read_text()
+        api_spec_file = pathlib.Path(args.get("schema_dir") + "/" + json_file)
+        raw_content = api_spec_file.read_text()
         swagger_file = SwaggerFile(raw_content)
         resources = swagger_file.init_resources(swagger_file.paths.values())
 
@@ -1252,13 +1264,14 @@ def generate_vmware_rest(args: Iterable):
                     resource, definitions=swagger_file.definitions
                 )
                 if (
-                    module.is_trusted(args.modules)
+                    module.is_trusted(args.get("modules"))
                     and len(module.default_operationIds) > 0
                 ):
                     module.renderer(
-                        target_dir=args.target_dir,
-                        module_dir=args.modules,
-                        next_version=args.next_version,
+                        target_dir=args.get("target_dir"),
+                        module_dir=args.get("modules"),
+                        next_version=args.get("next_version"),
+                        role_path=role_path
                     )
                     module_list.append(module.name)
             elif "get" in resource.operations:
@@ -1266,13 +1279,14 @@ def generate_vmware_rest(args: Iterable):
                     resource, definitions=swagger_file.definitions
                 )
                 if (
-                    module.is_trusted(args.modules)
+                    module.is_trusted(args.get("modules"))
                     and len(module.default_operationIds) > 0
                 ):
                     module.renderer(
-                        target_dir=args.target_dir,
-                        module_dir=args.modules,
-                        next_version=args.next_version,
+                        target_dir=args.get("target_dir"),
+                        module_dir=args.get("modules"),
+                        next_version=args.get("next_version"),
+                        role_path=role_path,
                     )
                     module_list.append(module.name)
 
@@ -1280,81 +1294,66 @@ def generate_vmware_rest(args: Iterable):
                 resource, definitions=swagger_file.definitions
             )
 
-            if module.is_trusted(args.modules) and len(module.default_operationIds) > 0:
+            if module.is_trusted(args.get("modules")) and len(module.default_operationIds) > 0:
                 module.renderer(
-                    target_dir=args.target_dir,
-                    module_dir=args.modules,
-                    next_version=args.next_version,
+                    target_dir=args.get("target_dir"),
+                    module_dir=args.get("modules"),
+                    next_version=args.get("next_version"),
+                    role_path=role_path
                 )
                 module_list.append(module.name)
-    
     return
 
 
-def main():
+class ActionModule(ActionBase):
 
-    parser = argparse.ArgumentParser(description="Build cloud collection modules.")
+    def __init__(self, *args, **kwargs):
+        super(ActionModule, self).__init__(*args, **kwargs)
+        self._validator_name = None
+        self._result = {}
 
-    parser.add_argument(
-        "--collection",
-        dest="collection",
-        type=str,
-        default="amazon_cloud",
-        help=f"The collection for which the modules are generated (Values: amazon_cloud/vmware_rest default: amazon_cloud)",
-    )
+    def _debug(self, name, msg):
+        """Output text using ansible's display
+        :param msg: The message
+        :type msg: str
+        """
+        msg = "<{phost}> {name} {msg}".format(phost=self._playhost, name=name, msg=msg)
+        self._display.vvvv(msg)
 
-    parser.add_argument(
-        "--target-dir",
-        dest="target_dir",
-        type=pathlib.Path,
-        help=f"location of the target repository (default: ./cloud or ./vmware_rest)",
-    )
+    def run(self, tmp=None, task_vars=None):
+        """The std execution entry pt for an action plugin
+        :param tmp: no longer used
+        :type tmp: none
+        :param task_vars: The vars provided when the task is run
+        :type task_vars: dict
+        :return: The results from the parser
+        :rtype: dict
+        """
+        
+        self._result = super(ActionModule, self).run(tmp, task_vars)
+        self._task_vars = task_vars
+        
+        args = self._task.args
+        func = "generate_" + args['collection'] + "(args, task_vars['vars']['role_path'])"
+        eval(func)
 
-    parser.add_argument(
-        "--modules",
-        dest="modules",
-        type=pathlib.Path,
-        help="location of the modules.yaml file (default: .)",
-    )
-
-    parser.add_argument(
-        "--next-version",
-        type=str,
-        default="TODO",
-        help="the next major version",
-    )
-    parser.add_argument(
-        "--schema-dir",
-        dest="schema_dir",
-        type=pathlib.Path,
-        help="location where to store the collected schemas (default: .)",
-    )
-    
-    args = parser.parse_args()
-    func = "generate_" + args.collection + "(args)"
-    eval(func)
-
-    #info = VersionInfo("content_builder")
-    dev_md = args.target_dir / "dev.md"
-    dev_md.write_text(
-        (
-            "The modules are autogenerated by:\n"
-            "https://github.com/ansible-community/ansible.content_builder\n"
-            ""
-            
+        # info = VersionInfo("content_builder")
+        dev_md = pathlib.Path(args.get("target_dir") + "/dev.md")
+        dev_md.write_text(
+            (
+                "The modules are autogenerated by:\n"
+                "https://github.com/ansible-community/ansible.content_builder\n"
+                ""
+                
+            )
         )
-    )
-    dev_md = args.target_dir / "commit_message"
-    dev_md.write_text(
-        (
-            "bump auto-generated modules\n"
-            "\n"
-            "The modules are autogenerated by:\n"
-            "https://github.com/ansible-community/ansible.content_builder\n"
-            ""
+        dev_md = pathlib.Path(args.get("target_dir") + "/commit_message")
+        dev_md.write_text(
+            (
+                "bump auto-generated modules\n"
+                "\n"
+                "The modules are autogenerated by:\n"
+                ""
+            )
         )
-    )
-
-
-if __name__ == "__main__":
-    main()
+        return self._result

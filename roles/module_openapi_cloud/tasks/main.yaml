@@ -29,6 +29,7 @@
   changed_when: false
   when:
       - ( plugin['action'] == 'generate_ignore_files' ) or ( plugin['action'] == 'generate_all' )
+      - plugin['name'] == 'vmware_rest'
 
 - name: Format the files in the collection using black
   ansible.builtin.command: "black {{ collection['path'] }}"

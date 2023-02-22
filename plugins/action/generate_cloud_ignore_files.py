@@ -1,17 +1,16 @@
-#!/usr/bin/env python3
-
-import argparse
 import pathlib
+
+from ansible.plugins.action import ActionBase
 
 
 def refresh_ignore_files(target_dir):
-    module_utils_directory = target_dir / "plugins/module_utils"
-    plugin_utils_directory = target_dir / "plugins/plugin_utils"
-    module_directory = target_dir / "plugins/modules"
-    lookup_directory = target_dir / "plugins/lookup"
+    module_utils_directory = pathlib.Path(target_dir +  "/plugins/module_utils") #target_dir / "plugins/module_utils"
+    plugin_utils_directory = pathlib.Path(target_dir + "/plugins/plugin_utils")
+    module_directory = pathlib.Path(target_dir + "/plugins/modules")
+    lookup_directory = pathlib.Path(target_dir + "/plugins/lookup")
 
     def ignore_file(version):
-        return target_dir / f"tests/sanity/ignore-{version}.txt"
+        return pathlib.Path(target_dir + f"/tests/sanity/ignore-{version}.txt")
 
     def rp(m):
         # return the relative path (rp) of the file inside the collection
@@ -186,21 +185,35 @@ def refresh_ignore_files(target_dir):
             pass
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Refresh the ignore files of the vmware_rest collection."
-    )
-    parser.add_argument(
-        "--target-dir",
-        dest="target_dir",
-        type=pathlib.Path,
-        default=pathlib.Path("."),
-        help="location of the target repository (default: ./vmware_rest)",
-    )
+class ActionModule(ActionBase):
 
-    args = parser.parse_args()
-    refresh_ignore_files(target_dir=args.target_dir)
+    def __init__(self, *args, **kwargs):
+        super(ActionModule, self).__init__(*args, **kwargs)
+        self._validator_name = None
+        self._result = {}
 
+    def _debug(self, name, msg):
+        """Output text using ansible's display
+        :param msg: The message
+        :type msg: str
+        """
+        msg = "<{phost}> {name} {msg}".format(phost=self._playhost, name=name, msg=msg)
+        self._display.vvvv(msg)
 
-if __name__ == "__main__":
-    main()
+    def run(self, tmp=None, task_vars=None):
+        """The std execution entry pt for an action plugin
+        :param tmp: no longer used
+        :type tmp: none
+        :param task_vars: The vars provided when the task is run
+        :type task_vars: dict
+        :return: The results from the parser
+        :rtype: dict
+        """
+
+        self._result = super(ActionModule, self).run(tmp, task_vars)
+        self._task_vars = task_vars
+
+        args = self._task.args
+        refresh_ignore_files(target_dir=args.get("target_dir"))
+
+        return self._result

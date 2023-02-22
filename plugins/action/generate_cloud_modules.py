@@ -1102,15 +1102,16 @@ class SwaggerFile:
 
 def generate_amazon_cloud(args: Iterable, role_path: str):
     module_list = []    
-    RESOURCES = []
     resource_file = pathlib.Path(args.get("modules") + "/modules.yaml")
     res = resource_file.read_text()
-    for i in yaml.safe_load(res):
-        RESOURCES = i.get("RESOURCES", "")
-        if RESOURCES:
-            break
 
-    for type_name in RESOURCES:
+    RESOURCES = yaml.load(
+        pathlib.Path(resource_file).read_text(), Loader=yaml.FullLoader
+    )
+
+    for module in RESOURCES:
+        for k, v in module.items():
+            type_name = v["resource"]
         file_name = re.sub("::", "_", type_name)
         print(f"Generating modules {file_name}")
         schema_file = pathlib.Path(args.get("schema_dir") + "/" + file_name + ".json")
@@ -1118,14 +1119,13 @@ def generate_amazon_cloud(args: Iterable, role_path: str):
 
         module = AnsibleModuleBaseAmazon(schema=schema)
 
-        if module.is_trusted(args.get("modules")):
-            module.renderer(
-                target_dir=args.get("target_dir"),
-                module_dir=args.get("modules"),
-                next_version=args.get("next_version"),
-                role_path=role_path,
-            )
-            module_list.append(module.name)
+        module.renderer(
+            target_dir=args.get("target_dir"),
+            module_dir=args.get("modules"),
+            next_version=args.get("next_version"),
+            role_path=role_path,
+        )
+        module_list.append(module.name)
 
     modules = [f"plugins/modules/{module}.py" for module in module_list]
     module_utils = ["plugins/module_utils/core.py", "plugins/module_utils/utils.py"]

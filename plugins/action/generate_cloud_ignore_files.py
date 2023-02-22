@@ -4,7 +4,7 @@ from ansible.plugins.action import ActionBase
 
 
 def refresh_ignore_files(target_dir):
-    module_utils_directory = pathlib.Path(target_dir +  "/plugins/module_utils") #target_dir / "plugins/module_utils"
+    module_utils_directory = pathlib.Path(target_dir +  "/plugins/module_utils")
     plugin_utils_directory = pathlib.Path(target_dir + "/plugins/plugin_utils")
     module_directory = pathlib.Path(target_dir + "/plugins/modules")
     lookup_directory = pathlib.Path(target_dir + "/plugins/lookup")

@@ -12,10 +12,14 @@ from ansible.plugins.action import ActionBase
 
 
 class MissingDependency(Exception):
+    # Raises exception when there is a missing dependency in the
+    # integration tests picked up for EXAMPLES in the doc.
     pass
 
 
 class ContentInjectionFailure(Exception):
+    # Raises exception when the closing of the EXAMPLES block
+    # is not updated or found.
     pass
 
 
@@ -115,6 +119,7 @@ def list_dependencies(value: Any) -> List[str]:
     return sorted(list(set(dependencies)))
 
 
+# Use tags tagged with tags: docs in the integration tests to extract to use as EXAMPLES
 def extract(
     tasks: List[TaskType],
     collection_name: str,

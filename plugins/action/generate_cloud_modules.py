@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Copyright 2020 Red Hat
+# Copyright 2023 Red Hat
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -34,6 +34,7 @@ from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_util
     camel_to_snake,
     ignore_description,
 )
+# import for amazon.cloud doc generation
 from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.generator import generate_documentation
 
 

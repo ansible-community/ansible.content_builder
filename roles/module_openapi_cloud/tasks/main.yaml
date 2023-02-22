@@ -13,7 +13,7 @@
       target_dir: "{{ collection['path'] }}"
       schema_dir: "{{ plugin['api_object_path'] }}"
       modules: "{{ plugin['resource'] }}"
-      next_version: "{{ plugin['version'] }}"
+      next_version: "{{ plugin['module_version'] }}"
   changed_when: false
   when: ( plugin['action'] == 'generate_modules' ) or ( plugin['action'] == 'generate_all' )
 

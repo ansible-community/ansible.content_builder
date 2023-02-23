@@ -1,3 +1,0 @@
----
-minor_changes:
-  - convert refresh_ignore_files.py python script to action plugin.

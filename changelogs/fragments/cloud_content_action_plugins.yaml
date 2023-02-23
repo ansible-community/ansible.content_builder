@@ -1,3 +1,0 @@
----
-minor_changes:
-  - convert all the cloud_content modules, schema and examples generation python scripts to action plugins.

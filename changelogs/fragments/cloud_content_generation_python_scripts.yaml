@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Move all the python scripts responsible for cloud content generation from https://github.com/ansible-collections/gouttelette

@@ -1,14 +1,70 @@
 # This is a sample file for amazon.cloud collection.
 ---
-- RESOURCES:
-    - "AWS::Backup::BackupVault"
-    - "AWS::Backup::ReportPlan"
-    - "AWS::EKS::Cluster"
+- RESOURCES: [
+    "AWS::Backup::BackupVault",
+    "AWS::Backup::Framework",
+    "AWS::Backup::ReportPlan",
+    "AWS::EKS::Cluster",
+    "AWS::IAM::Role",
+    "AWS::Lambda::CodeSigningConfig",
+    "AWS::Lambda::EventSourceMapping",
+    "AWS::Lambda::Function",
+    "AWS::Logs::LogGroup",
+    "AWS::Logs::QueryDefinition",
+    "AWS::Logs::ResourcePolicy",
+    "AWS::RDS::DBProxy",
+    "AWS::Redshift::Cluster",
+    "AWS::Redshift::EventSubscription",
+    "AWS::S3::AccessPoint",
+    "AWS::S3::Bucket",
+    "AWS::S3::MultiRegionAccessPoint",
+    "AWS::S3::MultiRegionAccessPointPolicy",
+    "AWS::S3ObjectLambda::AccessPoint",
+    "AWS::S3ObjectLambda::AccessPointPolicy",
+    # 0.2.0
+    "AWS::EKS::FargateProfile",
+    "AWS::DynamoDB::GlobalTable",
+    "AWS::EKS::Addon",
+    "AWS::IAM::ServerCertificate",
+    "AWS::KMS::Alias",
+    "AWS::KMS::ReplicaKey",
+    "AWS::RDS::DBProxyEndpoint",
+    "AWS::Redshift::EndpointAccess",
+    "AWS::Redshift::EndpointAuthorization",
+    "AWS::Redshift::ScheduledAction",
+    "AWS::Route53::DNSSEC",
+    "AWS::Route53::KeySigningKey",
+    "AWS::CloudTrail::Trail",
+    "AWS::CloudTrail::EventDataStore",
+    "AWS::CloudWatch::CompositeAlarm",
+    "AWS::CloudWatch::MetricStream",
+  ]
+
+- s3_bucket:
+    documentation:
+      short_description: Create and manage S3 buckets
+      description:
+        - Create and manage S3 buckets.
+- logs_log_group:
+    documentation:
+      short_description: Create and manage log groups
+      description:
+        - Create and manage log groups.
+- iam_role:
+    documentation:
+      short_description: Create and manage roles
+      description:
+        - Creates and manages new roles for your AWS account.
 - backup_backup_vault:
     documentation:
       short_description: Create and manage logical containers where backups are stored
       description:
         - Creates and manages logical containers where backups are stored.
+- backup_framework:
+    documentation:
+      short_description: Create and manage frameworks with one or more controls
+      description:
+        - Creates and manages frameworks with one or more controls.
 - backup_report_plan:
     documentation:
       short_description: Create and manage report plans
@@ -19,3 +75,184 @@
       short_description: Create and manages Amazon EKS control planes
       description:
         - Create and manage Amazon EKS control planes.
+- lambda_code_signing_config:
+    documentation:
+      short_description: Code signing for AWS Lambda
+      description:
+        - Creates and manage code signing for AWS Lambda.
+- lambda_event_source_mapping:
+    documentation:
+      short_description: Create a mapping between an event source and an AWS Lambda function
+      description:
+        - Create a mapping between an event source and an AWS Lambda function.
+- lambda_function:
+    documentation:
+      short_description: Create and manage Lambda functions
+      description:
+        - Creates and manage Lambda functions.
+- logs_query_definition:
+    documentation:
+      short_description: Create and manage query definitions
+      description:
+        - Creates and manage query definitions for CloudWatch Logs Insights.
+- logs_resource_policy:
+    documentation:
+      short_description: Create and manage resource policies
+      description:
+        - Creates and manage resource policies that allows other AWS services to put log events to the account.
+- rds_db_proxy:
+    documentation:
+      short_description: Create and manage DB proxies
+      description:
+        - Creates and manage DB proxies.
+- redshift_cluster:
+    documentation:
+      short_description: Create and manage clusters
+      description:
+        - Creates and manage clusters.
+- redshift_event_subscription:
+    documentation:
+      short_description: Create and manage Amazon Redshift event notification subscriptions
+      description:
+        - Creates and manage Amazon Redshift event notification subscriptions.
+- s3_access_point:
+    documentation:
+      short_description: Create and manage Amazon S3 access points to use to access S3 buckets
+      description:
+        - Create and manage Amazon S3 access points to use to access S3 buckets.
+- s3_multi_region_access_point:
+    documentation:
+      short_description: Create and manage Amazon S3 Multi-Region Access Points
+      description:
+        - Create and manage Amazon S3 Multi-Region Access Points.
+- s3_multi_region_access_point_policy:
+    documentation:
+      short_description: Manage Amazon S3 access policies
+      description:
+        - Applie and manage Amazon S3 access policies to an Amazon S3 Multi-Region Access Points.
+- s3objectlambda_access_point:
+    documentation:
+      short_description: Create and manage Object Lambda Access Points used to access S3 buckets
+      description:
+        - Create and manage Object Lambda Access Points used to access S3 buckets.
+- s3objectlambda_access_point_policy:
+    documentation:
+      short_description: Specifies the Object Lambda Access Point resource policy document
+      description:
+        - Create and manage Object Lambda Access Point resource policy document.
+# 0.2.0
+- eks_fargate_profile:
+    documentation:
+      short_description: Creates and manage AWS Fargate profiles
+      description:
+        - Creates and manage AWS Fargate profiles for your Amazon EKS cluster.
+        - You must have at least one Fargate profile in a cluster to be able to run pods on Fargate.
+- dynamodb_global_table:
+    documentation:
+      short_description: Creates and manages a Version 2019.11.21 global table
+      description:
+        - Creates and manages a Version 2019.11.21 global table.
+        - This resource cannot be used to create or manage a Version 2017.11.29 global table.
+- eks_addon:
+    documentation:
+      short_description: Creates and manages Amazon EKS add-ons
+      description:
+        - Creates and manages Amazon EKS add-ons.
+        - Amazon EKS add-ons require clusters running version 1.18 or later because Amazon EKS add-ons rely on the Server-side Apply Kubernetes feature, which is only available in Kubernetes 1.18 and later.
+        - For more information see U(https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html).
+- iam_server_certificate:
+    documentation:
+      short_description: Uploads and manages a server certificate entity for the AWS account
+      description:
+        - Uploads and manages a server certificate entity for the AWS account.
+- kms_alias:
+    documentation:
+      short_description: Specifies a display name for a KMS key.
+      description:
+        - Specifies a display name for a KMS key.
+- kms_replica_key:
+    documentation:
+      short_description: Creates and manages a multi-Region replica key that is based on a multi-Region primary key
+      description:
+        - Creates andn manages a multi-Region replica key that is based on a multi-Region primary key.
+- rds_db_proxy_endpoint:
+    documentation:
+      short_description: Creates and manages a DB proxy endpoint
+      description:
+        - Creates and manages a DB proxy endpoint.
+        - You can use custom proxy endpoints to access a proxy through a different VPC than the proxy's default VPC.
+- redshift_endpoint_access:
+    documentation:
+      short_description: Creates and manages Redshift-managed VPC endpoint
+      description:
+        - Creates and manages a Redshift-managed VPC endpoint.
+- redshift_endpoint_authorization:
+    documentation:
+      short_description: Describes an endpoint authorization for authorizing Redshift-managed VPC endpoint access to a cluster across AWS accounts.
+      description:
+        - Describes an endpoint authorization for authorizing Redshift-managed VPC endpoint access to a cluster across AWS accounts.
+- redshift_scheduled_action:
+    documentation:
+      short_description: Creates and manages a scheduled action
+      description:
+        - Creates and manages a scheduled action.
+        - A scheduled action contains a schedule and an Amazon Redshift API action.
+        - For example, you can create a schedule of when to run the ResizeCluster API operation.
+- route53_dnssec:
+    documentation:
+      short_description: Is used to enable DNSSEC signing in a hosted zone
+      description:
+        - Is used to enable DNSSEC signing in a hosted zone.
+- route53_key_signing_key:
+    documentation:
+      short_description: Creates a new key-signing key (KSK) in a hosted zone
+      description:
+        - Creates a new key-signing key (KSK) in a hosted zone.
+- cloudtrail_trail:
+    documentation:
+      short_description: Creates and manages a trail that specifies the settings for delivery of log data to an Amazon S3 bucket.
+      description:
+        - Creates and manages a trail that specifies the settings for delivery of log data to an Amazon S3 bucket.
+- cloudtrail_event_data_store:
+    documentation:
+      short_description: Creates and manages a new event data store
+      description:
+        - Creates and manages a new event data store.
+- cloudwatch_composite_alarm:
+    documentation:
+      short_description: Creates and manages a composite alarm
+      description:
+        - Creates and manages a composite alarm.
+        - When you create a composite alarm, you specify a rule expression for the alarm that takes into account the alarm states of other alarms that you have created.
+        - The composite alarm goes into ALARM state only if all conditions of the rule are met.
+- cloudwatch_metric_stream:
+    documentation:
+      short_description: Creates and manages a metric stream
+      description:
+         - Creates and manages a metric stream.
+         - Metrics streams can automatically stream CloudWatch metrics to AWS destinations including Amazon S3 and to many third-party solutions.
+         - For more information, see U(https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Metric-Streams.html).
+- rds_db_instance:
+- rds_db_cluster_parameter_group:
+- rds_db_subnet_group:
+- rds_global_cluster:
+- rds_option_group:
+- ssm_document:
+- ssm_resource_data_sync:
+- wafv2_ip_set:
+- wafv2_logging_configuration:
+- wafv2_regex_pattern_set:
+- wafv2_rule_group:
+- wafv2_rule_acl:
+- wafv2_web_acl_association:
+- ecr_repository:
+- ecs_capacity_provider:
+- ecs_cluster:
+- ecs_cluster_capacity_provider_associations:
+- ecs_primary_task_set:
+- iam_instance_profile:
+- logs_metric_filter:
+- ec2_placement_group:
+- autoscaling_launch_configuration:
+- autoscaling_lifecycle_hook:
+- autoscaling_warm_pool:

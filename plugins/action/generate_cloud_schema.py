@@ -1,3 +1,7 @@
+# Copyright (c) 2020 Ansible Project
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 import pathlib
 import re
 from typing import Dict, List, Optional, TypedDict
@@ -32,7 +36,7 @@ def generate_schema(raw_content) -> Dict:
     schema: Dict[str, Schema] = json_content
 
     for key, value in schema.items():
-        if key != "anyOf":
+        if key not in ("anyOf", "oneOf"):
             if isinstance(value, list):
                 elems = []
                 for v in value:
@@ -49,7 +53,7 @@ def generate_schema(raw_content) -> Dict:
 
 
 class ActionModule(ActionBase):
-    
+
     def __init__(self, *args, **kwargs):
         super(ActionModule, self).__init__(*args, **kwargs)
         self._validator_name = None
@@ -72,10 +76,9 @@ class ActionModule(ActionBase):
         :return: The results from the parser
         :rtype: dict
         """
-        
+
         self._result = super(ActionModule, self).run(tmp, task_vars)
         self._task_vars = task_vars
-        
         args = self._task.args
         RESOURCES = []
         resource_file = pathlib.Path(args.get("resource") + "/modules.yaml")

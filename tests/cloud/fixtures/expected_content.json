@@ -1,0 +1,112 @@
+{
+    "module": "logs_log_group",
+    "author": "Ansible Cloud Team (@ansible-collections)",
+    "description": [
+        "Create and manage log groups."
+    ],
+    "short_description": "Create and manage log groups",
+    "options": {
+        "log_group_name": {
+            "description": [
+                "The name of the log group.",
+                "If you dont specify a name, AWS CloudFormation generates a unique ID for the log group."
+            ],
+            "type": "str"
+        },
+        "purge_tags": {
+            "default": true,
+            "description": [
+                "Remove tags not listed in I(tags)."
+            ],
+            "type": "bool"
+        },
+        "kms_key_id": {
+            "description": [
+                "The Amazon Resource Name (ARN) of the CMK to use when encrypting log data."
+            ],
+            "type": "str"
+        },
+        "retention_in_days": {
+            "description": [
+                "The number of days to retain the log events in the specified log group.",
+                "Possible values are: C(1), C(3), C(5), C(7), C(14), C(30), C(60), C(90), C(120), C(150), C(180), C(365), C(400), C(545), C(731), C(1827), and C(3653)."
+            ],
+            "type": "int",
+            "choices": [
+                1,
+                3,
+                5,
+                7,
+                14,
+                30,
+                60,
+                90,
+                120,
+                150,
+                180,
+                365,
+                400,
+                545,
+                731,
+                1827,
+                3653
+            ]
+        },
+        "state": {
+            "description": [
+                "Goal state for resource.",
+                "I(state=present) creates the resource if it doesn't exist, or updates to the provided state if the resource already exists.",
+                "I(state=absent) ensures an existing instance is deleted.",
+                "I(state=list) get all the existing resources.",
+                "I(state=describe) or I(state=get) retrieves information on an existing resource."
+            ],
+            "type": "str",
+            "choices": [
+                "present",
+                "absent",
+                "list",
+                "describe",
+                "get"
+            ],
+            "default": "present"
+        },
+        "tags": {
+            "aliases": [
+                "resource_tags"
+            ],
+            "description": [
+                "A dict of tags to apply to the resource.",
+                "To remove all tags set I(tags={}) and I(purge_tags=true)."
+            ],
+            "type": "dict"
+        },
+        "wait": {
+            "description": [
+                "Wait for operation to complete before returning."
+            ],
+            "type": "bool",
+            "default": false
+        },
+        "wait_timeout": {
+            "description": [
+                "How many seconds to wait for an operation to complete before timing out."
+            ],
+            "type": "int",
+            "default": 320
+        },
+        "force": {
+            "description": [
+                "Cancel IN_PROGRESS and PENDING resource requestes.",
+                "Because you can only perform a single operation on a given resource at a time, there might be cases where you need to cancel the current resource operation to make the resource available so that another operation may be performed on it."
+            ],
+            "type": "bool",
+            "default": false
+        }
+    },
+    "version_added": "1.0.0",
+    "extends_documentation_fragment": [
+        "amazon.aws.aws",
+        "amazon.aws.ec2",
+        "amazon.cloud.boto3"
+    ]
+}

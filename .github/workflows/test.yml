@@ -6,7 +6,7 @@ concurrency:
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, cloud_content]
   workflow_dispatch:
 
 jobs:
@@ -14,15 +14,31 @@ jobs:
     uses: ansible-network/github_actions/.github/workflows/ansible-lint.yml@main
   changelog:
     uses: ansible-network/github_actions/.github/workflows/changelog.yml@main
+  cloud_unit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9"]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "${{ matrix.python-version }}"
+    - run: |
+        python -m pip install --upgrade pip
+        python -m pip install tox
+        python -m tox -epy3 -- tests/cloud/
   all_green:
     if: ${{ always() }}
     needs:
     - ansible-lint
     - changelog
+    - cloud_unit
     runs-on: ubuntu-latest
     steps:
     - run: >-
         python -c "assert set([
         '${{ needs.ansible-lint.result }}',
         '${{ needs.changelog.result }}',
+        '${{ needs.cloud_unit.result }}',
         ]) == {'success'}"

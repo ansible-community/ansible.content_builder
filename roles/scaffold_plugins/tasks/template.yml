@@ -3,30 +3,33 @@
   ansible.builtin.debug:
     msg: "Scaffolding {{ plugin['name'] }} of type {{ plugin['type'] }}"
 
-- name: Set path to main plugin file for generic plugins
-  ansible.builtin.set_fact:
-    path_to_plugin: "{{ parent_directory }}/{{ plugin['type'] }}/{{ plugin['name'] }}.py"
-  when: plugin['type'] in generic_plugins
+- name: Scaffold plugin
+  when: plugin['content'] != 'cloud'
+  block:
+    - name: Set path to main plugin file for generic plugins
+      ansible.builtin.set_fact:
+        path_to_plugin: "{{ parent_directory }}/{{ plugin['type'] }}/{{ plugin['name'] }}.py"
+      when: plugin['type'] in generic_plugins
 
-- name: Set path to main plugin file for specialized plugins
-  ansible.builtin.set_fact:
-    path_to_plugin: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
-  when: plugin['type'] not in generic_plugins
+    - name: Set path to main plugin file for specialized plugins
+      ansible.builtin.set_fact:
+        path_to_plugin: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
+      when: plugin['type'] not in generic_plugins
 
-- name: Load docstring (if specified)
-  ansible.builtin.set_fact:
-    docstring: "{{ lookup('file', '{{ plugin.docstring }}') }}"
-  when: "'docstring' in plugin"
+    - name: Load docstring (if specified)
+      ansible.builtin.set_fact:
+        docstring: "{{ lookup('file', '{{ plugin.docstring }}') }}"
+      when: "'docstring' in plugin"
 
-- name: Load examples from example file (if specified)
-  ansible.builtin.set_fact:
-    examples: "{{ lookup('file', '{{ plugin.examples }}') }}"
-  when: "'examples' in plugin"
+    - name: Load examples from example file (if specified)
+      ansible.builtin.set_fact:
+        examples: "{{ lookup('file', '{{ plugin.examples }}') }}"
+      when: "'examples' in plugin"
 
-- name: Check to see if the plugin file exists
-  ansible.builtin.stat:
-    path: "{{ path_to_plugin }}"
-  register: file_stat
+    - name: Check to see if the plugin file exists
+      ansible.builtin.stat:
+        path: "{{ path_to_plugin }}"
+      register: file_stat
 
 # Load docstring from correct places (if previously unspecified)
 # Error out if not present anywhere

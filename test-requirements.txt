@@ -1,0 +1,12 @@
+coverage==4.5.4
+placebo
+mock
+pytest
+pytest-forked
+pytest-mock
+pytest-xdist
+baron
+redbaron
+ruamel.yaml
+botocore
+boto3

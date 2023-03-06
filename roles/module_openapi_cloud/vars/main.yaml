@@ -1,0 +1,32 @@
+# basic vars to make the templates cleaner
+copyright: "Copyright {{ ansible_date_time.year }} Red Hat"
+version_added: "1.0.0"
+examples:
+  vmware.vmware_rest:
+    load_from:
+      - tests/integration/targets/appliance
+      - tests/integration/targets/vcenter_library_and_ovf_clone
+      - tests/integration/targets/vcenter_vm_clone_on_library
+      - tests/integration/targets/vcenter_vm_cloning
+      - tests/integration/targets/vcenter_vm_customize
+      - tests/integration/targets/vcenter_vm_scenario1
+    dont_look_up_vars:
+      - disk_name
+    task_selector: name
+  amazon.cloud:
+    load_from:
+      - tests/integration/targets/eks
+      - tests/integration/targets/iam
+      - tests/integration/targets/logs
+      - tests/integration/targets/s3
+    dont_look_up_vars:
+      - aws_region
+      - aws_access_key
+      - aws_secret_key
+      - security_token
+      - aws_region
+      - remote_tmp_dir
+      - cert_name
+      - bucket_name
+      - log_group_name
+    task_selector: tag

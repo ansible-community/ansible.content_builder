@@ -1,0 +1,38 @@
+---
+- name: Generate schema for "{{ collection['name'] }}"
+  ansible.content_builder.generate_cloud_schema:
+      api_object_path: "{{ plugin['api_object_path'] }}"
+      resource: "{{ plugin['resource'] }}"
+  when:
+      - ( plugin['action'] == 'generate_schema' ) or ( plugin['action'] == 'generate_all' )
+      - plugin['name'] == 'amazon_cloud'
+
+- name: Generate modules for "{{ collection['name'] }}"
+  ansible.content_builder.generate_cloud_modules:
+      collection: "{{ plugin['name'] }}"
+      target_dir: "{{ collection['path'] }}"
+      schema_dir: "{{ plugin['api_object_path'] }}"
+      modules: "{{ plugin['resource'] }}"
+      next_version: "{{ plugin['module_version'] }}"
+  changed_when: false
+  when: ( plugin['action'] == 'generate_modules' ) or ( plugin['action'] == 'generate_all' )
+
+- name: Generate examples for "{{ collection['name'] }}"
+  ansible.content_builder.generate_cloud_examples:
+      target_dir: "{{ collection['path'] }}"
+  changed_when: false
+  when: ( plugin['action'] == 'generate_examples' ) or ( plugin['action'] == 'generate_all' )
+
+- name: Generate ignore files for "{{ collection['name'] }}"
+  ansible.content_builder.generate_cloud_ignore_files:
+      target_dir: "{{ collection['path'] }}"
+  changed_when: false
+  when:
+      - ( plugin['action'] == 'generate_ignore_files' ) or ( plugin['action'] == 'generate_all' )
+      - plugin['name'] == 'vmware_rest'
+
+- name: Format the files in the collection using black
+  ansible.builtin.command: "black {{ collection['path'] }}"
+  delegate_to: 127.0.0.1
+  run_once: true
+  changed_when: false

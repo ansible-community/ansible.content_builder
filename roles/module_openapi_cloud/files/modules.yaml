@@ -1,9 +1,5 @@
 # This is a sample file for amazon.cloud collection.
 ---
-- RESOURCES:
-    - "AWS::Backup::BackupVault"
-    - "AWS::Backup::ReportPlan"
-    - "AWS::EKS::Cluster"
 - backup_backup_vault:
     resource: "AWS::Backup::BackupVault"
     documentation:

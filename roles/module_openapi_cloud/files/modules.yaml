@@ -1,20 +1,19 @@
 # This is a sample file for amazon.cloud collection.
 ---
-- RESOURCES:
-    - "AWS::Backup::BackupVault"
-    - "AWS::Backup::ReportPlan"
-    - "AWS::EKS::Cluster"
 - backup_backup_vault:
+    resource: "AWS::Backup::BackupVault"
     documentation:
       short_description: Create and manage logical containers where backups are stored
       description:
         - Creates and manages logical containers where backups are stored.
 - backup_report_plan:
+    resource: "AWS::Backup::ReportPlan"
     documentation:
       short_description: Create and manage report plans
       description:
         - Creates and manages report plans.
 - eks_cluster:
+    resource: "AWS::EKS::Cluster"
     documentation:
       short_description: Create and manages Amazon EKS control planes
       description:

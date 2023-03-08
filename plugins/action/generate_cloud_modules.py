@@ -1103,15 +1103,15 @@ class SwaggerFile:
 
 def generate_amazon_cloud(args: Iterable, role_path: str):
     module_list = []    
-    RESOURCES = []
     resource_file = pathlib.Path(args.get("modules") + "/modules.yaml")
-    res = resource_file.read_text()
-    for i in yaml.safe_load(res):
-        RESOURCES = i.get("RESOURCES", "")
-        if RESOURCES:
-            break
 
-    for type_name in RESOURCES:
+    RESOURCES = yaml.load(
+        pathlib.Path(resource_file).read_text(), Loader=yaml.FullLoader
+    )
+
+    for module in RESOURCES:
+        for k, v in module.items():
+            type_name = v["resource"]
         file_name = re.sub("::", "_", type_name)
         print(f"Generating modules {file_name}")
         schema_file = pathlib.Path(args.get("schema_dir") + "/" + file_name + ".json")

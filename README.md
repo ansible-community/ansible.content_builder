@@ -231,7 +231,15 @@ plugins:
     author: "Ansible Cloud Team"
 ```
 
-
+*Refresh the `RETURN Block` of the vmware modules using the test-suite:*
+```
+    mkdir -p ~/.ansible/collections/ansible_collections/goneri/utils
+    git clone https://github.com/goneri/ansible-collection-goneri.utils.git ~/.ansible/collections/ansible_collections/goneri/utils
+    cd ~/.ansible/collections/ansible_collections/vmware/vmware_rest/tests/integration/targets/vcenter_vm_scenario1
+    ./refresh_RETURN_block.sh
+    cd ~/.ansible/collections/ansible_collections/goneri/utils
+    ./scripts/inject_RETURN.py ~/.ansible/collections/ansible_collections/vmware/vmware_rest/manual/source/vmware_rest_scenarios/task_outputs ~/.ansible/collections/ansible_collections/vmware/vmware_rest --config-file config/inject_RETURN.yaml
+```
 ## Licensing
 
 GNU General Public License v3.0 or later.

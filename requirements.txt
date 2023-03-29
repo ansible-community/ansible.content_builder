@@ -3,3 +3,6 @@ Jinja2==3.0.3
 ansible-core
 jsonschema
 oyaml
+boto3
+baron
+redbaron

@@ -4,7 +4,7 @@
     msg: "Scaffolding {{ plugin['name'] }} of type {{ plugin['type'] }}"
 
 - name: Scaffold plugin
-  when: plugin['content'] != 'cloud'
+  when: plugin['content']|d("") != 'cloud'
   block:
     - name: Set path to main plugin file for generic plugins
       ansible.builtin.set_fact:

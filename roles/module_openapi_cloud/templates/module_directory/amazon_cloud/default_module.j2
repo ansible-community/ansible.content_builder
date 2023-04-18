@@ -39,6 +39,8 @@ def main():
         )
 
     params_to_set = snake_dict_to_camel_dict(_params_to_set, capitalize_first=True)
+    if "AclName" in params_to_set:
+        params_to_set["ACLName"] = params_to_set.pop("AclName")
 
     # Ignore createOnlyProperties that can be set only during resource creation
     create_only_params = {{create_only_properties}}

@@ -34,6 +34,6 @@
   ansible.builtin.file:
     path: "{{ collection['path'] }}/{{ item }}"
     state: directory
-    mode: 0755
+    mode: "0755"
   with_items: "{{ directories_openapi }}"
   when: ( collection['namespace'] != 'amazon' ) and ( collection['namespace'] != 'vmware' )

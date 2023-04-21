@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Do not fail if plugin content type is undefined.

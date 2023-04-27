@@ -1,0 +1,3 @@
+trivial:
+  - "Update header.j2 for amazon.cloud and vmware.vmware_rest to reference the ansible.content_builder."
+  - "Remove unused json import from amazon.cloud module template."

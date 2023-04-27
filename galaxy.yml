@@ -7,7 +7,8 @@ authors:
   - Nilashish Chakraborty (@NilashishC)
 description: A collection to scaffold Ansible content.
 license_file: LICENSE
-tags: []
+tags:
+  - tools
 dependencies:
   "ansible.netcommon": ">=3.0.0"
   "ansible.utils": ">=2.6.1"

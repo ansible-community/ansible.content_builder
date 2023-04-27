@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) 2023 Ansible Project
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 import argparse
 import collections
@@ -237,7 +240,7 @@ def inject(
 
 
 class ActionModule(ActionBase):
-    
+
     def __init__(self, *args, **kwargs):
         super(ActionModule, self).__init__(*args, **kwargs)
         self._validator_name = None
@@ -260,11 +263,11 @@ class ActionModule(ActionBase):
         :return: The results from the parser
         :rtype: dict
         """
-        
+
         self._result = super(ActionModule, self).run(tmp, task_vars)
         self._task_vars = task_vars
         args = self._task.args
-    
+
         galaxy_file = args.get("target_dir") + "/galaxy.yml"
         galaxy = yaml.safe_load(Path(galaxy_file).open())
         vars_file = task_vars['vars']['role_path'] + "/vars/main.yaml"
@@ -282,7 +285,7 @@ class ActionModule(ActionBase):
                 continue
             task_dir = scenario_dir / "tasks"
             tasks += get_tasks(task_dir)
-    
+
         extracted_examples = extract(
             tasks,
             collection_name,

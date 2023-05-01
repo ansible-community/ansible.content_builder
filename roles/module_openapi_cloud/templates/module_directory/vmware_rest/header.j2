@@ -18,8 +18,8 @@ RETURN = r"""
 # This structure describes the format of the data expected by the end-points
 PAYLOAD_FORMAT = {{payload_format}}  # pylint: disable=line-too-long
 
-import json
-import socket
+import json  # pylint: disable=unused-import
+import socket  # pylint: disable=unused-import
 from ansible.module_utils.basic import env_fallback
 try:
     from ansible_collections.cloud.common.plugins.module_utils.turbo.exceptions import EmbeddedModuleFailure
@@ -27,6 +27,8 @@ try:
     AnsibleModule.collection_name = "vmware.vmware_rest"
 except ImportError:
     from ansible.module_utils.basic import AnsibleModule
+
+# pylint: disable=unused-import
 from ansible_collections.vmware.vmware_rest.plugins.module_utils.vmware_rest import (
     build_full_device_list,
     exists,

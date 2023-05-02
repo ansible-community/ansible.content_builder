@@ -1,0 +1,9 @@
+---
+- name: Invoke remediate function
+  ansible.builtin.include_role:
+    name: network.base.resource_manager
+  vars:
+    action: 'remediate'
+    state: 'replaced'
+    resources:
+      - '{{resource}}'

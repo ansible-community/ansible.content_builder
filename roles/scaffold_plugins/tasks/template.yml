@@ -34,7 +34,7 @@
 # Load docstring from correct places (if previously unspecified)
 # Error out if not present anywhere
 - name: Attempt to extract documentation
-  when: plugin['type'] != 'module_openapi' and (not docstring | default(None) or not examples | default(None))
+  when: plugin['type'] != 'module_openapi' and plugin['type'] != 'module_network_validated_content' and (not docstring | default(None) or not examples | default(None))
   block:
     - name: Check if documentation string can be found
       ansible.builtin.assert:

@@ -40,6 +40,7 @@
                             "test",
                             "lookup",
                             "module_network_cli",
+                            "module_network_validated_content",
                             "module_network_netconf",
                             "module_security_httpapi",
                             "module_openapi"
@@ -92,6 +93,7 @@
                                 "type": {
                                     "enum": [
                                         "module_network_cli",
+                                        "module_network_validated_content",
                                         "module_network_netconf"
                                     ]
                                 }

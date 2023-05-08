@@ -1,4 +1,4 @@
-black==22.3.0
+black
 Jinja2==3.0.3
 ansible-core
 jsonschema

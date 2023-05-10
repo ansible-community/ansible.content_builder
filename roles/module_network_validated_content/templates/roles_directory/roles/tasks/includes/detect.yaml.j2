@@ -1,9 +1,0 @@
----
-- name: Invoke detect function
-  ansible.builtin.include_role:
-    name: network.base.resource_manager
-  vars:
-    action: 'detect'
-    state: 'replaced'
-    resources:
-      - '{{ resource }}'

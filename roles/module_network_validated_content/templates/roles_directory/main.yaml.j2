@@ -1,4 +1,0 @@
----
-- name: Include tasks
-  ansible.builtin.include_tasks: includes/{{'{{ item.name }}'}}.yaml
-  loop: {% raw %} "{{ actions }}" {% endraw %}

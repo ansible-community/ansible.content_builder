@@ -1,0 +1,12 @@
+---
+- name: Include tasks
+  ansible.builtin.include_tasks: ./health_checks/{{ ansible_network_os.split('.')[2] }}.yaml
+
+- name: Set health checks fact
+  ansible.builtin.set_fact:
+     health_checks: "{{ resource_health | health_check_view(item) }}"
+
+- name: Resource health checks
+  ansible.builtin.debug:
+     var: health_checks
+  failed_when: "'unsuccessful' == health_checks.status"

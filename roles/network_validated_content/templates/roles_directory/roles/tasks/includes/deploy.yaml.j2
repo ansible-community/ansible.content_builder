@@ -1,0 +1,8 @@
+---
+- name: Invoke gather function
+  ansible.builtin.include_role:
+    name: network.base.resource_manager
+  vars:
+    action: 'deploy'
+    resources:
+      - {{ resource }}

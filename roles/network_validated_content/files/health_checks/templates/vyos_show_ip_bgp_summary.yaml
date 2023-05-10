@@ -1,0 +1,43 @@
+# fmt: off
+[
+  {
+    "name": "router_id",
+    "getval": '''^BGP router identifier\s(?P<router_id>\S+),\slocal AS number\s(?P<local_as>\d+)$''',
+    "result": {
+    "router_id": "{{ router_id }}",
+    "local_as": "{{ local_as }}"
+    }
+  },
+  {
+    "name": "path_memory_usage",
+    "getval": '''^Peers\s(?P<total_entries>\d+),\susing\s(?P<memory_usage>\S+)''',
+    "result": {
+      "path": {
+        "memory_usage": "{{ memory_usage }}",
+        "total_entries": "{{ total_entries }}",
+      }
+    }
+  },
+  {
+    "name": "neighbors",
+    "getval": '''^(?P<peer>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(?P<version>\d+)\s+(?P<peer_as>\d+)\s+(?P<msg_rcvd>\d+)\s+(?P<msg_sent>\d+)\s+(?P<bgp_table_version>\d+)\s+(?P<input_queue>\d+)\s+(?P<output_queue>\d+)\s+(?P<uptime>\S+)\s+(?P<peer_state>\S+)''',
+    "result": {
+      "neighbors": [
+      {
+        "peer": "{{ peer }}",
+        "version": "{{ version }}",
+        "peer_as": "{{ peer_as }}",
+        "msg_rcvd": "{{ msg_rcvd }}",
+        "msg_sent": "{{ msg_sent }}",
+        "bgp_table_version": "{{ bgp_table_version }}",
+        "input_queue": "{{ input_queue }}",
+        "output_queue": "{{ output_queue }}",
+        "uptime": "{{ uptime }}",
+        "peer_state": "{{ peer_state }}",
+      }
+      ]
+    }
+  }
+
+]
+# fmt: on

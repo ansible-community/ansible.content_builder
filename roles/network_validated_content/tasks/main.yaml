@@ -40,18 +40,6 @@
     force: false
   with_items: "{{ resource_module_directories }}"
 
-- name: Copy GH config
-  ansible.builtin.copy:
-    src: "workflows/"
-    dest: "{{ parent_directory }}/.github/workflows"
-    force: false
-
-- name: Copy changelog config
-  ansible.builtin.copy:
-    src: "changelogs/"
-    dest: "{{ parent_directory }}/changelogs"
-    force: false
-
 - name: Copy project config files
   ansible.builtin.copy:
     src: "project_config_files/"
@@ -106,6 +94,12 @@
         overwrite: true
       - source: config.yaml.j2
         destination: "{{ parent_directory }}/changelogs/config.yaml"
+        overwrite: true
+      - source: changelog/changelog.yaml.j2
+        destination: "{{ parent_directory }}/changelogs/changelog.yaml"
+        overwrite: true
+      - source: workflows/tests.yml.j2
+        destination: "{{ parent_directory }}/.github/workflows/tests.yml"
         overwrite: true
       - source: galaxy.yml.j2
         destination: "{{ parent_directory }}/galaxy.yml"

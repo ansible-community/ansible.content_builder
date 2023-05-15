@@ -1,5 +1,6 @@
 name: Test collection
 
+{% raw %}
 concurrency:
   group: ${{ github.head_ref }}
   cancel-in-progress: true
@@ -14,7 +15,6 @@ jobs:
     uses: ansible-network/github_actions/.github/workflows/ansible-lint.yml@main
   changelog:
     uses: ansible-network/github_actions/.github/workflows/changelog.yml@main
-
   all_green:
     if: ${{ always() }}
     needs:
@@ -27,3 +27,4 @@ jobs:
           '${{ needs.ansible-lint.result }}',
           '${{ needs.changelog.result }}',
           ]) == {'success'}"
+{% endraw %}

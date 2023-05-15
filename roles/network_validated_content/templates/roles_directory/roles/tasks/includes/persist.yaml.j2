@@ -1,11 +1,12 @@
 ---
-- name: Invoke gather function
+- name: Invoke persist function
   ansible.builtin.include_role:
     name: network.base.resource_manager
-  vars:
+  vars:{% raw %}
+    ignore_empty: "{{ persist_empty | default(true) }}"
     action: 'persist'
-    resources: 
-    {% for r in resources %}
-      - "{{r}}"       
-    {% endfor %} {% raw %}    
-    ignore_empty: "{{ persist_empty | default(true) }}" {% endraw %}
+{% endraw %}
+    resources:
+      {% for r in resources %}
+      - "{{r}}"
+      {% endfor %}

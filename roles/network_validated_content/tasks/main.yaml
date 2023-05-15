@@ -5,8 +5,9 @@
 
 - name: Set required facts
   ansible.builtin.set_fact:
-    resource: "{{ plugin['resource'] }}"
+    resources: "{{ plugin['resources'] }}"
     rm_documentation: "docstring"
+    name: "{{ plugin['name'] }}"
 
 - name: Set/reset directory paths
   ansible.builtin.set_fact:
@@ -63,7 +64,7 @@
     dest: "{{ parent_directory }}/roles/run/tasks/includes/health_checks/templates"
     force: false
 
-- name: copy health_check.yaml
+- name: Copy health_check.yaml
   ansible.builtin.copy:
     src: "health_check.yaml"
     dest: "{{ parent_directory }}/roles/run/tasks/includes/health_check.yaml"
@@ -94,6 +95,9 @@
       - source: roles_directory/roles/tasks/includes/remediate.yaml.j2
         destination: "{{ parent_directory }}/roles/run/tasks/includes/remediate.yaml"
         overwrite: false
+      - source: roles_directory/roles/tasks/includes/configure.yaml.j2
+        destination: "{{ parent_directory }}/roles/run/tasks/includes/configure.yaml"
+        overwrite: false
       - source: roles_directory/main.yaml.j2
         destination: "{{ parent_directory }}/roles/run/tasks/main.yaml"
         overwrite: true
@@ -106,11 +110,9 @@
       - source: galaxy.yml.j2
         destination: "{{ parent_directory }}/galaxy.yml"
         overwrite: true
-      
 
 - name: Template each of the files
   ansible.builtin.include_tasks: template.yml
   with_items: "{{ resource_module_templates }}"
   loop_control:
     loop_var: template
-

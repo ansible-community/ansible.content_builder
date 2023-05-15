@@ -4,5 +4,7 @@
     name: network.base.resource_manager
   vars:
     action: 'deploy'
-    resources:
-      - {{ resource }}
+    resources: 
+      {% for r in resources %}
+      - "{{r}}"       
+      {% endfor %}

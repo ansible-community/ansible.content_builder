@@ -5,7 +5,7 @@
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 """
-The module file for {{ resource }}_health_check
+The module file for {{ name }}_health_check
 """
 
 from __future__ import absolute_import, division, print_function
@@ -62,7 +62,7 @@ def health_check_view(*args, **kwargs):
     if len(data) < 2:
         raise AnsibleFilterError(
             "Missing either 'health facts' or 'other value in filter input,"
-            "refer 'network.{{resource}}.health_check_view' filter plugin documentation for details",
+            "refer 'network.{{name}}.health_check_view' filter plugin documentation for details",
         )
     return health_checks
 

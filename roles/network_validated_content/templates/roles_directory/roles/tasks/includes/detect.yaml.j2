@@ -6,4 +6,6 @@
     action: 'detect'
     state: 'replaced'
     resources:
-      - '{{ resource }}'
+      {% for r in resources %}
+      - "{{r}}"       
+      {% endfor %} 

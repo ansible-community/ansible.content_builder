@@ -6,4 +6,6 @@
     action: 'remediate'
     state: 'replaced'
     resources:
-      - '{{resource}}'
+      {% for r in resources %}
+      - "{{r}}"       
+      {% endfor %}

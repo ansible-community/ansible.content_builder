@@ -1219,6 +1219,13 @@ def generate_amazon_cloud(args: Iterable, role_path: str):
             )
 
         ignore_file = ignore_dir / f"ignore-{version}.txt"
+
+        # keep all non-plugins entries from ignore file
+        if ignore_file.exists():
+            for line in ignore_file.read_text().split("\n"):
+                if not line.startswith("plugins/"):
+                    per_version_ignore_content += line + "\n"
+
         ignore_file.write_text(per_version_ignore_content)
 
     meta_dir = pathlib.Path(args.get("target_dir") + "/meta")

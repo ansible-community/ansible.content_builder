@@ -22,7 +22,9 @@ import yaml
 import copy
 from typing import Dict, Iterable, List, DefaultDict, Union, Optional, TypeVar, Type
 from ansible.plugins.action import ActionBase
-from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.content_library_data import content_library_static_ds
+from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.content_library_data import (
+    content_library_static_ds,
+)
 from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.utils import (
     format_documentation,
     indent,
@@ -34,8 +36,11 @@ from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_util
     camel_to_snake,
     ignore_description,
 )
+
 # import for amazon.cloud doc generation
-from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.generator import generate_documentation
+from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.generator import (
+    generate_documentation,
+)
 
 
 # vmware specific
@@ -202,7 +207,6 @@ def gen_documentation(
     next_version: str,
     target_dir: str,
 ) -> Dict:
-
     short_description = description.split(". ")[0]
     documentation = {
         "author": ["Ansible Cloud Team (@ansible-collections)"],
@@ -466,8 +470,10 @@ def gen_mutually_exclusive(schema: Dict) -> List:
     primary_idenfifier = schema.get("primaryIdentifier", [])
     entries: List = []
 
-    if len(primary_idenfifier) > 1:
-        entries.append([tuple(primary_idenfifier), "identifier"])
+    _primary_idenfifier = [camel_to_snake(id, alias=False) for id in primary_idenfifier]
+
+    if len(_primary_idenfifier) > 1:
+        entries.append([tuple(_primary_idenfifier), "identifier"])
 
     return entries
 
@@ -495,6 +501,7 @@ def generate_argument_spec(options: Dict) -> str:
         ignore_description(options_copy[key])
 
     for key in options_copy.keys():
+        print("key", key)
         argument_spec += f"\nargument_spec['{key}'] = "
         argument_spec += str(options_copy[key])
 
@@ -511,7 +518,9 @@ def gen_required_if(schema: Union[List, Dict]) -> List:
         entries: List = []
         states = ["absent", "get"]
 
-        _primary_idenfifier = copy.copy(primary_idenfifier)
+        _primary_idenfifier = [
+            camel_to_snake(id, alias=False) for id in primary_idenfifier
+        ]
 
         # For compound primary identifiers consisting of multiple resource properties strung together,
         # use the property values in the order that they are specified in the primary identifier definition
@@ -559,8 +568,12 @@ class AnsibleModuleBaseAmazon(UtilsBase):
         list_to_str = "".join(map(str, splitted[2:]))
         return prefix + "_" + camel_to_snake(list_to_str)
 
-    def renderer(self, target_dir: str, module_dir: str, next_version: str, role_path: str):
-        added_ins = get_module_added_ins(self.name, git_dir=pathlib.Path(target_dir + "/.git"))
+    def renderer(
+        self, target_dir: str, module_dir: str, next_version: str, role_path: str
+    ):
+        added_ins = get_module_added_ins(
+            self.name, git_dir=pathlib.Path(target_dir + "/.git")
+        )
         documentation = generate_documentation(
             self,
             added_ins,
@@ -570,7 +583,6 @@ class AnsibleModuleBaseAmazon(UtilsBase):
 
         arguments = generate_argument_spec(documentation["options"])
         documentation_to_string = format_documentation(documentation)
-
         content = jinja2_renderer(
             self.template_file,
             role_path,
@@ -763,7 +775,6 @@ class AnsibleModuleBaseVmware(UtilsBase):
                     len(set(self.default_operationIds) - set(result["operationIds"]))
                     > 0
                 ):
-
                     required_with = []
                     for i in result["operationIds"]:
                         state = ansible_state(i, self.default_operationIds)
@@ -935,8 +946,9 @@ class AnsibleModuleBaseVmware(UtilsBase):
 
         return list_path
 
-    def renderer(self, target_dir: str, module_dir: str, next_version: str, role_path: str):
-
+    def renderer(
+        self, target_dir: str, module_dir: str, next_version: str, role_path: str
+    ):
         added_ins = {}  # get_module_added_ins(self.name, git_dir=target_dir / ".git")
         arguments = gen_arguments_py(self.parameters(), self.list_index())
         documentation = format_documentation(
@@ -1231,7 +1243,7 @@ def generate_amazon_cloud(args: Iterable, role_path: str):
     meta_dir = pathlib.Path(args.get("target_dir") + "/meta")
     meta_dir.mkdir(parents=True, exist_ok=True)
     yaml_dict = {
-        "requires_ansible": """>=2.11.0""",
+        "requires_ansible": """>=2.12.0""",
         "action_groups": {"aws": []},
         "plugin_routing": {"modules": {}},
     }
@@ -1291,7 +1303,7 @@ def generate_vmware_rest(args: Iterable, role_path: str):
                         target_dir=args.get("target_dir"),
                         module_dir=args.get("modules"),
                         next_version=args.get("next_version"),
-                        role_path=role_path
+                        role_path=role_path,
                     )
                     module_list.append(module.name)
             elif "get" in resource.operations:
@@ -1314,19 +1326,21 @@ def generate_vmware_rest(args: Iterable, role_path: str):
                 resource, definitions=swagger_file.definitions
             )
 
-            if module.is_trusted(args.get("modules")) and len(module.default_operationIds) > 0:
+            if (
+                module.is_trusted(args.get("modules"))
+                and len(module.default_operationIds) > 0
+            ):
                 module.renderer(
                     target_dir=args.get("target_dir"),
                     module_dir=args.get("modules"),
                     next_version=args.get("next_version"),
-                    role_path=role_path
+                    role_path=role_path,
                 )
                 module_list.append(module.name)
     return
 
 
 class ActionModule(ActionBase):
-
     def __init__(self, *args, **kwargs):
         super(ActionModule, self).__init__(*args, **kwargs)
         self._validator_name = None
@@ -1349,12 +1363,14 @@ class ActionModule(ActionBase):
         :return: The results from the parser
         :rtype: dict
         """
-        
+
         self._result = super(ActionModule, self).run(tmp, task_vars)
         self._task_vars = task_vars
-        
+
         args = self._task.args
-        func = "generate_" + args['collection'] + "(args, task_vars['vars']['role_path'])"
+        func = (
+            "generate_" + args["collection"] + "(args, task_vars['vars']['role_path'])"
+        )
         eval(func)
 
         # info = VersionInfo("content_builder")
@@ -1364,7 +1380,6 @@ class ActionModule(ActionBase):
                 "The modules are autogenerated by:\n"
                 "https://github.com/ansible-community/ansible.content_builder\n"
                 ""
-                
             )
         )
         dev_md = pathlib.Path(args.get("target_dir") + "/commit_message")

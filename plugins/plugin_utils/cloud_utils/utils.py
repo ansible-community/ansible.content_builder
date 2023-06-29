@@ -17,8 +17,9 @@ from functools import lru_cache
 def jinja2_renderer(
     template_file: str, role_path: Path, collection: str, **kwargs: Dict[str, Any]
 ) -> str:
-
-    templateLoader = jinja2.FileSystemLoader(role_path + "/templates/module_directory/" + collection)
+    templateLoader = jinja2.FileSystemLoader(
+        role_path + "/templates/module_directory/" + collection
+    )
     templateEnv = jinja2.Environment(loader=templateLoader)
     template = templateEnv.get_template(template_file)
     return template.render(kwargs)
@@ -74,7 +75,6 @@ def indent(text_block: str, indent: int = 0) -> str:
 
 
 def get_module_from_config(module: str, target_dir: Path) -> Dict[str, Any]:
-
     module_file = Path(target_dir) / "modules.yaml"
     raw_content = module_file.read_text()
 
@@ -236,7 +236,12 @@ def _camel_to_snake(name: str, reversible: bool = False) -> str:
     return re.sub(all_cap_pattern, r"\1_\2", s2).lower()
 
 
-def camel_to_snake(data: Any) -> Any:
+def camel_to_snake(data: Any, alias=True) -> Any:
+    """
+    It performs a transformation from CamelCase to snake_case and set an aliases list
+    with the original CamelCase as item if alias=True.
+    When alias=False, it perfoms only the transformation from CamelCase to snake_case.
+    """
     if isinstance(data, str):
         return _camel_to_snake(data)
     elif isinstance(data, list):
@@ -244,10 +249,23 @@ def camel_to_snake(data: Any) -> Any:
     elif isinstance(data, dict):
         b_dict: Dict[str, Any] = {}
         for k in data.keys():
+            snaked_case_key = _camel_to_snake(k)
             if isinstance(data[k], dict):
-                b_dict[_camel_to_snake(k)] = camel_to_snake(data[k])
+                b_dict[snaked_case_key] = camel_to_snake(data[k])
+                # Add aliases for each parameter exclusing these module specific ones
+                if alias and k not in (
+                    "description",
+                    "type",
+                    "enum",
+                    "choices",
+                    "suboptions",
+                    "elements",
+                    "default",
+                    "options",
+                ):
+                    b_dict[snaked_case_key].update({"aliases": [k]})
             else:
-                b_dict[_camel_to_snake(k)] = data[k]
+                b_dict[snaked_case_key] = data[k]
         return b_dict
 
 

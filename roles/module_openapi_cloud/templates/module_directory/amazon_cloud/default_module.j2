@@ -3,8 +3,9 @@
 
 from ansible_collections.amazon.cloud.plugins.module_utils.core import AnsibleAmazonCloudModule
 from ansible_collections.amazon.cloud.plugins.module_utils.core import CloudControlResource
-from ansible_collections.amazon.cloud.plugins.module_utils.core import snake_dict_to_camel_dict
 from ansible_collections.amazon.cloud.plugins.module_utils.core import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.cloud.plugins.module_utils.core import scrub_none_parameters
+from ansible_collections.amazon.cloud.plugins.module_utils.core import map_key_to_alias
 
 
 def main():
@@ -29,7 +30,7 @@ def main():
     params = {}
     {{params}}
     # The DesiredState we pass to AWS must be a JSONArray of non-null values
-    _params_to_set = {k: v for k, v in params.items() if v is not None}
+   _params_to_set = scrub_none_parameters(params)
 
     # Only if resource is taggable
     if module.params.get("tags") is not None:
@@ -37,9 +38,8 @@ def main():
             module.params["tags"]
         )
 
-    params_to_set = snake_dict_to_camel_dict(_params_to_set, capitalize_first=True)
-    if "AclName" in params_to_set:
-        params_to_set["ACLName"] = params_to_set.pop("AclName")
+    # Use the alis from argument_spec as key and avoid snake_to_camel conversions
+    params_to_set = map_key_to_alias(_params_to_set, argument_spec)
 
     # Ignore createOnlyProperties that can be set only during resource creation
     create_only_params = {{create_only_properties}}

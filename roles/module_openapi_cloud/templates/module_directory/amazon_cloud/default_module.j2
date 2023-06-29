@@ -30,7 +30,7 @@ def main():
     params = {}
     {{params}}
     # The DesiredState we pass to AWS must be a JSONArray of non-null values
-   _params_to_set = scrub_none_parameters(params)
+    _params_to_set = scrub_none_parameters(params)
 
     # Only if resource is taggable
     if module.params.get("tags") is not None:

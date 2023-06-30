@@ -1,18 +1,18 @@
 # basic vars to make the templates cleaner
-copyright: "Copyright {{ ansible_date_time.year }} Red Hat"
-version_added: "1.0.0"
+module_openapi_security__copyright: "Copyright {{ ansible_date_time.year }} Red Hat"
+module_openapi_security__version_added: "1.0.0"
 temp: "/tmp/{{ ansible_date_time.iso8601_basic | hash('md5') }}"
 
 # set transport to httpapi unless overridden in cli
-transport: httpapi
+module_openapi_security__transport: httpapi
 
-parent_directory: "{{ collection['path'] }}/plugins"
+module_openapi_security__parent_directory: "{{ collection['path'] }}/plugins"
 
-import_path: "ansible_collections.{{ collection['namespace'] | default('') }}.\
+module_openapi_security__import_path: "ansible_collections.{{ collection['namespace'] | default('') }}.\
   {{ collection['name'] | default('') }}.plugins.modules.{{ collection['name'] }}_{{ resource }}"
 
 # each of the files to be templated
-resource_module_templates:
+module_openapi_security__resource_module_templates:
 
   - source: module_directory/resource_module.py.j2
     destination: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"

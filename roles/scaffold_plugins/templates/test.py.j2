@@ -28,7 +28,7 @@ RETURN = """
 def _{{ plugin.name }}({{ (scaffold_plugins__docstring|from_yaml)["options"].keys()|join(', ') }}):
     """Implementation for {{ plugin.name }}"""
     # TO-DO: Remove quotes from the dict values for `params`
-    params = {{ dict((docstring|from_yaml)["options"].keys() | zip((scaffold_plugins__docstring|from_yaml)["options"].keys())) }}
+    params = {{ dict((scaffold_plugins__docstring|from_yaml)["options"].keys() | zip((scaffold_plugins__docstring|from_yaml)["options"].keys())) }}
     _validate_args("{{ plugin.name }}", DOCUMENTATION, params)
 
     # implement test logic here

@@ -8,7 +8,7 @@
   ansible.builtin.tempfile:
     state: directory
     suffix: build
-  register: tmp_directory
+  register: module_openapi_security__tmp_directory
 
 - name: EXECUTE the python script
   ansible.builtin.command: python3 "{{ role_path }}"/templates/doc_generator.py "{{ plugin['rm_swagger_json'] }}"
@@ -20,14 +20,14 @@
     "{{ collection['name'] }}"
     "{{ plugin['unique_key'] }}"
     "{{ plugin['author'] }}"
-    "{{ tmp_directory["path"] }}"
+    "{{ module_openapi_security__tmp_directory["path"] }}"
   delegate_to: 127.0.0.1
   run_once: true
   changed_when: false
 
 - name: Create a vars temp directory
   ansible.builtin.file:
-    path: "{{ tmp_directory['path'] }}/vars"
+    path: "{{ module_openapi_security__tmp_directory['path'] }}/vars"
     state: directory
     mode: "0755"
 
@@ -35,33 +35,33 @@
   ansible.builtin.debug:
     var: item
   with_file:
-    - "{{ tmp_directory['path'] }}/data.yml"
-    - "{{ tmp_directory['path'] }}/params.json"
-  register: test
+    - "{{ module_openapi_security__tmp_directory['path'] }}/data.yml"
+    - "{{ module_openapi_security__tmp_directory['path'] }}/params.json"
+  register: module_openapi_security__test
 
 - name: Copy the MODULE DOC
   ansible.builtin.copy:
-    content: "{{ test['results'][0]['item'] }}"
-    dest: "{{ tmp_directory['path'] }}/vars/data.yaml"
+    content: "{{ module_openapi_security__['results'][0]['item'] }}"
+    dest: "{{ module_openapi_security__tmp_directory['path'] }}/vars/data.yaml"
 
 - name: Copy the MODULE PARAM DICT
   ansible.builtin.copy:
-    content: "{{ test['results'][1]['item'] }}"
-    dest: "{{ tmp_directory['path'] }}/vars/module_params_dict.json"
+    content: "{{ module_openapi_security__['results'][1]['item'] }}"
+    dest: "{{ module_openapi_security__tmp_directory['path'] }}/vars/module_params_dict.json"
 
 - name: Extract DOCUMENTATION from source (for new module)
   ansible.builtin.set_fact:
-    rm_documentation: "{{ test['results'][0]['item'] }}"
-  when: test is defined
+    module_openapi_security__rm_documentation: "{{ module_openapi_security__['results'][0]['item'] }}"
+  when: module_openapi_security__ is defined
 
 - name: Extract MODULE PARAMS Dict from source (for new module)
   ansible.builtin.set_fact:
-    module_params_dict: "{{ test['results'][1]['item'] }}"
-  when: test is defined
+    module_openapi_security__module_params_dict: "{{ module_openapi_security__['results'][1]['item'] }}"
+  when: module_openapi_security__ is defined
 
 - name: Get the API object
   ansible.builtin.set_fact:
-    api_object: "api/{{ plugin['api_object_path'].split('/')[1] | default('default') }}"
+    module_openapi_security__api_object: "api/{{ plugin['api_object_path'].split('/')[1] | default('default') }}"
 
 - name: Template each of the files
   ansible.builtin.include_tasks: template.yaml
@@ -74,5 +74,5 @@
     path: "{{ item }}"
     state: absent
   with_items:
-    - "{{ tmp_directory['path'] }}/vars/data.yaml"
-    - "{{ tmp_directory['path'] }}/vars/module_params_dict.json"
+    - "{{ module_openapi_security__tmp_directory['path'] }}/vars/data.yaml"
+    - "{{ module_openapi_security__tmp_directory['path'] }}/vars/module_params_dict.json"

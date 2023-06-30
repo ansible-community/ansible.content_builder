@@ -239,6 +239,7 @@ class Documentation:
             "patternProperties",
             "maxItems",
             "minItems",
+            "$comment",
         ]
 
         self.replace_keys(self.options, self.definitions)
@@ -348,7 +349,8 @@ def generate_documentation(
                 "To remove all tags set I(tags={}) and I(purge_tags=true).",
             ],
             "type": "dict",
-            "aliases": ["Tags"],
+            # The first alias must be the one that will be used for the API calls
+            "aliases": ["Tags", "resource_tags"],
         }
         documentation["options"]["purge_tags"] = {
             "description": ["Remove tags not listed in I(tags)."],

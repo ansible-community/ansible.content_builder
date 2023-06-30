@@ -527,7 +527,7 @@ def gen_required_if(schema: Union[List, Dict]) -> List:
 
         # For compound primary identifiers consisting of multiple resource properties strung together,
         # use the property values in the order that they are specified in the primary identifier definition
-        if len(primary_idenfifier) > 1:
+        if len(_primary_idenfifier) > 1:
             entries.append(["state", "list", _primary_idenfifier[:-1], True])
             _primary_idenfifier.append("identifier")
 
@@ -535,7 +535,14 @@ def gen_required_if(schema: Union[List, Dict]) -> List:
             [
                 "state",
                 "present",
-                list(set([*_primary_idenfifier, *required])),
+                list(
+                    set(
+                        [
+                            *_primary_idenfifier,
+                            *[camel_to_snake(id, alias=False) for id in required],
+                        ]
+                    )
+                ),
                 True,
             ]
         )

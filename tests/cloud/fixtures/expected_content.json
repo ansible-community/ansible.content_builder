@@ -7,6 +7,7 @@
     "short_description": "Create and manage log groups",
     "options": {
         "log_group_name": {
+            "aliases": ["LogGroupName"],
             "description": [
                 "The name of the log group.",
                 "If you dont specify a name, AWS CloudFormation generates a unique ID for the log group."
@@ -21,12 +22,14 @@
             "type": "bool"
         },
         "kms_key_id": {
+            "aliases": ["KmsKeyId"],
             "description": [
                 "The Amazon Resource Name (ARN) of the CMK to use when encrypting log data."
             ],
             "type": "str"
         },
         "retention_in_days": {
+            "aliases": ["RetentionInDays"],
             "description": [
                 "The number of days to retain the log events in the specified log group.",
                 "Possible values are: C(1), C(3), C(5), C(7), C(14), C(30), C(60), C(90), C(120), C(150), C(180), C(365), C(400), C(545), C(731), C(1827), and C(3653)."
@@ -72,6 +75,7 @@
         },
         "tags": {
             "aliases": [
+                "Tags",
                 "resource_tags"
             ],
             "description": [

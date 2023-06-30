@@ -482,13 +482,17 @@ def ensure_all_identifiers_defined(schema: Dict) -> str:
     primary_idenfifier = schema.get("primaryIdentifier", [])
     new_content: str = "if state in ('present', 'absent', 'get', 'describe') and module.params.get('identifier') is None:\n"
     new_content += 8 * " "
-    new_content += f"if not module.params.get('{primary_idenfifier[0]}')" + " ".join(
-        map(lambda x: f" or not module.params.get('{x}')", primary_idenfifier[1:])
+    new_content += (
+        f"if not module.params.get('{camel_to_snake(primary_idenfifier[0], alias=False)}')"
+        + " ".join(
+            map(
+                lambda x: f" or not module.params.get('{camel_to_snake(x, alias=False)}')",
+                primary_idenfifier[1:],
+            )
+        )
     )
     new_content += ":\n" + 12 * " "
-    new_content += (
-        "module.fail_json(f'You must specify both {*identifier, } identifiers.')\n"
-    )
+    new_content += "module.fail_json(f'You must specify all the {*[camel_to_snake(id, alias=False) for id in identifier], } identifiers.')\n"
 
     return new_content
 
@@ -501,7 +505,6 @@ def generate_argument_spec(options: Dict) -> str:
         ignore_description(options_copy[key])
 
     for key in options_copy.keys():
-        print("key", key)
         argument_spec += f"\nargument_spec['{key}'] = "
         argument_spec += str(options_copy[key])
 
@@ -525,7 +528,7 @@ def gen_required_if(schema: Union[List, Dict]) -> List:
         # For compound primary identifiers consisting of multiple resource properties strung together,
         # use the property values in the order that they are specified in the primary identifier definition
         if len(primary_idenfifier) > 1:
-            entries.append(["state", "list", primary_idenfifier[:-1], True])
+            entries.append(["state", "list", _primary_idenfifier[:-1], True])
             _primary_idenfifier.append("identifier")
 
         entries.append(

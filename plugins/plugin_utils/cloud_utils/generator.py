@@ -141,9 +141,16 @@ class Documentation:
         """Sanitize module's options and replace $ref with the correspoding parameters"""
         dict_copy = copy.copy(options)
         for key in dict_copy.keys():
-            if key in self.read_only_properties and key not in self.primary_identifier:
-                options.pop(key)
-                continue
+            # The 'AWS::RDS::DBInstance' template has a bug for Port option which is classified as
+            # createOnlyProperties, writeOnlyProperties and a readOnlyProperties, but it can be set
+            # and it should not be filtered out from the documentation. This is a temporary workaround.
+            if self.type_name != "AWS::RDS::DBInstance":
+                if (
+                    key in self.read_only_properties
+                    and key not in self.primary_identifier
+                ):
+                    options.pop(key)
+                    continue
 
             item = options[key]
 
@@ -293,6 +300,8 @@ def generate_documentation(
     docs = Documentation()
     docs.options = module.schema.get("properties", {})
     docs.definitions = module.schema.get("definitions", {})
+
+    docs.type_name = module.schema.get("typeName")
 
     # Properties defined as required must be specified in the desired state during resource creation
     docs.required = module.schema.get("required", [])

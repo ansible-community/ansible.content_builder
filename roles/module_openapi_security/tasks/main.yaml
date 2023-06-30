@@ -1,7 +1,6 @@
 ---
 - name: Get the CURRENT WORKING DIR
   ansible.builtin.command: "pwd"
-  register: dir
   changed_when: false
 
 - name: Create temporary build directory

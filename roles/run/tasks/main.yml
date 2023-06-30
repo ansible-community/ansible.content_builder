@@ -5,9 +5,7 @@
     data: "{{ lookup('file', '{{ manifest_file }}') | from_yaml | to_json }}"
     criteria: "{{ lookup('file', 'files/schema.json') | from_json }}"
     engine: ansible.utils.jsonschema
-  vars:
-    ansible_jsonschema_draft: draft7
-  register: result
+  register: run__result
 
 - name: Load settings from manifest file
   ansible.builtin.include_vars:
@@ -21,4 +19,4 @@
     - scaffold_plugins
   loop_control:
     loop_var: builder_role
-  when: not result.failed
+  when: not run__result.failed

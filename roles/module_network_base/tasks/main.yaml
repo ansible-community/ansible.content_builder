@@ -48,7 +48,7 @@
 - name: Load formatted argspec and get other module kwargs
   ansible.builtin.set_fact:
     # this _has_ to be loaded as a string to preserve black formatting
-    formatted_argspec: "{{ lookup('file', '{{ temp }}') | string() }}"
+    module_network_base__formatted_argspec: "{{ lookup('file', '{{ temp }}') | string() }}"
 
 - name: Delete temp file
   ansible.builtin.file:

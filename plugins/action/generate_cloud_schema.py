@@ -24,8 +24,18 @@ class Schema(TypedDict):
     definitions: Optional[Dict]
     required: Optional[List]
     primaryIdentifier: List
+    # Resource properties that can be returned by a read or list request, but can't be set by the user.
     readOnlyProperties: Optional[List]
+    # Resource properties that can be specified by the user only during resource creation.
     createOnlyProperties: Optional[List]
+    # Resource properties that can be specified by the user, but can't be returned by a read or list request.
+    # Write-only properties are often used to contain passwords, secrets, or other sensitive data.
+    writeOnlyProperties: Optional[List]
+    # Resource properties that have been deprecated by the underlying service provider.
+    # These properties are still accepted in create and update operations.
+    # However they may be ignored, or converted to a consistent model on application.
+    # Deprecated properties are not guaranteed to be returned by read operations.
+    deprecatedProperties: Optional[List]
     taggable: Optional[bool]
     handlers: Optional[Dict]
 

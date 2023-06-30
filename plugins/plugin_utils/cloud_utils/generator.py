@@ -240,6 +240,9 @@ class Documentation:
             "maxItems",
             "minItems",
             "$comment",
+            "exclusiveMaximum",
+            "exclusiveMinimum",
+            "maxProperties",
         ]
 
         self.replace_keys(self.options, self.definitions)

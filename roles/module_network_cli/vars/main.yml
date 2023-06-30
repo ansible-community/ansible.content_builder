@@ -1,7 +1,7 @@
 # basic vars to make the templates cleaner
-copyright: "Copyright {{ ansible_date_time.year }} Red Hat"
-version_added: "1.0.0"
+module_network_cli__copyright: "Copyright {{ ansible_date_time.year }} Red Hat"
+module_network_cli__version_added: "1.0.0"
 
-network_os: "{{ collection['name'] }}"
+nmodule_network_cli__network_os: "{{ collection['name'] }}"
 
-import_path: "ansible_collections.{{ collection['namespace'] }}.{{ collection['name'] }}.plugins.module_utils.network"
+module_network_cli__import_path: "ansible_collections.{{ collection['namespace'] }}.{{ collection['name'] }}.plugins.module_utils.network"

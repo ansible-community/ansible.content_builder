@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# {{ copyright }}
+# {{ module_network_conf__copyright }}
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -8,12 +8,12 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 """
-The arg spec for the {{ network_os }} facts module.
+The arg spec for the {{ module_network_conf__network_os }} facts module.
 """
 
 
 class FactsArgs(object):  # pylint: disable=R0903
-    """ The arg spec for the {{ network_os }} facts module
+    """ The arg spec for the {{ module_network_conf__network_os }} facts module
     """
 
     def __init__(self, **kwargs):
@@ -21,7 +21,7 @@ class FactsArgs(object):  # pylint: disable=R0903
 
     choices = [
         'all',
-        '{{ resource }}',
+        '{{ module_network_conf__resource }}',
     ]
 
     argument_spec = {

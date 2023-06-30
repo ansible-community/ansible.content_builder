@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# {{ copyright }}
+# {{ module_network_cli__copyright }}
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 """
-The {{ resource|capitalize }} parser templates file. This contains
+The {{ module_network_cli__resource|capitalize }} parser templates file. This contains
 a list of parser definitions and associated functions that
 facilitates both facts gathering and native command generation for
 the given network resource.
@@ -19,9 +19,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
     NetworkTemplate,
 )
 
-class {{ resource|capitalize }}Template(NetworkTemplate):
+class {{ module_network_cli__resource|capitalize }}Template(NetworkTemplate):
     def __init__(self, lines=None, module=None):
-        super({{ resource|capitalize }}Template, self).__init__(lines=lines, tmplt=self, module=module)
+        super({{ module_network_cli__resource|capitalize }}Template, self).__init__(lines=lines, tmplt=self, module=module)
 
     # fmt: off
     PARSERS = [

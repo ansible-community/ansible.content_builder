@@ -1,12 +1,12 @@
 ---
 - name: Set required facts
   ansible.builtin.set_fact:
-    module_network_conf_resource: "{{ plugin['resource'] }}"
-    module_network_conf_rm_documentation: "{{ docstring }}"
+    module_network_conf__resource: "{{ plugin['resource'] }}"
+    module_network_conf__rm_documentation: "{{ docstring }}"
 
 - name: Set required template facts
   ansible.builtin.set_fact:
-    module_network_conf_resource_module_templates:
+    module_network_conf__resource_module_templates:
       - source: module_directory/network_os/network_os_resource.py.j2
         destination: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
         overwrite: true
@@ -38,6 +38,6 @@
 
 - name: Template each of the files
   ansible.builtin.include_tasks: template.yml
-  with_items: "{{ module_network_conf_resource_module_templates }}"
+  with_items: "{{ module_network_conf__resource_module_templates }}"
   loop_control:
     loop_var: template

@@ -5,7 +5,7 @@
 
 - name: Set/reset directory paths
   ansible.builtin.set_fact:
-    resource_module_directories:
+    module_network_base__resource_module_directories:
       - modules
       - module_utils
       - module_utils/network
@@ -18,11 +18,11 @@
       - module_utils/network/{{ network_os }}/facts
       - module_utils/network/{{ network_os }}/facts/{{ resource }}
       - module_utils/network/{{ network_os }}/utils
-    rm_templates_dir:
+    module_network_base__rm_templates_dir:
       - "module_utils/network/{{ network_os }}/rm_templates"
 - name: Add rm_templates dir when scaffolding module_network_cli
   ansible.builtin.set_fact:
-    resource_module_directories: "{{ resource_module_directories + rm_templates_dir }}"
+    module_network_base__resource_module_directories: "{{ module_network_base__resource_module_directories + module_network_base__rm_templates_dir }}"
   when: plugin['type'] == 'module_network_cli'
 
 
@@ -60,14 +60,14 @@
   ansible.builtin.file:
     path: "{{ parent_directory }}/{{ item }}"
     state: directory
-  with_items: "{{ resource_module_directories }}"
+  with_items: "{{ module_network_base__resource_module_directories }}"
 
 - name: Touch the __init__.py in each directory
   ansible.builtin.copy:
     content: ""
     dest: "{{ parent_directory }}/{{ item }}/__init__.py"
     force: false
-  with_items: "{{ resource_module_directories }}"
+  with_items: "{{ module_network_base__resource_module_directories }}"
 
 - name: Debug message
   ansible.builtin.debug:

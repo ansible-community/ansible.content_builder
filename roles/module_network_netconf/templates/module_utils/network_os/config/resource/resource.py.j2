@@ -1,10 +1,10 @@
 #
 # -*- coding: utf-8 -*-
-# {{ copyright }}
+# {{ module_network_conf__copyright }}
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """
-The {{ network_os }}_{{ resource }} class
+The {{ module_network_conf__network_os }}_{{ module_network_conf__resource }} class
 It is in this file where the current configuration (as dict)
 is compared to the provided configuration (as dict) and the command set
 necessary to bring the current configuration to it's desired end-state is
@@ -26,9 +26,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.n
 )
 
 
-class {{ resource|capitalize }}(ConfigBase):
+class {{ module_network_conf__resource|capitalize }}(ConfigBase):
     """
-    The {{ network_os }}_{{ resource }} class
+    The {{ module_network_conf__network_os }}_{{ module_network_conf__resource }} class
     """
 
     gather_subset = [
@@ -37,13 +37,13 @@ class {{ resource|capitalize }}(ConfigBase):
     ]
 
     gather_network_resources = [
-        '{{ resource }}',
+        '{{ module_network_conf__resource }}',
     ]
 
     def __init__(self, module):
-        super({{ resource|capitalize }}, self).__init__(module)
+        super({{ module_network_conf__resource|capitalize }}, self).__init__(module)
 
-    def get_{{ resource }}_facts(self):
+    def get_{{ module_network_conf__resource }}_facts(self):
         """ Get the 'facts' (the current configuration)
 
         :rtype: A dictionary
@@ -62,8 +62,8 @@ class {{ resource|capitalize }}(ConfigBase):
         :returns: The result from module execution
         """
         result = {'changed': False}
-        existing_{{ resource }}_facts = self.get_{{ resource }}_facts()
-        config_xmls = self.set_config(existing_{{ resource }}_facts)
+        existing_{{ module_network_conf__resource }}_facts = self.get_{{ module_network_conf__resource }}_facts()
+        config_xmls = self.set_config(existing_{{ module_network_conf__resource }}_facts)
 
         with locked_config(self._module):
             for config_xml in to_list(config_xmls):
@@ -82,16 +82,16 @@ class {{ resource|capitalize }}(ConfigBase):
 
         result['xml'] = config_xmls
 
-        changed_{{ resource }}_facts = self.get_{{ resource }}_facts()
+        changed_{{ module_network_conf__resource }}_facts = self.get_{{ module_network_conf__resource }}_facts()
 
-        result['before'] = existing_{{ resource }}_facts
+        result['before'] = existing_{{ module_network_conf__resource }}_facts
         if result['changed']:
-            result['after'] = changed_{{ resource }}_facts
+            result['after'] = changed_{{ module_network_conf__resource }}_facts
 
         result['warnings'] = warnings
         return result
 
-    def set_config(self, existing_{{ resource }}_facts):
+    def set_config(self, existing_{{ module_network_conf__resource }}_facts):
         """ Collect the configuration from the args passed to the module,
             collect the current configuration (as a dict from facts)
 

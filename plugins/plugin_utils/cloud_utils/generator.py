@@ -250,6 +250,7 @@ class Documentation:
             "exclusiveMaximum",
             "exclusiveMinimum",
             "maxProperties",
+            "anyOf",
         ]
 
         self.replace_keys(self.options, self.definitions)

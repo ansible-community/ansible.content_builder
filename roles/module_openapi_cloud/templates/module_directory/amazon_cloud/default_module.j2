@@ -25,7 +25,8 @@ def main():
     module = AnsibleAmazonCloudModule(argument_spec=argument_spec, required_if=required_if, mutually_exclusive=mutually_exclusive, supports_check_mode=True)
     cloud = CloudControlResource(module)
 
-    type_name = {{resource_type}}
+    {% set type_name=resource_type %}
+    type_name = {{ type_name }}
 
     params = {}
     {{params}}
@@ -51,6 +52,13 @@ def main():
     identifier = {{primary_identifier}}
     {{ ensure_all_identifiers_defined }}
     results = {"changed": False, "result": {}}
+
+    {% if 'AWS::RDS::DBInstance' in type_name %}
+    if module.params.get("engine") not in ("aurora", "aurora-postgresql", "aurora-mysql"):
+        # It can only be used when engine is one of ("aurora", "aurora-postgresql", "aurora-mysql").
+        # Since the CloudFormation template assigns 'default: 1', it is always set to 1.
+        params.pop("promotion_tier")
+    {% endif %}
 
     if state == "list":
         if "list" not in handlers:

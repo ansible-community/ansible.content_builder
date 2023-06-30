@@ -1,6 +1,6 @@
 #
 # -*- coding: utf-8 -*-
-# {{ copyright }}
+# {{ module_network_netconf__copyright }}
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """
@@ -16,7 +16,7 @@ from ansible.module_utils._text import to_bytes
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
-from {{ import_path }}.{{ network_os }}.argspec.{{ resource }}.{{ resource }} import {{ resource|capitalize }}Args
+from {{ module_network_netconf__import_path }}.{{ module_network_netconf__network_os }}.argspec.{{ module_network_netconf__resource }}.{{ module_network_netconf__resource }} import {{ module_network_netconf__resource|capitalize }}Args
 from ansible.module_utils.six import string_types
 try:
     from lxml import etree
@@ -25,8 +25,8 @@ except ImportError:
     HAS_LXML = False
 
 
-class {{ resource|capitalize }}Facts(object):
-    """ The {{ network_os }} {{ resource }} fact class
+class {{ module_network_netconf__resource|capitalize }}Facts(object):
+    """ The {{ module_network_netconf__network_os }} {{ module_network_netconf__resource }} fact class
     """
 
     def __init__(self, module, subspec='config', options='options'):

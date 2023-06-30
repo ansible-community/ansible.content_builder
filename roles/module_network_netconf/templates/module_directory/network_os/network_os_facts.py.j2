@@ -1,10 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# {{ module_network_conf__copyright }}
+# {{ module_network_netconf__copyright }}
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """
-The module file for {{ module_network_conf__network_os }}_facts
+The module file for {{ module_network_netconf__network_os }}_facts
 """
 
 from __future__ import absolute_import, division, print_function
@@ -14,11 +14,11 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 ---
-module: {{ module_network_conf__network_os }}_facts
-version_added: {{ module_network_conf__version_added }}
+module: {{ module_network_netconf__network_os }}_facts
+version_added: {{ module_network_netconf__version_added }}
 short_description: Get facts about {{ network_os }} devices.
 description:
-  - Collects facts from network devices running the {{ module_network_conf__network_os }} operating
+  - Collects facts from network devices running the {{ module_network_netconf__network_os }} operating
     system. This module places the facts gathered in the fact tree keyed by the
     respective resource name.  The facts module will always collect a
     base set of facts from the device and can enable or disable
@@ -49,27 +49,27 @@ options:
 
 EXAMPLES = """
 # Gather all facts
-- {{ module_network_conf__network_os }}_facts:
+- {{ module_network_netconf__network_os }}_facts:
     gather_subset: all
     gather_network_resources: all
 
-# Collect only the {{ resource }} facts
-- {{ module_network_conf__network_os }}_facts:
+# Collect only the {{ module_network_netconf__resource }} facts
+- {{ module_network_netconf__network_os }}_facts:
     gather_subset:
       - !all
       - !min
     gather_network_resources:
-      - {{ module_network_conf__resource }}
+      - {{ module_network_netconf__resource }}
 
-# Do not collect {{ module_network_conf__resource }} facts
-- {{ network_os }}_facts:
+# Do not collect {{ module_network_netconf__resource }} facts
+- {{ module_network_netconf__network_os }}_facts:
     gather_network_resources:
-      - "!{{ module_network_conf__resource }}"
+      - "!{{ module_network_netconf__resource }}"
 
-# Collect {{ module_network_conf__resource }} and minimal default facts
-- {{ network_os }}_facts:
+# Collect {{ module_network_netconf__resource }} and minimal default facts
+- {{ module_network_netconf__network_os }}_facts:
     gather_subset: min
-    gather_network_resources: {{ module_network_conf__resource }}
+    gather_network_resources: {{ module_network_netconf__resource }}
 """
 
 RETURN = """
@@ -77,8 +77,8 @@ See the respective resource module parameters for the tree.
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from {{ module_network_conf__import_path }}.{{ module_network_conf__network_os }}.argspec.facts.facts import FactsArgs
-from {{ module_network_conf__import_path }}.{{ module_network_conf__network_os }}.facts.facts import Facts
+from {{ module_network_netconf__import_path }}.{{ module_network_netconf__network_os }}.argspec.facts.facts import FactsArgs
+from {{ module_network_netconf__import_path }}.{{ module_network_netconf__network_os }}.facts.facts import Facts
 
 
 def main():

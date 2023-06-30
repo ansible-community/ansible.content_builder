@@ -1,35 +1,35 @@
 ---
 - name: Set required facts
   ansible.builtin.set_fact:
-    module_network_conf__resource: "{{ plugin['resource'] }}"
-    module_network_conf__rm_documentation: "{{ docstring }}"
+    module_network_netconf__resource: "{{ plugin['resource'] }}"
+    module_network_netconf__rm_documentation: "{{ docstring }}"
 
 - name: Set required template facts
   ansible.builtin.set_fact:
-    module_network_conf__resource_module_templates:
+    module_network_netconf__resource_module_templates:
       - source: module_directory/network_os/network_os_resource.py.j2
         destination: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
         overwrite: true
       - source: module_directory/network_os/network_os_facts.py.j2
-        destination: "{{ parent_directory }}/modules/{{ network_os }}_facts.py"
+        destination: "{{ parent_directory }}/modules/{{ module_network_netconf__network_os }}_facts.py"
         overwrite: false
       - source: module_utils/network_os/argspec/facts/facts.py.j2
-        destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/argspec/facts/facts.py"
+        destination: "{{ parent_directory }}/module_utils/network/{{ module_network_netconf__network_os }}/argspec/facts/facts.py"
         overwrite: false
       - source: module_utils/network_os/argspec/resource/resource.py.j2
-        destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/argspec/{{ resource }}/{{ resource }}.py"
+        destination: "{{ parent_directory }}/module_utils/network/{{ module_network_netconf__network_os }}/argspec/{{ module_network_netconf__resource }}/{{ module_network_netconf__resource }}.py"
         overwrite: true
       - source: module_utils/network_os/config/resource/resource.py.j2
-        destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/config/{{ resource }}/{{ resource }}.py"
+        destination: "{{ parent_directory }}/module_utils/network/{{ module_network_netconf__network_os }}/config/{{ module_network_netconf__resource }}/{{ module_network_netconf__resource }}.py"
         overwrite: false
       - source: module_utils/network_os/facts/facts.py.j2
-        destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/facts/facts.py"
+        destination: "{{ parent_directory }}/module_utils/network/{{ module_network_netconf__network_os }}/facts/facts.py"
         overwrite: false
       - source: module_utils/network_os/facts/resource/resource.py.j2
-        destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/facts/{{ resource }}/{{ resource }}.py"
+        destination: "{{ parent_directory }}/module_utils/network/{{ module_network_netconf__network_os }}/facts/{{ module_network_netconf__resource }}/{{ module_network_netconf__resource }}.py"
         overwrite: false
       - source: module_utils/network_os/utils/utils.py.j2
-        destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/utils/utils.py"
+        destination: "{{ parent_directory }}/module_utils/network/{{ module_network_netconf__network_os }}/utils/utils.py"
         overwrite: false
 
 - name: Invoking network base to build argspec and touch common files
@@ -38,6 +38,6 @@
 
 - name: Template each of the files
   ansible.builtin.include_tasks: template.yml
-  with_items: "{{ module_network_conf__resource_module_templates }}"
+  with_items: "{{ module_network_netconf__resource_module_templates }}"
   loop_control:
     loop_var: template

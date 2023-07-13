@@ -4,7 +4,7 @@ concurrency:
   group: ${{ github.head_ref }}
   cancel-in-progress: true
 
-on:
+on:  # yamllint disable-line rule:truthy
   pull_request:
     branches: [main, cloud_content]
   workflow_dispatch:

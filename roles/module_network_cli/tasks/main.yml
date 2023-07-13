@@ -1,8 +1,12 @@
 ---
 - name: Set required facts
   ansible.builtin.set_fact:
-    module_network_cli__resource: "{{ plugin['resource'] }}"
-    module_network_cli__rm_documentation: "{{ docstring }}"
+    copyright: "{{ module_network_cli__copyright }}"
+    version_added: "{{ module_network_cli__version_added }}"
+    network_os: "{{ module_network_cli__network_os }}"
+    import_path: "{{ module_network_cli__import_path }}"
+    resource: "{{ plugin['resource'] }}"
+    rm_documentation: "{{ docstring }}"
 
 - name: Set required template facts
   ansible.builtin.set_fact:

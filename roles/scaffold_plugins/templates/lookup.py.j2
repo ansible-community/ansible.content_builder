@@ -13,7 +13,7 @@ __metaclass__ = type
 
 
 DOCUMENTATION = """
-{{ scaffold_plugins__docstring|d('') }}
+{{ docstring|d('') }}
 """
 
 
@@ -36,7 +36,7 @@ from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_valid
 class LookupModule(LookupBase):
     def run(self, terms, variables=None, **kwargs):
         if isinstance(terms, list):
-            keys = {{ (scaffold_plugins__docstring|from_yaml)["options"].keys() }}
+            keys = {{ (docstring|from_yaml)["options"].keys() }}
             terms = dict(zip(keys, terms))
         terms.update(kwargs)
         aav = AnsibleArgSpecValidator(

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# {{ module_network_cli__copyright }}
+# {{ copyright }}
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 """
-The facts class for {{ module_network_cli__network_os }}
+The facts class for {{ network_os }}
 this file validates each subset of facts and selectively
 calls the appropriate facts gathering function
 """
@@ -12,12 +12,12 @@ calls the appropriate facts gathering function
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts import (
     FactsBase,
 )
-from {{ module_network_cli__import_path }}.{{ module_network_cli__network_os }}.facts.{{ module_network_cli__resource }}.{{ module_network_cli__resource }} import {{ module_network_cli__resource|capitalize }}Facts
+from {{ import_path }}.{{ network_os }}.facts.{{ resource }}.{{ resource }} import {{ resource|capitalize }}Facts
 
 
 FACT_LEGACY_SUBSETS = {}
 FACT_RESOURCE_SUBSETS = dict(
-    {{ module_network_cli__resource }}={{ module_network_cli__resource|capitalize }}Facts,
+    {{ resource }}={{ resource|capitalize }}Facts,
 )
 
 
@@ -32,7 +32,7 @@ class Facts(FactsBase):
         super(Facts, self).__init__(module)
 
     def get_facts(self, legacy_facts_type=None, resource_facts_type=None, data=None):
-        """ Collect the facts for {{ module_network_cli__network_os }}
+        """ Collect the facts for {{ network_os }}
 
         :param legacy_facts_type: List of legacy facts types
         :param resource_facts_type: List of resource fact types

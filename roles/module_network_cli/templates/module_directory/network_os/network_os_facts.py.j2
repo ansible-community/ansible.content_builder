@@ -51,23 +51,23 @@ EXAMPLES = """
     gather_subset: all
     gather_network_resources: all
 
-# Collect only the {{ module_network_cli__resource }} facts
+# Collect only the {{ resource }} facts
 - {{ network_os }}_facts:
     gather_subset:
       - !all
       - !min
     gather_network_resources:
-      - {{ module_network_cli_resource }}
+      - {{ resource }}
 
-# Do not collect {{ module_network_cli__resource }} facts
+# Do not collect {{ resource }} facts
 - {{ network_os }}_facts:
     gather_network_resources:
-      - "!{{ module_network_cli__resource }}"
+      - "!{{ resource }}"
 
-# Collect {{ module_network_cli__resource }} and minimal default facts
+# Collect {{ resource }} and minimal default facts
 - {{ network_os }}_facts:
     gather_subset: min
-    gather_network_resources: {{ module_network_cli__resource }}
+    gather_network_resources: {{ resource }}
 """
 
 RETURN = """

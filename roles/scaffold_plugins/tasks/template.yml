@@ -3,33 +3,40 @@
   ansible.builtin.debug:
     msg: "Scaffolding {{ plugin['name'] }} of type {{ plugin['type'] }}"
 
+- name: Set facts
+  ansible.builtin.set_fact:
+    copyright: "{{ scaffold_plugins__copyright }}"
+    version_added: "{{ scaffold_plugins__version_added }}"
+    parent_directory: "{{ scaffold_plugins__parent_directory }}"
+    generic_plugins: "{{ scaffold_plugins__generic_plugins }}"
+
 - name: Scaffold plugin
   when: plugin['content']|d("") != 'cloud'
   block:
     - name: Set path to main plugin file for generic plugins
       ansible.builtin.set_fact:
-        scaffold_plugins__path_to_plugin: "{{ parent_directory }}/{{ plugin['type'] }}/{{ plugin['name'] }}.py"
+        path_to_plugin: "{{ parent_directory }}/{{ plugin['type'] }}/{{ plugin['name'] }}.py"
       when: plugin['type'] in generic_plugins
 
     - name: Set path to main plugin file for specialized plugins
       ansible.builtin.set_fact:
-        scaffold_plugins__path_to_plugin: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
+        path_to_plugin: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
       when: plugin['type'] not in generic_plugins
 
     - name: Load docstring (if specified)
       ansible.builtin.set_fact:
-        scaffold_plugins__docstring: "{{ lookup('file', '{{ plugin.docstring }}') }}"
+        docstring: "{{ lookup('file', '{{ plugin.docstring }}') }}"
       when: "'docstring' in plugin"
 
     - name: Load examples from example file (if specified)
       ansible.builtin.set_fact:
-        scaffold_plugins__examples: "{{ lookup('file', '{{ plugin.examples }}') }}"
+        examples: "{{ lookup('file', '{{ plugin.examples }}') }}"
       when: "'examples' in plugin"
 
     - name: Check to see if the plugin file exists
       ansible.builtin.stat:
-        path: "{{ scaffold_plugins__path_to_plugin }}"
-      register: scaffold_plugins__file_stat
+        path: "{{ path_to_plugin }}"
+      register: file_stat
 
 # Load docstring from correct places (if previously unspecified)
 # Error out if not present anywhere
@@ -38,25 +45,25 @@
   block:
     - name: Check if documentation string can be found
       ansible.builtin.assert:
-        that: scaffold_plugins__file_stat.stat.exists
+        that: file_stat.stat.exists
         success_msg: "{{ plugin['name'] }} plugin file exists...attempting to fetch DOCUMENTATION"
         fail_msg: "{{ plugin['name'] }} plugin file does not exist and path to docstring not set"
       when: not docstring | default(None)
 
     - name: Extract documentation from plugin (for existing plugin)
       ansible.builtin.set_fact:
-        scaffold_plugins__docstring: "{{ lookup('file', '{{ path_to_plugin }}') | ansible.content_builder.get_doc }}"
+        docstring: "{{ lookup('file', '{{ path_to_plugin }}') | ansible.content_builder.get_doc }}"
       when: not docstring | default(None)
 
     - name: Fail if no docstring could be found
       ansible.builtin.assert:
-        that: scaffold_plugins__docstring != ''
+        that: docstring != ''
         fail_msg: "{{ plugin['name'] }} plugin file has no DOCUMENTATION and path to docstring is not set"
 
     - name: Extract examples from plugin (for existing plugin)
       ansible.builtin.set_fact:
-        scaffold_plugins__examples: "{{ lookup('file', '{{ path_to_plugin }}') | ansible.content_builder.get_example }}"
-      when: not scaffold_plugins__examples | default(None) and scaffold_plugins__file_stat.stat.exists
+        examples: "{{ lookup('file', '{{ path_to_plugin }}') | ansible.content_builder.get_example }}"
+      when: not examples | default(None) and file_stat.stat.exists
 
 # Start scaffolding specialized plugins
 - name: Start scaffolding specialized plugins
@@ -71,7 +78,7 @@
   when: plugin['type'] in generic_plugins
   block:
     - name: Generate plugin file
-      when: not scaffold_plugins__file_stat.stat.exists or plugin['overwrite'] | default(False)
+      when: not file_stat.stat.exists or plugin['overwrite'] | default(False)
       block:
         - name: Create the plugin file, if it doesnt exist already or override is set
           ansible.builtin.template:
@@ -90,13 +97,13 @@
         - name: Check to see if the utils file exists
           ansible.builtin.stat:
             path: "{{ parent_directory }}/plugin_utils/{{ plugin['name'] }}.py"
-          register: scaffold_plugins__file_stat
+          register: file_stat
 
         - name: Create utils file
           ansible.builtin.template:
             src: "plugin_utils/plugin.py.j2"
             dest: "{{ parent_directory }}/plugin_utils/{{ plugin['name'] }}.py"
-          when: not scaffold_plugins__file_stat.stat.exists
+          when: not file_stat.stat.exists
 
     - name: Generate common implementation file
       when: plugin['type'] in ["filter", "lookup"]
@@ -104,18 +111,18 @@
         - name: Check to see if the common implementation file exists
           ansible.builtin.stat:
             path: "{{ parent_directory }}/module_utils/common/{{ plugin['name'] }}.py"
-          register: scaffold_plugins__file_stat
+          register: file_stat
 
         - name: Create utils file
           ansible.builtin.template:
             src: "common/plugin.py.j2"
             dest: "{{ parent_directory }}/module_utils/common/{{ plugin['name'] }}.py"
-          when: not scaffold_plugins__file_stat.stat.exists
+          when: not file_stat.stat.exists
 
 - name: Empty docstring
   ansible.builtin.set_fact:
-    scaffold_plugins__docstring: ""
-    scaffold_plugins__examples: ""
+    docstring: ""
+    examples: ""
   when: "'docstring' in plugin or 'examples' in plugin"
 
 - name: Debug message

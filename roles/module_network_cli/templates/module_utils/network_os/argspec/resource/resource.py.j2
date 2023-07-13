@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# {{ module_network_cli__copyright }}
+# {{ copyright }}
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -24,12 +24,12 @@ __metaclass__ = type
 ##############################################
 
 """
-The arg spec for the {{ module_network_cli__network_os }}_{{ module_network_cli__resource }} module
+The arg spec for the {{ network_os }}_{{ resource }} module
 """
 
 
-class {{ module_network_cli__resource|capitalize }}Args(object):  # pylint: disable=R0903
-    """The arg spec for the {{ network_os }}_{{ module_network_cli__resource }} module
+class {{ resource|capitalize }}Args(object):  # pylint: disable=R0903
+    """The arg spec for the {{ network_os }}_{{ resource }} module
     """
 
     argument_spec = {{ module_network_base__formatted_argspec|indent(4, False) }}  # pylint: disable=C0301

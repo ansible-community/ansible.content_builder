@@ -18,7 +18,6 @@ def jinja2_renderer(
     template_file: str, role_path: Path, collection: str, **kwargs: Dict[str, Any]
 ) -> str:
 
-    import q
     templateLoader = jinja2.FileSystemLoader(role_path + "/templates/module_directory/" + collection)
     templateEnv = jinja2.Environment(loader=templateLoader)
     template = templateEnv.get_template(template_file)

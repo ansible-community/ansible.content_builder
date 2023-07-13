@@ -67,7 +67,7 @@ class {{ resource|capitalize }}(ConfigBase):
 
         with locked_config(self._module):
             for config_xml in to_list(config_xmls):
-                diff = self._module._connectionload_config(self._module, config_xml, [])
+                diff = self._module._connection.load_config(self._module, config_xml, [])
 
             commit = not self._module.check_mode
             if diff:

@@ -1,10 +1,10 @@
 # basic vars to make the templates cleaner
-copyright: "Copyright {{ ansible_date_time.year }} Red Hat"
-version_added: "1.0.0"
+scaffold_plugins__copyright: "Copyright {{ ansible_date_time.year }} Red Hat"
+scaffold_plugins__version_added: "1.0.0"
 
-parent_directory: "{{ collection['path'] }}/plugins"
+scaffold_plugins__parent_directory: "{{ collection['path'] }}/plugins"
 
-generic_plugins:
+scaffold_plugins__generic_plugins:
   - action
   - filter
   - test

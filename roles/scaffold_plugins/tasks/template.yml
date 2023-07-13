@@ -3,6 +3,13 @@
   ansible.builtin.debug:
     msg: "Scaffolding {{ plugin['name'] }} of type {{ plugin['type'] }}"
 
+- name: Set facts
+  ansible.builtin.set_fact:
+    copyright: "{{ scaffold_plugins__copyright }}"
+    version_added: "{{ scaffold_plugins__version_added }}"
+    parent_directory: "{{ scaffold_plugins__parent_directory }}"
+    generic_plugins: "{{ scaffold_plugins__generic_plugins }}"
+
 - name: Scaffold plugin
   when: plugin['content']|d("") != 'cloud'
   block:

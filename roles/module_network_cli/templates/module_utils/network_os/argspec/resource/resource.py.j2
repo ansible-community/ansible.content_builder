@@ -18,10 +18,10 @@ __metaclass__ = type
 #
 # To update the argspec make the desired changes
 # in the documentation in the module file and re-run
-# ansible.content_builder commenting out 
+# ansible.content_builder commenting out
 # the path to external 'docstring' in build.yaml.
 #
-############################################## 
+##############################################
 
 """
 The arg spec for the {{ network_os }}_{{ resource }} module
@@ -32,4 +32,4 @@ class {{ resource|capitalize }}Args(object):  # pylint: disable=R0903
     """The arg spec for the {{ network_os }}_{{ resource }} module
     """
 
-    argument_spec = {{ formatted_argspec|indent(4, False) }}  # pylint: disable=C0301
+    argument_spec = {{ module_network_base__formatted_argspec|indent(4, False) }}  # pylint: disable=C0301

@@ -1,7 +1,7 @@
 # basic vars to make the templates cleaner
-copyright: "Copyright {{ ansible_date_time.year }} Red Hat"
-version_added: "1.0.0"
-examples:
+module_openapi_cloud__copyright: "Copyright {{ ansible_date_time.year }} Red Hat"
+module_openapi_cloud__version_added: "1.0.0"
+module_openapi_cloud__examples:
   vmware.vmware_rest:
     load_from:
       - tests/integration/targets/appliance

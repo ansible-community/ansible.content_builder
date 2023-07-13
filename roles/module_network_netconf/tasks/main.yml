@@ -1,8 +1,16 @@
 ---
 - name: Set required facts
   ansible.builtin.set_fact:
+    copyright: "{{ module_network_netconf__copyright }}"
+    version_added: "{{ module_network_netconf__version_added }}"
+    network_os: "{{ module_network_netconf__network_os }}"
+    import_path: "{{ module_network_netconf__import_path }}"
     resource: "{{ plugin['resource'] }}"
     rm_documentation: "{{ docstring }}"
+
+- name: Set networkutils path
+  ansible.builtin.set_fact:
+    networkutils_path: "{{ parent_directory }}/module_utils/network/{{ network_os }}"
 
 - name: Set required template facts
   ansible.builtin.set_fact:
@@ -14,22 +22,22 @@
         destination: "{{ parent_directory }}/modules/{{ network_os }}_facts.py"
         overwrite: false
       - source: module_utils/network_os/argspec/facts/facts.py.j2
-        destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/argspec/facts/facts.py"
+        destination: "{{ networkutils_path }}/argspec/facts/facts.py"
         overwrite: false
       - source: module_utils/network_os/argspec/resource/resource.py.j2
-        destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/argspec/{{ resource }}/{{ resource }}.py"
+        destination: "{{ networkutils_path }}/argspec/{{ resource }}/{{ resource }}.py"
         overwrite: true
       - source: module_utils/network_os/config/resource/resource.py.j2
-        destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/config/{{ resource }}/{{ resource }}.py"
+        destination: "{{ networkutils_path }}/config/{{ resource }}/{{ resource }}.py"
         overwrite: false
       - source: module_utils/network_os/facts/facts.py.j2
-        destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/facts/facts.py"
+        destination: "{{ networkutils_path }}/facts/facts.py"
         overwrite: false
       - source: module_utils/network_os/facts/resource/resource.py.j2
-        destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/facts/{{ resource }}/{{ resource }}.py"
+        destination: "{{ networkutils_path }}/facts/{{ resource }}/{{ resource }}.py"
         overwrite: false
       - source: module_utils/network_os/utils/utils.py.j2
-        destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/utils/utils.py"
+        destination: "{{ networkutils_path }}/utils/utils.py"
         overwrite: false
 
 - name: Invoking network base to build argspec and touch common files

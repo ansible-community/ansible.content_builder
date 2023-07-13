@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# {{ copyright }}
+# {{ module_openapi_security__copyright }}
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """
@@ -129,13 +129,13 @@ class ActionModule(ActionBase):
                 search_result = remove_unwanted_key(search_result, remove_from_response)
                 before = search_result
                 diff = verify_want_have_diff(payload, search_result, remove_from_diff_compare)
-            
+
         if diff:
             payload = map_params_to_obj(payload, self.key_transform)
             payload["diff"] = True
             result = conn_request.post(self.api_call_object, self._task.args["state"], data=payload)
         elif not search_result:
-            payload = map_params_to_obj(payload, self.key_transform) 
+            payload = map_params_to_obj(payload, self.key_transform)
             result = conn_request.post(self.api_call_object, self._task.args["state"], data=payload)
         if result.get("changed"):
             search_result = sync_show_params_with_add_params(result["response"], self.key_transform)

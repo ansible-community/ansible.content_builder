@@ -1,12 +1,16 @@
 ---
 - name: Set required facts
   ansible.builtin.set_fact:
+    copyright: "{{ module_network_cli__copyright }}"
+    version_added: "{{ module_network_cli__version_added }}"
+    network_os: "{{ module_network_cli__network_os }}"
+    import_path: "{{ module_network_cli__import_path }}"
     resource: "{{ plugin['resource'] }}"
     rm_documentation: "{{ docstring }}"
 
 - name: Set required template facts
   ansible.builtin.set_fact:
-    resource_module_templates:
+    module_network_cli__resource_module_templates:
       - source: module_directory/network_os/network_os_resource.py.j2
         destination: "{{ parent_directory }}/modules/{{ plugin['name'] }}.py"
         overwrite: true
@@ -41,6 +45,6 @@
 
 - name: Template each of the files
   ansible.builtin.include_tasks: template.yml
-  with_items: "{{ resource_module_templates }}"
+  with_items: "{{ module_network_cli__resource_module_templates }}"
   loop_control:
     loop_var: template

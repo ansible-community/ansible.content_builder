@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - remove unnecessary q import (https://github.com/ansible-community/ansible.content_builder/pull/60).

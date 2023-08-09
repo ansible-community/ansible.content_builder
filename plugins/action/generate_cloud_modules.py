@@ -470,7 +470,9 @@ def gen_mutually_exclusive(schema: Dict) -> List:
     primary_idenfifier = schema.get("primaryIdentifier", [])
     entries: List = []
 
-    _primary_idenfifier = [camel_to_snake(id, alias=False) for id in primary_idenfifier]
+    _primary_idenfifier = [
+        camel_to_snake(id.split("/")[-1], alias=False) for id in primary_idenfifier
+    ]
 
     if len(_primary_idenfifier) > 1:
         entries.append([tuple(_primary_idenfifier), "identifier"])
@@ -480,19 +482,20 @@ def gen_mutually_exclusive(schema: Dict) -> List:
 
 def ensure_all_identifiers_defined(schema: Dict) -> str:
     primary_idenfifier = schema.get("primaryIdentifier", [])
+    _primary_idenfifier = [item.split("/")[-1] for item in primary_idenfifier]
     new_content: str = "if state in ('present', 'absent', 'get', 'describe') and module.params.get('identifier') is None:\n"
     new_content += 8 * " "
     new_content += (
-        f"if not module.params.get('{camel_to_snake(primary_idenfifier[0], alias=False)}')"
+        f"if not module.params.get('{camel_to_snake(_primary_idenfifier[0])}')"
         + " ".join(
             map(
-                lambda x: f" or not module.params.get('{camel_to_snake(x, alias=False)}')",
-                primary_idenfifier[1:],
+                lambda x: f" or not module.params.get('{camel_to_snake(x)}')",
+                _primary_idenfifier[1:],
             )
         )
     )
     new_content += ":\n" + 12 * " "
-    new_content += "module.fail_json(f'You must specify all the {*[camel_to_snake(id, alias=False) for id in identifier], } identifiers.')\n"
+    new_content += f'module.fail_json("You must specify all the {*[camel_to_snake(id) for id in _primary_idenfifier], } identifiers.")\n'
 
     return new_content
 
@@ -522,7 +525,7 @@ def gen_required_if(schema: Union[List, Dict]) -> List:
         states = ["absent", "get"]
 
         _primary_idenfifier = [
-            camel_to_snake(id, alias=False) for id in primary_idenfifier
+            camel_to_snake(id.split("/")[-1], alias=False) for id in primary_idenfifier
         ]
 
         # For compound primary identifiers consisting of multiple resource properties strung together,
@@ -1253,7 +1256,7 @@ def generate_amazon_cloud(args: Iterable, role_path: str):
     meta_dir = pathlib.Path(args.get("target_dir") + "/meta")
     meta_dir.mkdir(parents=True, exist_ok=True)
     yaml_dict = {
-        "requires_ansible": """>=2.12.0""",
+        "requires_ansible": """>=2.13.0""",
         "action_groups": {"aws": []},
         "plugin_routing": {"modules": {}},
     }

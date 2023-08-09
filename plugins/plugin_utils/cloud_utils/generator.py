@@ -141,16 +141,13 @@ class Documentation:
         """Sanitize module's options and replace $ref with the correspoding parameters"""
         dict_copy = copy.copy(options)
         for key in dict_copy.keys():
-            # The 'AWS::RDS::DBInstance' template has a bug for Port option which is classified as
-            # createOnlyProperties, writeOnlyProperties and a readOnlyProperties, but it can be set
-            # and it should not be filtered out from the documentation. This is a temporary workaround.
-            if self.type_name != "AWS::RDS::DBInstance":
-                if (
-                    key in self.read_only_properties
-                    and key not in self.primary_identifier
-                ):
-                    options.pop(key)
-                    continue
+            key_path = f"/properties/{key}"
+            if (
+                key_path in self.read_only_properties
+                and key_path not in self.primary_identifier
+            ):
+                options.pop(key)
+                continue
 
             item = options[key]
 
@@ -231,6 +228,31 @@ class Documentation:
 
             self.cleanup_required(a_dict[k])
 
+    def cleanup_readonly_properties(self):
+        options = copy.deepcopy(self.options)
+
+        def _cleanup_readonly_properties(nested_dict, key_list):
+            if not key_list:
+                return nested_dict
+            key = key_list[0]
+            if key in nested_dict:
+                if len(key_list) == 1:
+                    return nested_dict.pop(key, None)
+                else:
+                    return _cleanup_readonly_properties(
+                        nested_dict[key]["suboptions"], key_list[1:]
+                    )
+            else:
+                return None
+
+        for item in self.read_only_properties:
+            opt = item.split("/")
+            _cleanup_readonly_properties(options, opt[2:])
+            # Remove option entirely if all the suboptions have been removed
+            if options.get(opt[2]) and options.pop(opt[2]).get("suboptions", {}) == {}:
+                options.pop(opt[2])
+        return options
+
     def preprocess(self) -> Iterable:
         list_of_keys_to_remove = [
             "additionalProperties",
@@ -252,9 +274,9 @@ class Documentation:
             "maxProperties",
             "anyOf",
         ]
-
         self.replace_keys(self.options, self.definitions)
         self.cleanup_required(self.options)
+        self.options = self.cleanup_readonly_properties()
         sanitized_options: Iterable = camel_to_snake(
             scrub_keys(self.options, list_of_keys_to_remove)
         )
@@ -301,8 +323,6 @@ def generate_documentation(
     docs = Documentation()
     docs.options = module.schema.get("properties", {})
     docs.definitions = module.schema.get("definitions", {})
-
-    docs.type_name = module.schema.get("typeName")
 
     # Properties defined as required must be specified in the desired state during resource creation
     docs.required = module.schema.get("required", [])

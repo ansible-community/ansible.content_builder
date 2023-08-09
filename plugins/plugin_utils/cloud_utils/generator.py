@@ -141,14 +141,6 @@ class Documentation:
         """Sanitize module's options and replace $ref with the correspoding parameters"""
         dict_copy = copy.copy(options)
         for key in dict_copy.keys():
-            key_path = f"/properties/{key}"
-            if (
-                key_path in self.read_only_properties
-                and key_path not in self.primary_identifier
-            ):
-                options.pop(key)
-                continue
-
             item = options[key]
 
             if isinstance(item, list):

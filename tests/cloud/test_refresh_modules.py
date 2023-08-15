@@ -67,10 +67,14 @@ options:
             be performed on it.
         type: bool
     kms_key_id:
+        aliases:
+        - KmsKeyId
         description:
         - The Amazon Resource Name (ARN) of the CMK to use when encrypting log data.
         type: str
     log_group_name:
+        aliases:
+        - LogGroupName
         description:
         - The name of the log group.
         - If you dont specify a name, AWS CloudFormation generates a unique ID for
@@ -82,6 +86,8 @@ options:
         - Remove tags not listed in I(tags).
         type: bool
     retention_in_days:
+        aliases:
+        - RetentionInDays
         choices:
         - 1
         - 3
@@ -123,6 +129,7 @@ options:
         type: str
     tags:
         aliases:
+        - Tags
         - resource_tags
         description:
         - A dict of tags to apply to the resource.
@@ -161,10 +168,10 @@ extends_documentation_fragment:
 
 def test__generate_argument_spec():
     expected_argument_spec = """
-argument_spec['log_group_name'] = {'type': 'str'}
-argument_spec['kms_key_id'] = {'type': 'str'}
-argument_spec['retention_in_days'] = {'type': 'int', 'choices': [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653]}
-argument_spec['tags'] = {'type': 'dict', 'aliases': ['resource_tags']}
+argument_spec['log_group_name'] = {'type': 'str', 'aliases': ['LogGroupName']}
+argument_spec['kms_key_id'] = {'type': 'str', 'aliases': ['KmsKeyId']}
+argument_spec['retention_in_days'] = {'type': 'int', 'choices': [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653], 'aliases': ['RetentionInDays']}
+argument_spec['tags'] = {'type': 'dict', 'aliases': ['Tags', 'resource_tags']}
 argument_spec['state'] = {'type': 'str', 'choices': ['present', 'absent', 'list', 'describe', 'get'], 'default': 'present'}
 argument_spec['wait'] = {'type': 'bool', 'default': False}
 argument_spec['wait_timeout'] = {'type': 'int', 'default': 320}

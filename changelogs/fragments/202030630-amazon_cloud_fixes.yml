@@ -1,0 +1,5 @@
+bugfixes:
+  - "amazon.cloud - Add the original option name as an alias to avoid issues when snake cased option names are not correctly reversed to CamelCase."
+  - "amazon.cloud - Update cleanup documentation function."
+  - "amazon.cloud - Add some temporary workarounds for 'AWS::RDS::DBInstance' resource."
+  - "amazon.cloud - Use module_openapi_cloud__examples rather than examples in generate_cloud_example.py"

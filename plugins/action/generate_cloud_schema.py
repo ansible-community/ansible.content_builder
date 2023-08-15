@@ -10,10 +10,9 @@ import json
 import yaml
 from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils import (
     generator,
-    utils
+    utils,
 )
 from ansible.plugins.action import ActionBase
-
 
 
 class Schema(TypedDict):
@@ -34,26 +33,10 @@ class Schema(TypedDict):
 def generate_schema(raw_content) -> Dict:
     json_content = json.loads(raw_content)
     schema: Dict[str, Schema] = json_content
-
-    for key, value in schema.items():
-        if key not in ("anyOf", "oneOf"):
-            if isinstance(value, list):
-                elems = []
-                for v in value:
-                    if isinstance(v, list):
-                        elems.extend(
-                            [utils.camel_to_snake(p.split("/")[-1].strip()) for p in v]
-                        )
-                    else:
-                        elems.append(utils.camel_to_snake(v.split("/")[-1].strip()))
-
-                schema[key] = elems
-
     return schema
 
 
 class ActionModule(ActionBase):
-
     def __init__(self, *args, **kwargs):
         super(ActionModule, self).__init__(*args, **kwargs)
         self._validator_name = None
@@ -92,12 +75,18 @@ class ActionModule(ActionBase):
                 type_name = v["resource"]
             print("Collecting Schema")
             print(type_name)
-            cloudformation = generator.CloudFormationWrapper(boto3.client("cloudformation"))
+            cloudformation = generator.CloudFormationWrapper(
+                boto3.client("cloudformation")
+            )
             raw_content = cloudformation.generate_docs(type_name)
             schema = generate_schema(raw_content)
             file_name = re.sub("::", "_", type_name)
             if not pathlib.Path(args.get("api_object_path")).exists():
-                pathlib.Path(args.get("api_object_path")).mkdir(parents=True, exist_ok=True)
-            schema_file = pathlib.Path(args.get("api_object_path") + "/" + file_name + ".json")
+                pathlib.Path(args.get("api_object_path")).mkdir(
+                    parents=True, exist_ok=True
+                )
+            schema_file = pathlib.Path(
+                args.get("api_object_path") + "/" + file_name + ".json"
+            )
             schema_file.write_text(json.dumps(schema, indent=2))
         return self._result

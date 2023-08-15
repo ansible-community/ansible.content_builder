@@ -141,13 +141,6 @@ class Documentation:
         """Sanitize module's options and replace $ref with the correspoding parameters"""
         dict_copy = copy.copy(options)
         for key in dict_copy.keys():
-            if (
-                camel_to_snake(key) in self.read_only_properties
-                and camel_to_snake(key) not in self.primary_identifier
-            ):
-                options.pop(key)
-                continue
-
             item = options[key]
 
             if isinstance(item, list):
@@ -227,6 +220,31 @@ class Documentation:
 
             self.cleanup_required(a_dict[k])
 
+    def cleanup_readonly_properties(self):
+        options = copy.deepcopy(self.options)
+
+        def _cleanup_readonly_properties(nested_dict, key_list):
+            if not key_list:
+                return nested_dict
+            key = key_list[0]
+            if key in nested_dict:
+                if len(key_list) == 1:
+                    return nested_dict.pop(key, None)
+                else:
+                    return _cleanup_readonly_properties(
+                        nested_dict[key]["suboptions"], key_list[1:]
+                    )
+            else:
+                return None
+
+        for item in self.read_only_properties:
+            opt = item.split("/")
+            _cleanup_readonly_properties(options, opt[2:])
+            # Remove option entirely if all the suboptions have been removed
+            if options.get(opt[2]) and options.pop(opt[2]).get("suboptions", {}) == {}:
+                options.pop(opt[2])
+        return options
+
     def preprocess(self) -> Iterable:
         list_of_keys_to_remove = [
             "additionalProperties",
@@ -242,9 +260,15 @@ class Documentation:
             "patternProperties",
             "maxItems",
             "minItems",
+            "$comment",
+            "exclusiveMaximum",
+            "exclusiveMinimum",
+            "maxProperties",
+            "anyOf",
         ]
         self.replace_keys(self.options, self.definitions)
         self.cleanup_required(self.options)
+        self.options = self.cleanup_readonly_properties()
         sanitized_options: Iterable = camel_to_snake(
             scrub_keys(self.options, list_of_keys_to_remove)
         )
@@ -272,7 +296,6 @@ def generate_documentation(
     module: object, added_ins: Dict, next_version: str, target_dir: str
 ) -> Iterable:
     """Format and generate the AnsibleModule documentation"""
-
 
     module_name = module.name
     documentation: Iterable = {
@@ -351,7 +374,8 @@ def generate_documentation(
                 "To remove all tags set I(tags={}) and I(purge_tags=true).",
             ],
             "type": "dict",
-            "aliases": ["resource_tags"],
+            # The first alias must be the one that will be used for the API calls
+            "aliases": ["Tags", "resource_tags"],
         }
         documentation["options"]["purge_tags"] = {
             "description": ["Remove tags not listed in I(tags)."],

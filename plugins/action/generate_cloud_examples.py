@@ -240,7 +240,6 @@ def inject(
 
 
 class ActionModule(ActionBase):
-
     def __init__(self, *args, **kwargs):
         super(ActionModule, self).__init__(*args, **kwargs)
         self._validator_name = None
@@ -270,13 +269,15 @@ class ActionModule(ActionBase):
 
         galaxy_file = args.get("target_dir") + "/galaxy.yml"
         galaxy = yaml.safe_load(Path(galaxy_file).open())
-        vars_file = task_vars['vars']['role_path'] + "/vars/main.yaml"
+        vars_file = task_vars["vars"]["role_path"] + "/vars/main.yaml"
         vars = yaml.safe_load(Path(vars_file).open())
         collection_name = f"{galaxy['namespace']}.{galaxy['name']}"
         tasks = []
         test_scenarios_dirs = [
             Path(args.get("target_dir")) / Path(i)
-            for i in vars["examples"][collection_name]["load_from"]
+            for i in vars["module_openapi_cloud__examples"][collection_name][
+                "load_from"
+            ]
         ]
         for scenario_dir in test_scenarios_dirs:
             if not scenario_dir.is_dir():
@@ -289,8 +290,12 @@ class ActionModule(ActionBase):
         extracted_examples = extract(
             tasks,
             collection_name,
-            dont_look_up_vars=vars["examples"][collection_name]["dont_look_up_vars"],
-            task_selector=vars["examples"][collection_name]["task_selector"],
+            dont_look_up_vars=vars["module_openapi_cloud__examples"][collection_name][
+                "dont_look_up_vars"
+            ],
+            task_selector=vars["module_openapi_cloud__examples"][collection_name][
+                "task_selector"
+            ],
         )
         inject(Path(args.get("target_dir")), extracted_examples)
         return self._result

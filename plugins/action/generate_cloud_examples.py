@@ -276,7 +276,7 @@ class ActionModule(ActionBase):
         tasks = []
         test_scenarios_dirs = [
             Path(args.get("target_dir")) / Path(i)
-            for i in vars["examples"][collection_name]["load_from"]
+            for i in vars["module_openapi_cloud__examples"][collection_name]["load_from"]
         ]
         for scenario_dir in test_scenarios_dirs:
             if not scenario_dir.is_dir():
@@ -289,8 +289,8 @@ class ActionModule(ActionBase):
         extracted_examples = extract(
             tasks,
             collection_name,
-            dont_look_up_vars=vars["examples"][collection_name]["dont_look_up_vars"],
-            task_selector=vars["examples"][collection_name]["task_selector"],
+            dont_look_up_vars=vars["module_openapi_cloud__examples"][collection_name]["dont_look_up_vars"],
+            task_selector=vars["module_openapi_cloud__examples"][collection_name]["task_selector"],
         )
         inject(Path(args.get("target_dir")), extracted_examples)
         return self._result

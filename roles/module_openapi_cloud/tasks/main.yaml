@@ -31,8 +31,8 @@
       - ( plugin['action'] == 'generate_ignore_files' ) or ( plugin['action'] == 'generate_all' )
       - plugin['name'] == 'vmware_rest'
 
-- name: Use autoflake to remove unused vars
-  ansible.builtin.command: "autoflake --in-place --remove-unused-variables -r {{ collection['path'] }}"
+- name: Use autoflake to remove unused imports
+  ansible.builtin.command: "autoflake --in-place --remove-all-unused-imports  -r {{ collection['path'] }}"
   delegate_to: 127.0.0.1
   run_once: true
   changed_when: false

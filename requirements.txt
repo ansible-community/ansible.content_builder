@@ -6,3 +6,4 @@ oyaml
 boto3
 baron
 redbaron
+autoflake

@@ -9,7 +9,7 @@ Tested with ansible-core 2.13 releases and the current development version of an
 ## Installation
 
 ```
-pip install black==22.3.0 jsonschema jinja2==3.0.3 ansible-core
+pip install black==22.3.0 autoflake jsonschema jinja2==3.0.3 ansible-core
 ansible-galaxy collection install git+https://github.com/ansible-community/ansible.content_builder.git
 ```
 

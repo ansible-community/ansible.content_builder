@@ -1,0 +1,2 @@
+minor_changes:
+  - "Adds a task to the module_openapi_cloud role to remove unused imports from the generated module."

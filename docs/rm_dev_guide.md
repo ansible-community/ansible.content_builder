@@ -19,7 +19,7 @@ Once the above repo is cloned, go to the desired collection and add your model t
 At first, we would need a builder for our whole code base to get scaffolded from a tool - `content_builder`
 
 ```
-pip install black jsonschema jinja2==3.0.3 ansible-core
+pip install black autoflake jsonschema jinja2==3.0.3 ansible-core
 ansible-galaxy collection install git+https://github.com/ansible-community/ansible.content_builder.git
 ```
 

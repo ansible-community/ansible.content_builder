@@ -319,7 +319,7 @@ def gen_documentation(
             option["choices"] = sorted(parameter["enum"])
         if parameter["type"] == "array":
             option["elements"] = python_type(parameter["elements"])
-        if parameter.get("default"):
+        if parameter.get("default") is not None:
             option["default"] = parameter.get("default")
 
         documentation["options"][normalized_name] = option
@@ -402,10 +402,7 @@ def gen_arguments_py(parameters: List, list_index=None) -> str:
             _elements = python_type(parameter["elements"])
             values.append(f"'elements': '{_elements}'")
 
-        # "bus" option defaulting on 0
-        if name == "bus":
-            values.append("'default': 0")
-        elif "default" in parameter:
+        if "default" in parameter:
             default = parameter["default"]
             values.append(f"'default': '{default}'")
 

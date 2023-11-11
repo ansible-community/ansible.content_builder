@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Fix generating module documentation when default evaluates to False (https://github.com/ansible-community/ansible.content_builder/issues/69).

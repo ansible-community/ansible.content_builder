@@ -170,6 +170,9 @@ class Description:
             "VirtualMachine": "vcenter_vm_info",
             "infraprofile.profile": "appliance_infraprofile_configs",
             "appliance.vmon.Service": "appliance_vmon_service",
+            "appliance.monitoring": "appliance_monitoring_info",
+            "appliance.networking.interfaces": "appliance_networking_interfaces_info",
+            "appliance.services": "appliance_services_info",
         }
 
         if not m:

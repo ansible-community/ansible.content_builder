@@ -211,7 +211,7 @@ def gen_documentation(
         "author": ["Ansible Cloud Team (@ansible-collections)"],
         "description": description,
         "module": name,
-        "notes": ["Tested on vSphere 7.0.2"],
+        "notes": ["Tested on vSphere 7.0.3"],
         "options": {
             "vcenter_hostname": {
                 "description": [
@@ -265,7 +265,7 @@ def gen_documentation(
                 "version_added": "2.1.0",
             },
         },
-        "requirements": ["vSphere 7.0.2 or greater", "python >= 3.6", "aiohttp"],
+        "requirements": ["vSphere 7.0.3 or greater", "python >= 3.6", "aiohttp"],
         "short_description": short_description,
         "version_added": next_version,
     }

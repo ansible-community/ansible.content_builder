@@ -1325,6 +1325,22 @@ def generate_vmware_rest(args: Iterable, role_path: str):
                     role_path=role_path
                 )
                 module_list.append(module.name)
+
+    meta_dir = pathlib.Path(args.get("target_dir") + "/meta")
+    meta_dir.mkdir(parents=True, exist_ok=True)
+
+    yaml_dict = {
+        "requires_ansible": """>=2.14.0""",
+        "action_groups": {"vmware_rest": []},
+    }
+
+    for m in module_list:
+        yaml_dict["action_groups"]["vmware_rest"].append(m)
+
+    runtime_file = meta_dir / "runtime.yml"
+    with open(runtime_file, "w") as file:
+        yaml.safe_dump(yaml_dict, file, sort_keys=False)
+
     return
 
 

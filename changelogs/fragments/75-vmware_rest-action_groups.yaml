@@ -1,0 +1,2 @@
+minor_changes:
+  - "Generate action_groups for the vmware.vmware_rest collection (https://github.com/ansible-community/ansible.content_builder/issues/75)."

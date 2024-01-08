@@ -218,6 +218,7 @@ collection:
   path: /collections/ansible_collections/vmware/vmware_rest
   namespace: vmware
   name: vmware_rest
+  requires_ansible: 2.14.0
 plugins:
   - type: module_openapi
     name: "vmware_rest"

@@ -1330,7 +1330,7 @@ def generate_vmware_rest(args: Iterable, role_path: str):
     meta_dir.mkdir(parents=True, exist_ok=True)
 
     yaml_dict = {
-        "requires_ansible": """>=2.14.0""",
+        "requires_ansible": (">=%s") % args.get("requires_ansible"),
         "action_groups": {"vmware_rest": []},
     }
 

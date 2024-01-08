@@ -21,7 +21,17 @@
                 "path",
                 "namespace",
                 "name"
-            ]
+            ],
+            "if": {
+                "properties": {
+                    "name": {
+                        "const": "vmware_rest"
+                    }
+                }
+            },
+            "then": {
+                "required": ["requires_ansible"]
+            }
         },
         "license_file": {
             "type": "string"

@@ -15,6 +15,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "requires_ansible": {
+                    "type": "string"
                 }
             },
             "required": [

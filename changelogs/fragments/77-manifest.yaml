@@ -1,0 +1,2 @@
+minor_changes:
+  - "Add requires_ansible to manifest (https://github.com/ansible-community/ansible.content_builder/pull/77)."

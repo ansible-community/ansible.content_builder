@@ -30,6 +30,11 @@
                 }
             },
             "then": {
+                "properties": {
+                    "requires_ansible": {
+                        "type": "string"
+                    }
+                },
                 "required": ["requires_ansible"]
             }
         },

@@ -72,5 +72,5 @@ def test_generate_documentation():
 
 
 def test_generate_runtime_yml():
-    runtime_yml = g.generate_runtime_yml("1.2.3", ["foo", "bar"])
-    assert runtime_yml == {"requires_ansible": ">=1.2.3", "action_groups": ["foo", "bar"]}
+    runtime_yml = g.generate_runtime_yml("1.2.3", "test", ["foo", "bar"])
+    assert runtime_yml == {"requires_ansible": ">=1.2.3", "action_groups": {"test": ["foo", "bar"]}}

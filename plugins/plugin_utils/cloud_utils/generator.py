@@ -268,14 +268,14 @@ class Documentation:
         return sanitized_options
 
 
-def generate_runtime_yml(requires_ansible, module_list):
+def generate_runtime_yml(requires_ansible, collection, module_list):
     yaml_dict = {
         "requires_ansible": (">=%s") % requires_ansible,
-        "action_groups": {"vmware_rest": []},
+        "action_groups": {collection: []},
     }
 
     for m in module_list:
-        yaml_dict["action_groups"]["vmware_rest"].append(m)
+        yaml_dict["action_groups"][collection].append(m)
 
     return yaml_dict
 

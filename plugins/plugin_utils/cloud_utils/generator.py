@@ -268,6 +268,18 @@ class Documentation:
         return sanitized_options
 
 
+def generate_runtime_yml(requires_ansible, module_list):
+    yaml_dict = {
+        "requires_ansible": (">=%s") % requires_ansible,
+        "action_groups": {"vmware_rest": []},
+    }
+
+    for m in module_list:
+        yaml_dict["action_groups"]["vmware_rest"].append(m)
+
+    return yaml_dict
+
+
 def generate_documentation(
     module: object, added_ins: Dict, next_version: str, target_dir: str
 ) -> Iterable:

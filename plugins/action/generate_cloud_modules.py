@@ -33,6 +33,7 @@ from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_util
     python_type,
     camel_to_snake,
     ignore_description,
+    generate_runtime_yml,
 )
 # import for amazon.cloud doc generation
 from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.generator import generate_documentation
@@ -1326,20 +1327,12 @@ def generate_vmware_rest(args: Iterable, role_path: str):
                 )
                 module_list.append(module.name)
 
+    runtime_yml = generate_runtime_yml(args.get("requires_ansible"), module_list)
     meta_dir = pathlib.Path(args.get("target_dir") + "/meta")
     meta_dir.mkdir(parents=True, exist_ok=True)
-
-    yaml_dict = {
-        "requires_ansible": (">=%s") % args.get("requires_ansible"),
-        "action_groups": {"vmware_rest": []},
-    }
-
-    for m in module_list:
-        yaml_dict["action_groups"]["vmware_rest"].append(m)
-
     runtime_file = meta_dir / "runtime.yml"
     with open(runtime_file, "w") as file:
-        yaml.safe_dump(yaml_dict, file, sort_keys=False)
+        yaml.safe_dump(runtime_yml, file, sort_keys=False)
 
     return
 

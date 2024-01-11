@@ -36,6 +36,8 @@ from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_util
 )
 # import for amazon.cloud doc generation
 from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.generator import generate_documentation
+# import for vmware.vware_rest runtime.yml generation
+from ansible_collections.ansible.content_builder.plugins.plugin_utils.cloud_utils.generator import generate_runtime_yml
 
 
 # vmware specific
@@ -1325,6 +1327,15 @@ def generate_vmware_rest(args: Iterable, role_path: str):
                     role_path=role_path
                 )
                 module_list.append(module.name)
+
+    print("Generating meta/runtime.yml")
+    runtime_yml = generate_runtime_yml(args.get("requires_ansible"), "vmware_rest", module_list)
+    meta_dir = pathlib.Path(args.get("target_dir") + "/meta")
+    meta_dir.mkdir(parents=True, exist_ok=True)
+    runtime_file = meta_dir / "runtime.yml"
+    with open(runtime_file, "w") as file:
+        yaml.safe_dump(runtime_yml, file, sort_keys=False)
+
     return
 
 

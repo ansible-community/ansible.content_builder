@@ -69,3 +69,8 @@ def test_generate_documentation():
         Path("tests/cloud/fixtures"),
     )
     assert documentation == expected_content
+
+
+def test_generate_runtime_yml():
+    runtime_yml = g.generate_runtime_yml("1.2.3", "test", ["foo", "bar"])
+    assert runtime_yml == {"requires_ansible": ">=1.2.3", "action_groups": {"test": ["foo", "bar"]}}

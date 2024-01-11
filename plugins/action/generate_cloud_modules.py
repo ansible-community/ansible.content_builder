@@ -1328,6 +1328,7 @@ def generate_vmware_rest(args: Iterable, role_path: str):
                 )
                 module_list.append(module.name)
 
+    print("Generating meta/runtime.yml")
     runtime_yml = generate_runtime_yml(args.get("requires_ansible"), "vmware_rest", module_list)
     meta_dir = pathlib.Path(args.get("target_dir") + "/meta")
     meta_dir.mkdir(parents=True, exist_ok=True)

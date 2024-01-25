@@ -81,12 +81,15 @@ async def _{{ operation }}(params, session):
     comp_func = None
 
     async def lookup_with_filters(params, session, url):
-        # e.g: for the datacenter resources
+        search_filter = ''
+        {% if name in ["vcenter_host", "vcenter_datacenter"] %}
         if "folder" not in params:
             return
+        search_filter = f"&folders={params.get['folder']}"
+        {% endif %}
         if "name" not in params:
             return
-        async with session.get(f"{url}?names={params['name']}&folders={params['folder']}") as resp:
+        async with session.get(f"{url}?names={params['name']}{search_filter}") as resp:
             _json = await resp.json()
             if isinstance(_json, list) and len(_json) == 1:
                 return await get_device_info(session, url, _json[0]["{{list_index}}"])

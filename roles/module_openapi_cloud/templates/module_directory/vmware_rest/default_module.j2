@@ -85,7 +85,7 @@ async def _{{ operation }}(params, session):
         {% if name in ["vcenter_host", "vcenter_datacenter"] %}
         if "folder" not in params:
             return
-        search_filter = f"&folders={params.get['folder']}"
+        search_filter = f"&folders={params.get('folder')}"
         {% endif %}
         if "name" not in params:
             return

@@ -1,0 +1,2 @@
+minor_changes:
+  - "Fix for use folder attribute for host and dc module only"

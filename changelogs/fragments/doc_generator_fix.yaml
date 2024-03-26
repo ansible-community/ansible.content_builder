@@ -1,5 +1,0 @@
----
-bugfixes:
-  - To fix the doc_generator issue for secbuity RM builder using OpenAPI JSON file.
-  - https://github.com/ansible-community/ansible.content_builder/issues/28
-  - https://github.com/ansible-community/ansible.content_builder/issues/29

@@ -1,3 +1,0 @@
----
-minor_changes:
-  - generate_cloud_modules should keep entries for files not part of plugins/* when generating tests/sanity/ignore-*.txt files.

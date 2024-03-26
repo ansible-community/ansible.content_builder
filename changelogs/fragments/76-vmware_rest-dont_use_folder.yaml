@@ -1,2 +1,0 @@
-minor_changes:
-  - "Use folder attribute for host and dc module only (https://github.com/ansible-community/ansible.content_builder/pull/79)."

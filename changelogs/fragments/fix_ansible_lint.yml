@@ -1,4 +1,0 @@
-trivial:
-  - "Rename changelogs/fragments/galaxy.yml to changelogs/fragments/fix_galaxy.yml."
-  - "Add meta/runtime.yml."
-  - "Add tags into galaxy."

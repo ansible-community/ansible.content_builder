@@ -1,4 +1,0 @@
----
-minor_changes:
-  - "vmware.vmware_rest - Fix incorrectly sorted imports (https://github.com/ansible-community/ansible.content_builder/pull/74)."
-  - "vmware.vmware_rest - Add new resource mappings (https://github.com/ansible-community/ansible.content_builder/pull/74)."

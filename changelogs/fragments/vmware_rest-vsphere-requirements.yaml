@@ -1,2 +1,0 @@
-minor_changes:
-  - "Update the vSphere requirements for generated vmware.vmware_rest modules (https://github.com/ansible-community/ansible.content_builder/pull/73)."

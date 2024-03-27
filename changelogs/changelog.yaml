@@ -3,69 +3,69 @@ releases:
   1.0.0:
     changes:
       bugfixes:
-      - Change galaxy.yaml to galaxy.yaml
-      - Do not fail if plugin content type is undefined.
-      - To fix the doc_generator issue for secbuity RM builder using OpenAPI JSON
-        file.
-      - Updates for roles.
-      - https://github.com/ansible-community/ansible.content_builder/issues/28
-      - https://github.com/ansible-community/ansible.content_builder/issues/29
-      - remove unnecessary q import (https://github.com/ansible-community/ansible.content_builder/pull/60).
+        - Change galaxy.yaml to galaxy.yaml
+        - Do not fail if plugin content type is undefined.
+        - To fix the doc_generator issue for secbuity RM builder using OpenAPI JSON
+          file.
+        - Updates for roles.
+        - https://github.com/ansible-community/ansible.content_builder/issues/28
+        - https://github.com/ansible-community/ansible.content_builder/issues/29
+        - remove unnecessary q import (https://github.com/ansible-community/ansible.content_builder/pull/60).
       doc_changes:
-      - Add dependency installation in README.
-      - Add resource module development doc.
-      - Minor updates to the README.
+        - Add dependency installation in README.
+        - Add resource module development doc.
+        - Minor updates to the README.
       minor_changes:
-      - Add requires_ansible to manifest (https://github.com/ansible-community/ansible.content_builder/pull/76).
-      - Add support for RM generating scaffolding tool using OpenApi based swagger
-        JSON file
-      - Adds a task to the module_openapi_cloud role to remove unused imports from
-        the generated module.
-      - Apply the latest changes needed for amazon.cloud 0.3.0 release.
-      - Change variable names that are used in the plugin files to match the ones
-        in vars file.
-      - Fix for use folder attribute for host and dc module only
-      - Generate action_groups for the vmware.vmware_rest collection (https://github.com/ansible-community/ansible.content_builder/issues/75).
-      - Get cloud formation resource type from modules.yaml.
-      - Integrate cloud content generator with content_builder (https://github.com/ansible-community/ansible.content_builder/pull/43).
-      - Update netconf supported network_module template.
-      - Update the vSphere requirements for generated vmware.vmware_rest modules (https://github.com/ansible-community/ansible.content_builder/pull/73).
-      - Use folder attribute for host and dc module only (https://github.com/ansible-community/ansible.content_builder/pull/79).
-      - generate_cloud_modules should keep entries for files not part of ``plugins/*``
-        when generating ``tests/sanity/ignore-*.txt`` files.
-      - vmware.vmware_rest - Add new resource mappings (https://github.com/ansible-community/ansible.content_builder/pull/74).
-      - vmware.vmware_rest - Fix incorrectly sorted imports (https://github.com/ansible-community/ansible.content_builder/pull/74).
+        - Add requires_ansible to manifest (https://github.com/ansible-community/ansible.content_builder/pull/76).
+        - Add support for RM generating scaffolding tool using OpenApi based swagger
+          JSON file
+        - Adds a task to the module_openapi_cloud role to remove unused imports from
+          the generated module.
+        - Apply the latest changes needed for amazon.cloud 0.3.0 release.
+        - Change variable names that are used in the plugin files to match the ones
+          in vars file.
+        - Fix for use folder attribute for host and dc module only
+        - Generate action_groups for the vmware.vmware_rest collection (https://github.com/ansible-community/ansible.content_builder/issues/75).
+        - Get cloud formation resource type from modules.yaml.
+        - Integrate cloud content generator with content_builder (https://github.com/ansible-community/ansible.content_builder/pull/43).
+        - Update netconf supported network_module template.
+        - Update the vSphere requirements for generated vmware.vmware_rest modules (https://github.com/ansible-community/ansible.content_builder/pull/73).
+        - Use folder attribute for host and dc module only (https://github.com/ansible-community/ansible.content_builder/pull/79).
+        - generate_cloud_modules should keep entries for files not part of ``plugins/*``
+          when generating ``tests/sanity/ignore-*.txt`` files.
+        - vmware.vmware_rest - Add new resource mappings (https://github.com/ansible-community/ansible.content_builder/pull/74).
+        - vmware.vmware_rest - Fix incorrectly sorted imports (https://github.com/ansible-community/ansible.content_builder/pull/74).
       release_summary: Release 1.0.0 with content generation roles
     fragments:
-    - 20231122-fix-vmware_rest-building.yaml
-    - 60-remove-q.yml
-    - 61-multiple-fixes.yml
-    - 75-vmware_rest-action_groups.yaml
-    - 76-vmware_rest-dont_use_folder.yaml
-    - 77-vmware_rest-dont_use_folder.yaml
-    - add_autoflake.yaml
-    - add_rm_doc.yaml
-    - cleanup.yaml
-    - cloud_content_generation.yaml
-    - cloud_content_resource_type_input.yaml
-    - doc_generator_fix.yaml
-    - facts.yaml
-    - fix_ansible_lint.yml
-    - fix_galaxy.yml
-    - fix_jinja2_version.yaml
-    - module_network_netconf_template_update.yaml
-    - readme.yaml
-    - release_1_0_0.yml
-    - rename.yaml
-    - return_block_vmware.yaml
-    - rm_scaffolding_using_openapi_json.yaml
-    - role_vars_name_reference_fix.yaml
-    - traceback.yaml
-    - update_header_amazon_and_vmware.yml
-    - update_latest_amazon_cloud_release.yml
-    - updates.yaml
-    - updates1.yaml
-    - updates_readme.yaml
-    - vmware_rest-vsphere-requirements.yaml
-    - wording.yaml
-    release_date: '2024-03-26'
+      - 20231122-fix-vmware_rest-building.yaml
+      - 60-remove-q.yml
+      - 61-multiple-fixes.yml
+      - 75-vmware_rest-action_groups.yaml
+      - 76-vmware_rest-dont_use_folder.yaml
+      - 77-vmware_rest-dont_use_folder.yaml
+      - add_autoflake.yaml
+      - add_rm_doc.yaml
+      - cleanup.yaml
+      - cloud_content_generation.yaml
+      - cloud_content_resource_type_input.yaml
+      - doc_generator_fix.yaml
+      - facts.yaml
+      - fix_ansible_lint.yml
+      - fix_galaxy.yml
+      - fix_jinja2_version.yaml
+      - module_network_netconf_template_update.yaml
+      - readme.yaml
+      - release_1_0_0.yml
+      - rename.yaml
+      - return_block_vmware.yaml
+      - rm_scaffolding_using_openapi_json.yaml
+      - role_vars_name_reference_fix.yaml
+      - traceback.yaml
+      - update_header_amazon_and_vmware.yml
+      - update_latest_amazon_cloud_release.yml
+      - updates.yaml
+      - updates1.yaml
+      - updates_readme.yaml
+      - vmware_rest-vsphere-requirements.yaml
+      - wording.yaml
+    release_date: "2024-03-26"

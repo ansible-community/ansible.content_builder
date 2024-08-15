@@ -681,6 +681,7 @@ class AnsibleModuleBaseVmware(UtilsBase):
         self.resource = resource
         self.definitions = definitions
         self.name = resource.name
+        self.next_version = "1.0.0"
         self.default_operationIds = set(list(self.resource.operations.keys())) - set(
             ["get", "list"]
         )
@@ -1016,7 +1017,7 @@ class AnsibleModuleBaseVmware(UtilsBase):
 
         return list_path
 
-    def renderer(self, target_dir: str, module_dir: str, next_version: str, role_path: str):
+    def renderer(self, target_dir: str, module_dir: str, role_path: str):
 
         added_ins = {}  # get_module_added_ins(self.name, git_dir=target_dir / ".git")
         arguments = gen_arguments_py(self.parameters(), self.list_index())
@@ -1026,7 +1027,7 @@ class AnsibleModuleBaseVmware(UtilsBase):
                 self.description(),
                 self.parameters(),
                 added_ins,
-                next_version,
+                self.next_version,
                 module_dir,
             )
         )
@@ -1748,7 +1749,6 @@ def generate_vmware_rest(args: Iterable, role_path: str):
                     module.renderer(
                         target_dir=args.get("target_dir"),
                         module_dir=args.get("modules"),
-                        next_version=args.get("next_version"),
                         role_path=role_path
                     )
                     module_list.append(module.name)
@@ -1763,7 +1763,6 @@ def generate_vmware_rest(args: Iterable, role_path: str):
                     module.renderer(
                         target_dir=args.get("target_dir"),
                         module_dir=args.get("modules"),
-                        next_version=args.get("next_version"),
                         role_path=role_path,
                     )
                     module_list.append(module.name)
@@ -1776,7 +1775,6 @@ def generate_vmware_rest(args: Iterable, role_path: str):
                 module.renderer(
                     target_dir=args.get("target_dir"),
                     module_dir=args.get("modules"),
-                    next_version=args.get("next_version"),
                     role_path=role_path
                 )
                 module_list.append(module.name)

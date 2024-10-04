@@ -337,6 +337,134 @@ def gen_documentation(
     return documentation
 
 
+def gen_cisco_intersight_documentation(
+    name: str,
+    description: str,
+    parameters: List,
+    added_ins: Dict,
+    next_version: str,
+    target_dir: str,
+) -> Dict:
+
+    short_description = description.split(". ")[0]
+    documentation = {
+        "author": ["Ansible Cloud Team (@ansible-collections)"],
+        "description": description,
+        "module": name,
+        "options": {
+            "api_private_key": {
+                "description": [
+                    "Filename (absolute path) or string of PEM formatted private key data to be used for Intersight API authentication.",
+                    "If a string is used, Ansible vault should be used to encrypt string data.",
+                    "Ex. ansible-vault encrypt_string --vault-id tme@/Users/dsoper/Documents/vault_password_file -----BEGIN EC PRIVATE KEY-----",
+                    "    <your private key data>",
+                    "    -----END EC PRIVATE KEY-----",
+                    "If not set, the value of the INTERSIGHT_API_PRIVATE_KEY environment variable is used."
+                ],
+                "type": "path",
+                "required": True,
+            },
+            "api_uri": {
+                "description": [
+                    "URI used to access the Intersight API.",
+                    "If not set, the value of the INTERSIGHT_API_URI environment variable is used."
+                ],
+                "type": "str",
+                "default": "https://intersight.com/api/v1"
+            },
+            "api_key_id": {
+                "description": [
+                    "Public API Key ID associated with the private key.",
+                    "If not set, the value of the INTERSIGHT_API_KEY_ID environment variable is used."
+                ],
+                "type": "str",
+                "required": True
+            },
+            "validate_certs": {
+                "description": [
+                    "Boolean control for verifying the api_uri TLS certificate"
+                ],
+                "type": "bool",
+                "default": True
+            },
+            "use_proxy": {
+                "description": [
+                    "If C(no), it will not use a proxy, even if one is defined in an environment variable on the target hosts."
+                ],
+                "type": "bool",
+                "default": True
+            },
+        },
+        "requirements": ["python >= 3.9"],
+        "short_description": short_description,
+        "version_added": next_version,
+    }
+
+    # Note: this series of if block is overcomplicated and should
+    # be refactorized.
+    for parameter in parameters:
+        if parameter["name"] == "action":
+            continue
+        normalized_name = normalize_parameter_name(parameter["name"])
+        description = []
+        option = {}
+        if parameter.get("required"):
+            option["required"] = True
+        if parameter.get("aliases"):
+            option["aliases"] = parameter.get("aliases")
+        if parameter.get("description"):
+            description.append(parameter["description"])
+        if parameter.get("subkeys"):
+            description.append("Valid attributes are:")
+            for sub_k, sub_v in parameter.get("subkeys").items():
+                sub_v["type"] = python_type(sub_v["type"])
+                states = sorted(set([ansible_state(o) for o in sub_v["_operationIds"]]))
+                required_with_operations = sorted(
+                    set([ansible_state(o) for o in sub_v["_required_with_operations"]])
+                )
+                description.append(
+                    " - C({name}) ({type}): {description} ({states})".format(
+                        **sub_v, states=states
+                    )
+                )
+                if required_with_operations:
+                    description.append(
+                        f"   This key is required with {required_with_operations}."
+                    )
+                if "enum" in sub_v:
+                    description.append("   - Accepted values:")
+                    for i in sorted(sub_v["enum"]):
+                        description.append(f"     - {i}")
+                if "properties" in sub_v:
+                    description.append("   - Accepted keys:")
+                    for i, v in sub_v["properties"].items():
+                        description.append(
+                            f"     - {i} ({v['type']}): {v['description']}"
+                        )
+                        if v.get("enum"):
+                            description.append("Accepted value for this field:")
+                            for val in sorted(v.get("enum")):
+                                description.append(f"       - C({val})")
+
+        option["description"] = list(Description.normalize(description))
+        option["type"] = python_type(parameter["type"])
+        if "enum" in parameter:
+            option["choices"] = sorted(parameter["enum"])
+        if parameter["type"] == "array":
+            option["elements"] = python_type(parameter["elements"])
+        if parameter.get("default"):
+            option["default"] = parameter.get("default")
+
+        documentation["options"][normalized_name] = option
+        parameter["added_in"] = next_version
+
+    module_from_config = get_module_from_config(name, target_dir)
+    if module_from_config and "documentation" in module_from_config:
+        for k, v in module_from_config["documentation"].items():
+            documentation[k] = v
+    return documentation
+
+
 def path_to_name(path: str) -> str:
     _path = path.lstrip("/").split("?")[0]
     elements = []
@@ -974,6 +1102,383 @@ class AnsibleModuleBaseVmware(UtilsBase):
         self.write_module(target_dir, content)
 
 
+class AnsibleModuleBaseCiscoIntersight(UtilsBase):
+    template_file = "default_module.j2"
+
+    def __init__(self, resource: str, definitions: any):
+        self.resource = resource
+        self.definitions = definitions
+        self.name = resource.name
+        self.default_operationIds = set(list(self.resource.operations.keys())) - set(
+            ["get", "list"]
+        )
+
+    def description(self) -> str:
+        prefered_operationId = ["get", "list", "create", "get", "set"]
+        for operationId in prefered_operationId:
+            if operationId not in self.default_operationIds:
+                continue
+            if operationId in self.resource.summary:
+                return self.resource.summary[operationId].split("\n")[0]
+
+        for operationId in sorted(self.default_operationIds):
+            if operationId in self.resource.summary:
+                return self.resource.summary[operationId].split("\n")[0]
+
+        print(f"generic description: {self.name}")
+        return f"Handle resource of type {self.name}"
+
+    def get_path(self) -> str:
+        return list(self.resource.operations.values())[0][1]
+
+    def list_index(self) -> any:
+        for i in ["get", "update", "delete"]:
+            if i not in self.resource.operations:
+                continue
+            path = self.resource.operations[i][1]
+            break
+        else:
+            return
+
+        m = re.search(r"{([-\w]+)}$", path)
+        if m:
+            return m.group(1)
+
+    def payload(self) -> Dict:
+        """ "Return a structure that describe the format of the data to send back."""
+        payload = {}
+        # for operationId in self.resource.operations:
+        for operationId in self.default_operationIds:
+            if operationId not in self.resource.operations:
+                continue
+            payload[operationId] = {"query": {}, "body": {}, "path": {}, "header": {}}
+            payload_info = {}
+            for parameter in AnsibleModuleBaseCiscoIntersight._property_to_parameter(
+                self.resource.operations[operationId][2], self.definitions, operationId
+            ):
+                _in = parameter["in"] or "body"
+
+                payload_info = parameter["_loc_in_payload"]
+                payload[operationId][_in][parameter["name"]] = payload_info
+        return payload
+
+    def answer(self) -> any:
+        # This is arguably not super elegant. The list outputs just include a summary of the resources,
+        # with this little transformation, we get access to the full item
+        output_format = None
+        for i in ["list", "get"]:
+            if i in self.resource.operations:
+                output_format = self.resource.operations[i][3]["200"]
+        if not output_format:
+            return
+
+        if "items" in output_format["schema"]:
+            ref = (
+                output_format["schema"]["items"]
+                .get("$ref", "")
+                .replace("Summary", "Info")
+            )
+        elif "schema" in output_format:
+            ref = output_format["schema"].get("$ref")
+        else:
+            ref = output_format.get("$ref")
+
+        if not ref:
+            return
+        try:
+            raw_answer = flatten_ref({"$ref": ref}, self.definitions)
+        except KeyError:
+            return
+        if "properties" in raw_answer:
+            return raw_answer["properties"].keys()
+
+    def parameters(self) -> Iterable:
+        def sort_operationsid(input: Iterable) -> Iterable:
+            output = sorted(input)
+            if "create" in output:
+                output = ["create"] + output
+            return output
+
+        results = {}
+        for operationId in sort_operationsid(self.default_operationIds):
+            if operationId not in self.resource.operations:
+                continue
+
+            for parameter in AnsibleModuleBaseCiscoIntersight._property_to_parameter(
+                self.resource.operations[operationId][2], self.definitions, operationId
+            ):
+                name = parameter["name"]
+                if name not in results:
+                    results[name] = parameter
+                    results[name]["operationIds"] = []
+                    results[name]["_required_with_operations"] = []
+
+                # Merging two parameters, for instance "action" in
+                # /rest/vcenter/vm-template/library-items/{template_library_item}/check-outs
+                # and
+                # /rest/vcenter/vm-template/library-items/{template_library_item}/check-outs/{vm}
+                if "description" not in parameter:
+                    pass
+                elif "description" not in results[name]:
+                    results[name]["description"] = parameter.get("description")
+                elif results[name]["description"] != parameter.get("description"):
+                    # We can hardly merge two description strings and
+                    # get magically something meaningful
+                    if len(parameter["description"]) > len(
+                        results[name]["description"]
+                    ):
+                        results[name]["description"] = parameter["description"]
+                if "enum" in parameter:
+                    results[name]["enum"] += parameter["enum"]
+                    results[name]["enum"] = sorted(set(results[name]["enum"]))
+
+                results[name]["operationIds"].append(operationId)
+                results[name]["operationIds"].sort()
+                if "subkeys" in parameter:
+                    if "subkeys" not in results[name]:
+                        results[name]["subkeys"] = {}
+                    for sub_k, sub_v in parameter["subkeys"].items():
+                        if sub_k in results[name]["subkeys"]:
+                            results[name]["subkeys"][sub_k][
+                                "_required_with_operations"
+                            ] += sub_v["_required_with_operations"]
+                            results[name]["subkeys"][sub_k]["_operationIds"] += sub_v[
+                                "_operationIds"
+                            ]
+                            results[name]["subkeys"][sub_k]["description"] = sub_v[
+                                "description"
+                            ]
+                        else:
+                            results[name]["subkeys"][sub_k] = sub_v
+
+                if parameter.get("required"):
+                    results[name]["_required_with_operations"].append(operationId)
+
+        answer_fields = self.answer()
+        # Note: If the final result comes with a "label" field, we expose a "label"
+        # parameter. We will use the field to identify an existing resource.
+        if answer_fields and "label" in answer_fields:
+            results["label"] = {
+                "type": "str",
+                "name": "label",
+                "description": "The name of the item",
+            }
+
+        for name, result in results.items():
+            if result.get("enum"):
+                result["enum"] = sorted(set(result["enum"]))
+            if result.get("required"):
+                if (
+                    len(set(self.default_operationIds) - set(result["operationIds"]))
+                    > 0
+                ):
+
+                    required_with = []
+                    for i in result["operationIds"]:
+                        state = ansible_state(i, self.default_operationIds)
+                        if state:
+                            required_with.append(state)
+                    result["description"] += " Required with I(state={})".format(
+                        sorted(set(required_with))
+                    )
+                    del result["required"]
+                else:
+                    result["description"] += " This parameter is mandatory."
+
+        states = []
+        for operation in sorted(list(self.default_operationIds)):
+            if operation in ["create", "update"]:
+                states.append("present")
+            elif operation == "delete":
+                states.append("absent")
+            else:
+                states.append(operation)
+
+        results["state"] = {
+            "name": "state",
+            "type": "str",
+            "enum": sorted(set(states)),
+        }
+        if "present" in states:
+            results["state"]["default"] = "present"
+        elif "set" in states:
+            results["state"]["default"] = "set"
+        elif states:
+            results["state"]["required"] = True
+
+        # There is just one possible operation, we remove the "state" parameter
+        if len(self.resource.operations) == 1:
+            del results["state"]
+
+        # Suppport pre 7.0.2 filters
+        if "list" in self.default_operationIds or "get" in self.default_operationIds:
+            for i in ["datacenters", "folders", "names"]:
+                if i in results and results[i]["type"] == "array":
+                    results[i]["aliases"] = [f"filter_{i}"]
+            if "type" in results and results["type"]["type"] == "string":
+                results["type"]["aliases"] = ["filter_type"]
+            if "types" in results and results["types"]["type"] == "array":
+                results["types"]["aliases"] = ["filter_types"]
+
+        return sorted(results.values(), key=lambda item: item["name"])
+
+    def gen_required_if(self, parameters: List) -> List:
+        by_states = DefaultDict(list)
+        for parameter in parameters:
+            for operation in parameter.get("_required_with_operations", []):
+                by_states[ansible_state(operation)].append(parameter["name"])
+        entries = []
+        for operation, fields in by_states.items():
+            state = ansible_state(operation)
+            if "state" in entries:
+                entries.append(["state", state, sorted(set(fields)), True])
+        return entries
+
+    @staticmethod
+    def _property_to_parameter(
+        prop_struct: any, definitions: Iterable, operationId: any
+    ) -> Iterable:
+        properties = flatten_ref(prop_struct, definitions)
+
+        def get_next(properties: List) -> Iterable:
+            required_keys = []
+            for i, v in enumerate(properties):
+                if "schema" in v:
+                    if "properties" in v["schema"]:
+                        properties[i] = v["schema"]["properties"]
+                        if "required" in v["schema"]:
+                            required_keys = v["schema"]["required"]
+                    elif "additionalProperties" in v["schema"]:
+                        properties[i] = v["schema"]["additionalProperties"][
+                            "properties"
+                        ]
+
+            for i, v in enumerate(properties):
+                # appliance_health_messages
+                if isinstance(v, str):
+                    yield v, {}, [], []
+
+                elif "spec" in v and "properties" in v["spec"]:
+                    required_keys = required_keys or []
+                    if "required" in v["spec"]:
+                        required_keys = v["spec"]["required"]
+                    for name, property in v["spec"]["properties"].items():
+                        yield name, property, ["spec"], name in required_keys
+
+                elif isinstance(v, dict):
+                    if not isinstance(v, dict):
+                        continue
+                    # {'type': 'string', 'required': True, 'in': 'path', 'name': 'datacenter', 'description': 'Identifier of the datacenter.'}
+                    if "name" in v and "in" in v and v.get("in") in ["path", "query"]:
+                        yield v["name"], v, [], v.get("required")
+                    # elif "name" in v and isinstance(v["name", dict]):
+                    #    yield v["name"], v, [], v.get("required")
+                    else:
+                        for k, data in v.items():
+                            if isinstance(data, dict):
+                                yield k, data, [], k in required_keys or data.get(
+                                    "required"
+                                )
+
+        parameters = []
+
+        for name, v, parent, required in get_next(properties):
+            if name == "request_body":
+                raise ValueError()
+            parameter = {
+                "name": name,
+                "type": v.get("type", "str"),  # 'str' by default, should be ok
+                "description": v.get("description", ""),
+                "required": required,
+                "_loc_in_payload": "/".join(parent + [name]),
+                "in": v.get("in"),
+            }
+            if "enum" in v:
+                parameter["enum"] = sorted(set(v["enum"]))
+
+            sub_items = None
+            required_subkeys = v.get("required", [])
+
+            if "properties" in v:
+                sub_items = v["properties"]
+                if "required" in v["properties"]:  # NOTE: do we still need these
+                    required_subkeys = v["properties"]["required"]
+            elif "items" in v and "properties" in v["items"]:
+                sub_items = v["items"]["properties"]
+                if "required" in v["items"]:  # NOTE: do we still need these
+                    required_subkeys = v["items"]["required"]
+            elif "items" in v and "name" not in v["items"]:
+                parameter["elements"] = v["items"].get("type", "str")
+            elif "items" in v and v["items"]["name"]:
+                sub_items = v["items"]
+
+            if sub_items:
+                subkeys = {}
+                for sub_k, sub_v in sub_items.items():
+                    subkey = {
+                        "name": sub_k,
+                        "type": sub_v["type"],
+                        "description": sub_v.get("description", ""),
+                        "_required_with_operations": [operationId]
+                        if sub_k in required_subkeys
+                        else [],
+                        "_operationIds": [operationId],
+                    }
+                    if "enum" in sub_v:
+                        subkey["enum"] = sub_v["enum"]
+                    if "properties" in sub_v:
+                        subkey["properties"] = sub_v["properties"]
+                    subkeys[sub_k] = subkey
+                parameter["subkeys"] = subkeys
+                parameter["elements"] = "dict"
+            parameters.append(parameter)
+
+        return sorted(
+            parameters, key=lambda item: (item["name"], item.get("description"))
+        )
+
+    def list_path(self) -> any:
+        list_path = None
+        if "list" in self.resource.operations:
+            list_path = self.resource.operations["list"][1]
+
+        return list_path
+
+    def renderer(self, target_dir: str, module_dir: str, next_version: str, role_path: str):
+
+        added_ins = {}  # get_module_added_ins(self.name, git_dir=target_dir / ".git")
+        arguments = gen_arguments_py(self.parameters(), self.list_index())
+        documentation = format_documentation(
+            gen_cisco_intersight_documentation(
+                self.name,
+                self.description(),
+                self.parameters(),
+                added_ins,
+                next_version,
+                module_dir,
+            )
+        )
+        required_if = gen_required_if(self.parameters())
+
+        content = jinja2_renderer(
+            self.template_file,
+            role_path,
+            "cisco_intersight",
+            arguments=indent(arguments, 4),
+            documentation=documentation,
+            list_index=self.list_index(),
+            list_path=self.list_path(),
+            name=self.name,
+            operations=self.resource.operations,
+            path=self.get_path(),
+            payload_format=self.payload(),
+            required_if=required_if,
+        )
+
+        self.write_module(target_dir, content)
+
+
+
 class AnsibleInfoModule(AnsibleModuleBaseVmware):
     def __init__(self, resource: any, definitions: any):
         super().__init__(resource, definitions)
@@ -1034,11 +1539,11 @@ class Path:
 
 
 class SwaggerFile:
-    def __init__(self, raw_content: any):
+    def __init__(self, raw_content: any, definitions="definitions"):
         super().__init__()
         self.resources = {}
         json_content = json.loads(raw_content)
-        self.definitions = Definitions(json_content["definitions"])
+        self.definitions = Definitions(json_content[definitions])
         self.paths = self.load_paths(json_content["paths"])
 
     @staticmethod
@@ -1330,6 +1835,70 @@ def generate_vmware_rest(args: Iterable, role_path: str):
 
     print("Generating meta/runtime.yml")
     runtime_yml = generate_runtime_yml(args.get("requires_ansible"), "vmware_rest", module_list)
+    meta_dir = pathlib.Path(args.get("target_dir") + "/meta")
+    meta_dir.mkdir(parents=True, exist_ok=True)
+    runtime_file = meta_dir / "runtime.yml"
+    with open(runtime_file, "w") as file:
+        yaml.safe_dump(runtime_yml, file, sort_keys=False)
+
+    return
+
+
+def generate_cisco_intersight(args: Iterable, role_path: str):
+    module_list = []
+
+    for json_file in ["intersight_server.json"]:
+        print("Generating modules from {}".format(json_file))
+        api_spec_file = pathlib.Path(args.get("schema_dir") + "/" + json_file)
+        raw_content = api_spec_file.read_text()
+        swagger_file = SwaggerFile(raw_content, definitions="components")
+        resources = swagger_file.init_resources(swagger_file.paths.values())
+
+        for resource in resources.values():
+            if "list" in resource.operations:
+                module = AnsibleInfoListOnlyModule(
+                    resource, definitions=swagger_file.definitions
+                )
+                if (
+                    len(module.default_operationIds) > 0
+                ):
+                    module.renderer(
+                        target_dir=args.get("target_dir"),
+                        module_dir=args.get("modules"),
+                        next_version=args.get("next_version"),
+                        role_path=role_path
+                    )
+                    module_list.append(module.name)
+            elif "get" in resource.operations:
+                module = AnsibleInfoNoListModule(
+                    resource, definitions=swagger_file.definitions
+                )
+                if (
+                    len(module.default_operationIds) > 0
+                ):
+                    module.renderer(
+                        target_dir=args.get("target_dir"),
+                        module_dir=args.get("modules"),
+                        next_version=args.get("next_version"),
+                        role_path=role_path,
+                    )
+                    module_list.append(module.name)
+
+            module = AnsibleModuleBaseCiscoIntersight(
+                resource, definitions=swagger_file.definitions
+            )
+
+            if len(module.default_operationIds) > 0:
+                module.renderer(
+                    target_dir=args.get("target_dir"),
+                    module_dir=args.get("modules"),
+                    next_version=args.get("next_version"),
+                    role_path=role_path
+                )
+                module_list.append(module.name)
+
+    print("Generating meta/runtime.yml")
+    runtime_yml = generate_runtime_yml(args.get("requires_ansible"), "cisco_intersight", module_list)
     meta_dir = pathlib.Path(args.get("target_dir") + "/meta")
     meta_dir.mkdir(parents=True, exist_ok=True)
     runtime_file = meta_dir / "runtime.yml"

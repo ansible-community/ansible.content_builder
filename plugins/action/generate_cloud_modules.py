@@ -348,7 +348,7 @@ def gen_cisco_intersight_documentation(
 
     short_description = description.split(". ")[0]
     documentation = {
-        "author": ["Ansible Cloud Team (@ansible-collections)"],
+        "author": ["Cisco Intersight Team (@ciscodevnet)"],
         "description": description,
         "module": name,
         "options": {
@@ -399,64 +399,6 @@ def gen_cisco_intersight_documentation(
         "short_description": short_description,
         "version_added": next_version,
     }
-
-    # Note: this series of if block is overcomplicated and should
-    # be refactorized.
-    for parameter in parameters:
-        if parameter["name"] == "action":
-            continue
-        normalized_name = normalize_parameter_name(parameter["name"])
-        description = []
-        option = {}
-        if parameter.get("required"):
-            option["required"] = True
-        if parameter.get("aliases"):
-            option["aliases"] = parameter.get("aliases")
-        if parameter.get("description"):
-            description.append(parameter["description"])
-        if parameter.get("subkeys"):
-            description.append("Valid attributes are:")
-            for sub_k, sub_v in parameter.get("subkeys").items():
-                sub_v["type"] = python_type(sub_v["type"])
-                states = sorted(set([ansible_state(o) for o in sub_v["_operationIds"]]))
-                required_with_operations = sorted(
-                    set([ansible_state(o) for o in sub_v["_required_with_operations"]])
-                )
-                description.append(
-                    " - C({name}) ({type}): {description} ({states})".format(
-                        **sub_v, states=states
-                    )
-                )
-                if required_with_operations:
-                    description.append(
-                        f"   This key is required with {required_with_operations}."
-                    )
-                if "enum" in sub_v:
-                    description.append("   - Accepted values:")
-                    for i in sorted(sub_v["enum"]):
-                        description.append(f"     - {i}")
-                if "properties" in sub_v:
-                    description.append("   - Accepted keys:")
-                    for i, v in sub_v["properties"].items():
-                        description.append(
-                            f"     - {i} ({v['type']}): {v['description']}"
-                        )
-                        if v.get("enum"):
-                            description.append("Accepted value for this field:")
-                            for val in sorted(v.get("enum")):
-                                description.append(f"       - C({val})")
-
-        option["description"] = list(Description.normalize(description))
-        option["type"] = python_type(parameter["type"])
-        if "enum" in parameter:
-            option["choices"] = sorted(parameter["enum"])
-        if parameter["type"] == "array":
-            option["elements"] = python_type(parameter["elements"])
-        if parameter.get("default"):
-            option["default"] = parameter.get("default")
-
-        documentation["options"][normalized_name] = option
-        parameter["added_in"] = next_version
 
     module_from_config = get_module_from_config(name, target_dir)
     if module_from_config and "documentation" in module_from_config:

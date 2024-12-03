@@ -1,0 +1,39 @@
+{% include 'header.j2' %}
+
+# template: default_module.j2
+def entry_point(intersight):
+    {% if operations|length > 1 %}
+    if intersight.module.params['state'] == "present":
+        if "_create" in globals():
+            operation = "create"
+        else:
+            operation = "update"
+    elif intersight.module.params['state'] == "absent":
+        operation = "delete"
+    else:
+        operation = intersight.module.params['state']
+
+    func = globals()["_" + operation]
+    {% else %}
+    func = globals()["_{{operations.keys()|list|first}}"]
+    {% endif %}
+    return func(intersight)
+
+{% for operation in operations|sort -%}
+{% set verb = operations[operation][0] %}
+{% set _path = operations[operation][1] %}
+
+def _{{ operation }}(intersight):
+    _in_query_parameters = PAYLOAD_FORMAT["{{ operation }}"]["query"].keys()
+    _url = (
+        "https://{api_uri}"
+        "{{ _path }}").format(**intersight.module.params)
+    response, info = fetch_url(intersight.module, _url)
+
+    return response, info
+
+{% endfor %}
+
+
+if __name__ == '__main__':
+    main()

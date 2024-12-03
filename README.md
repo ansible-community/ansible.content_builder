@@ -233,6 +233,29 @@ plugins:
     author: "Ansible Cloud Team"
 ```
 
+#### 6. cisco.intersight
+
+MANIFEST.yaml:
+```yaml
+---
+collection:
+  path: /Documents/intersight_ansible_content_builder/intersight
+  namespace: cisco
+  name: intersight
+  requires_ansible: 2.15
+plugins:
+  - type: module_openapi
+    name: "cisco_intersight"
+    content: cloud
+    api_object_path: /Documents/intersight_schema
+    resource: ./
+    action: generate_modules
+    unique_key: ""
+    rm_swagger_json: ""
+    module_version: "1.0.0"
+    author: "Cisco Intersight Team"
+```
+
 *Refresh the `RETURN Block` of the vmware modules using the test-suite:*
 ```
     mkdir -p ~/.ansible/collections/ansible_collections/goneri/utils

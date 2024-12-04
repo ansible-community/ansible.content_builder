@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - generate_cloud_modules - add vsphere 8 module name mappings
+  - vmware_rest - add support for python 3.11 and update asyncio calls

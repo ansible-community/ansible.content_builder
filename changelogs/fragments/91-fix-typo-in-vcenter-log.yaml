@@ -1,0 +1,3 @@
+---
+trivial:
+  - generate_cloud_modules - fixes small typo in vcenter rest log file param
